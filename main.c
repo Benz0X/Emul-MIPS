@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "user_int.h"
-#include "main.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,7 +15,7 @@ if (argc > 1)
 		//while (command != debug || strtok != EOF)
 		return 0;
 		}
-    	else 
+    	else
 		{
 		//renvoi d'erreur
 		printf("erreur à l'ouverture du script\n");
