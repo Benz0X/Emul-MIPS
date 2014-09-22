@@ -1,5 +1,5 @@
-#include "fonctions.h"
 #include "user_int.h"
+#include "fonctions.h"
 #include <string.h>
 
 
@@ -17,4 +17,8 @@ int getFromUser(char input[])
 {
     gets(input);//une entrée sécurisée serait pas mal pour eviter les buffer overflow
     return 1;
+}
+
+command getCommand(char word[]){
+return EXIT;
 }

@@ -1,14 +1,53 @@
 #include "user_int.h"
+#include "fonctions.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int decrypt(char input [])
+command decrypt(char input [])
 {
     char* word;
     word = strtok(input, " ");
+    command current_cmd=getCommand(word);
 
-    //MEGA CASE
+    switch (current_cmd){
+case LOAD:
 
+    break;
+case EXIT:
+
+    break;
+case DISP:
+
+    break;
+case DISASM:
+
+    break;
+case SET:
+
+    break;
+case ASSERT:
+
+    break;
+case DEBUG:
+
+    break;
+case RESUME:
+
+    break;
+case RUN:
+
+    break;
+case STEP:
+
+    break;
+case BREAK:
+
+    break;
+
+default:
+
+    break;
+    }
     return 0;
 }
