@@ -12,7 +12,8 @@ typedef enum {
     RESUME,
     RUN,
     STEP,
-    BREAK
+    BREAK,
+    UNKNOWN
 } command ;
 
 

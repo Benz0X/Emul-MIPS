@@ -12,37 +12,40 @@ command decrypt(char input [])
 
     switch (current_cmd){
 case LOAD:
-
+printf("%d \n",current_cmd);
     break;
 case EXIT:
-
+printf("%d \n",current_cmd);
     break;
 case DISP:
-
+printf("%d \n",current_cmd);
     break;
 case DISASM:
-
+printf("%d \n",current_cmd);
     break;
 case SET:
-
+printf("%d \n",current_cmd);
     break;
 case ASSERT:
-
+printf("%d \n",current_cmd);
     break;
 case DEBUG:
-
+printf("%d \n",current_cmd);
     break;
 case RESUME:
-
+printf("%d \n",current_cmd);
     break;
 case RUN:
-
+printf("%d \n",current_cmd);
     break;
 case STEP:
-
+printf("%d \n",current_cmd);
     break;
 case BREAK:
-
+printf("%d \n",current_cmd);
+    break;
+case UNKNOWN:
+printf("%d \n",current_cmd);
     break;
 
 default:
