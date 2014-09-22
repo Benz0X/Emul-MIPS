@@ -7,7 +7,7 @@
 command decrypt(char input [])
 {
     char* word;
-    word = strtok(input, " ");
+    word = strtok(input, " \n");
     command current_cmd=getCommand(word);
 
     switch (current_cmd){
