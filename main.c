@@ -31,14 +31,14 @@ int main(int argc, char *argv[])
         char input[100];
         if (scriptmode==1)
         {
-            quit=getFromScript(script_file,input);
+            scriptmode=getFromScript(script_file,input);
         }
         else
         {
             printf("execution en mode intéractif, entrez une commande \n");
-            quit=getFromUser(input);
+            getFromUser(input);
         }
-        printf("%s \n",input);
+         printf("%s \n",input);
         decrypt(input);//variable globale ?
 
     }
