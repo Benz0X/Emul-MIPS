@@ -82,7 +82,7 @@ extern "C" {
     RESET_COLORS(ON(stderr));						\
 } while( 0 )
 
-#ifdef VERBOSE
+
 #define INFO_MSG(...) do {							\
     fprintf( stderr, "%c[%d;%dm", 0x1B, STYLE_BOLD, COLOR_BLUE );	\
     fprintf( stderr, "[ INFO  :: %s:%s:%d] ",				\
@@ -92,11 +92,10 @@ extern "C" {
     fprintf( stderr, ".\n" );						\
     RESET_COLORS(ON(stderr));						\
 } while( 0 )
-#else
-#define INFO_MSG(...)
-#endif
 
-#ifdef DEBUG
+
+
+
 #define DEBUG_MSG(...) do {							\
     fprintf( stderr, "%c[%d;%dm", 0x1B, STYLE_BOLD, COLOR_BLUE );	\
     fprintf( stderr, "[ DEBUG :: %s:%s:%d] ",				\
@@ -106,9 +105,7 @@ extern "C" {
     fprintf( stderr, ".\n" );						\
     RESET_COLORS(ON(stderr));						\
 } while( 0 )
-#else
-#define DEBUG_MSG(...)
-#endif
+
 
 #ifdef __cplusplus
 }

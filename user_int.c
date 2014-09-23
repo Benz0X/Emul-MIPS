@@ -3,17 +3,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "notify.h"
+
+/* syntaxe strtok
+
+   const char str[80] = "This is - www.tutorialspoint.com - website";
+   const char s[2] = "-";
+   char *token;
+   
+   // get the first token 
+   token = strtok(str, s);
+   
+   // walk through other tokens 
+   while( token != NULL ) 
+   {
+      printf( " %s\n", token );
+    
+      token = strtok(NULL, s);
+   }
+*/
+int nextword(char** token, char* input, int* n){
+	if(*n==0){
+		*token=strtok(input, " ");
+		*n=*n+1;	
+	}else{
+		*token=strtok(NULL, " ");
+		*n=*n+1;	
+	}
+	printf("prochain mot : %s\n",*token);
+	if(*token==NULL){return 0;}else{return 1;}
+}
 
 command decrypt(char input [])
 {
+	int n=1; 
     char* word;
     word = strtok(input, " \n");
     command current_cmd=getCommand(word);
 
     switch (current_cmd){
+
 case LOAD:
-printf("%d \n",current_cmd);
+	printf("Chargement d'un script\n",n);
+	if(nextword(&word,input,&n)==0){
+		WARNING_MSG("Too few arguments. Syntax is 'load <filename> [<adress>]");
+	}else{
+		printf("Fichier '%s' à charger ",word);
+		if(nextword(&word,input,&n)==0){
+			printf(" sans specification d'adresse\n");		
+		}else{
+			if(isHexa(word)==0){
+				WARNING_MSG("Adress must be hexadecimal");
+			}else{
+				printf("à l'adresse '%s'\n",word);
+			}
+		}
+	}
+
+	 
+
     break;
+
+
 case EXIT:
 printf("%d \n",current_cmd);
     break;
