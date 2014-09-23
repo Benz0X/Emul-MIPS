@@ -7,7 +7,6 @@ int main(int argc, char *argv[])
 {
     FILE *script_file = NULL;
     int scriptmode=0;
-    int quit=0;
     if (argc > 1)
     {
         script_file = fopen (argv[1], "r");
@@ -25,7 +24,7 @@ int main(int argc, char *argv[])
     }
 
 
-    while(quit==0)
+    while(1)
     {
 
         char input[INPUT_SIZE];
