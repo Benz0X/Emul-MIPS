@@ -46,3 +46,61 @@ return BREAK;
 
 return UNKNOWN;
 }
+
+
+int what_type(char * word){
+	enum { INIT , DECIMAL_ZERO , HEXA , DECIMAL , OCTAL } ;
+	int i=0;
+	int c ;
+	int S=INIT ;
+	while (word[i] != '\0' && word[i] != '\n') {
+			c=word[i];
+			i++;
+			switch (S) {
+		case INIT:
+			if (isdigit(c)){
+				S = ( c=='0') ? DECIMAL_ZERO : DECIMAL ;
+			}
+			else return -1;
+			break;
+		case DECIMAL_ZERO:
+			if ( c == 'x' || c == 'X' ) S=HEXA ;
+			else if (isdigit(c) && c<'8') S=OCTAL;
+			else return -1;
+			break ;
+		case HEXA:
+			if(isdigit(c) || (c <= 'f' && c >= 'a') || (c <= 'F' ) && ( c >= 'A' )) S=HEXA;
+			else return -1;
+			break ;
+		case DECIMAL:
+			if(isdigit(c)) S= DECIMAL;
+			else return -1;
+			break ;
+		case OCTAL:
+			if (isdigit(c) && c<'8') S=OCTAL;
+			else return -1;
+
+			break ;
+		default:
+		return -1;
+		}
+	}
+	return S;
+}
+
+
+int isHexa(char * word){
+	if (what_type(word)==2){return 1;}
+	return 0;
+}
+
+
+int isDecimal(char * word){
+	if (what_type(word)==3){return 1;}
+	return 0;
+}
+
+int isOctal(char * word){
+	if (what_type(word)==4){return 1;}
+	return 0;
+}

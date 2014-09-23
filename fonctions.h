@@ -11,8 +11,10 @@ int getFromScript(FILE *fileptr,char input[]);//recupere ligne par ligne, renvoi
 int getFromUser(char input[]);// a coder, renvoi 1 si le programme doit se quitter
 command getCommand(char word[]);
 
+int what_type(char * word);
 
-
-
+int isHexa(char * word);
+int isDecimal(char * word);
+int isOctal(char * word);
 
 #endif
