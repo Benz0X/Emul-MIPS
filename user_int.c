@@ -22,17 +22,6 @@
       token = strtok(NULL, s);
    }
 */
-int nextword(char** token, char* input, int* n){
-	if(*n==0){
-		*token=strtok(input, " ");
-		*n=*n+1;	
-	}else{
-		*token=strtok(NULL, " ");
-		*n=*n+1;	
-	}
-	printf("prochain mot : %s\n",*token);
-	if(*token==NULL){return 0;}else{return 1;}
-}
 
 command decrypt(char input [])
 {
@@ -44,7 +33,7 @@ command decrypt(char input [])
     switch (current_cmd){
 
 case LOAD:
-	printf("Chargement d'un script\n",n);
+	printf("Chargement d'un script\n");
 	if(nextword(&word,input,&n)==0){
 		WARNING_MSG("Too few arguments. Syntax is 'load <filename> [<adress>]");
 	}else{

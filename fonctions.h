@@ -16,5 +16,6 @@ int what_type(char * word);
 int isHexa(char * word);
 int isDecimal(char * word);
 int isOctal(char * word);
+int nextword(char** token, char* input, int* n);
 
 #endif

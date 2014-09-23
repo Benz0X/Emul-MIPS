@@ -104,3 +104,15 @@ int isOctal(char * word){
 	if (what_type(word)==4){return 1;}
 	return 0;
 }
+
+int nextword(char** token, char* input, int* n){
+	if(*n==0){
+		*token=strtok(input, " \n");
+		*n=*n+1;	
+	}else{
+		*token=strtok(NULL, " \n");
+		*n=*n+1;	
+	}
+	//printf("prochain mot : %s\n",*token);
+	if(*token==NULL){return 0;}else{return 1;}
+}
