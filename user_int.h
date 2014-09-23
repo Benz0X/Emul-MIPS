@@ -17,7 +17,7 @@ typedef enum {
 } command ;
 
 
-command decrypt(char input []);//doit décrypter mot par mot, faudrait une fonction get-word qui ne renvoi rien si c'est des comment
+command decrypt(char input []);//doit decrypter mot par mot, faudrait une fonction get-word qui ne renvoi rien si c'est des comment
 
 
 

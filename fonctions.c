@@ -6,7 +6,7 @@
 
 int getFromScript(FILE *fileptr,char input[])
 {
-    if( fgets( input, 100, fileptr ) == NULL)
+    if( fgets( input, INPUT_SIZE, fileptr ) == NULL)
     {
         printf("end of file\n");
         return 0;
@@ -15,7 +15,7 @@ int getFromScript(FILE *fileptr,char input[])
 }
 int getFromUser(char input[])
 {
-    gets(input);//une entrée sécurisée serait pas mal pour eviter les buffer overflow
+    fgets(input,INPUT_SIZE,stdin);
     return 1;
 }
 

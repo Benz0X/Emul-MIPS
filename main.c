@@ -28,14 +28,14 @@ int main(int argc, char *argv[])
     while(quit==0)
     {
 
-        char input[100];
+        char input[INPUT_SIZE];
         if (scriptmode==1)
         {
             scriptmode=getFromScript(script_file,input);
         }
         else
         {
-            printf("execution en mode intéractif, entrez une commande \n");
+            printf("execution en mode interactif, entrez une commande \n");
             getFromUser(input);
         }
          printf("%s \n",input);
