@@ -12,6 +12,7 @@ int getFromScript(FILE *fileptr,char input[])
         printf("end of file\n");
         return 0;
     }
+
     return 1;
 }
 int getFromUser(char input[])
@@ -115,4 +116,37 @@ int nextword(char** token, char* input, int* n){
 	}
 	//printf("prochain mot : %s\n",*token);
 	if(*token==NULL){return 0;}else{return 1;}
+}
+
+void string_standardise( char* in, char* out ) {
+    unsigned int i=0, j;
+    //removes spaces
+    while(in[i]==' ' && i<strlen(in)){i++;}
+
+    for ( j= 0; i< strlen(in); i++ ) {
+ 
+        /* insert blanks around special characters*/
+        if (in[i]==':' || in[i]=='+' || in[i]=='~') {
+            out[j++]=' ';
+            out[j++]=in[i];
+            out[j++]=' ';
+
+        }
+
+        /* remove blanks after negation*/
+        else if (in[i]=='-') {
+            out[j++]=' ';
+            out[j++]=in[i];
+            while (isblank((int) in[i+1])) i++;
+        }
+
+        /* remove command */
+        else if (in[i]=='#') {
+            out[j++]='\0';
+        }
+        /* translate tabs into white spaces*/
+        else if (isblank((int) in[i])) out[j++]=' ';
+        else out[j++]=in[i];
+    }
+    out[j++]='\0';
 }

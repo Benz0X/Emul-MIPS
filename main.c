@@ -28,17 +28,25 @@ int main(int argc, char *argv[])
     {
 
         char input[INPUT_SIZE];
-        if (scriptmode==1)
-        {
-            scriptmode=getFromScript(script_file,input);
-        }
-        else
-        {
-            printf("execution en mode interactif, entrez une commande \n");
-            getFromUser(input);
-        }
-         printf("%s \n",input);
-        decrypt(input);//variable globale ?
+        char normalized_input[INPUT_SIZE];
+        input[0]='\0';
+        normalized_input[0]='\0';
+        do{
+            if (scriptmode==1)
+            {
+                scriptmode=getFromScript(script_file,input);
+            }
+            else
+            {
+                printf("execution en mode interactif, entrez une commande \n");
+                getFromUser(input);
+            }
+            string_standardise(input,normalized_input);
+        } while (normalized_input[0]=='\n' || normalized_input[0]=='\0');
+        
+        //printf(" normalized :%s\n",normalized_input);
+        //printf(" input :%s\n",input);
+        decrypt(normalized_input);//variable globale ?
 
     }
     return 0;

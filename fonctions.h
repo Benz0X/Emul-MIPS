@@ -17,5 +17,5 @@ int isHexa(char * word);
 int isDecimal(char * word);
 int isOctal(char * word);
 int nextword(char** token, char* input, int* n);
-
+void string_standardise( char* in, char* out );
 #endif
