@@ -3,6 +3,7 @@
 #include "fonctions.h"
 #include "notify.h"
 
+
 int main(int argc, char *argv[])
 {
     FILE *script_file = NULL;
@@ -27,7 +28,7 @@ int main(int argc, char *argv[])
     while(1)
     {
 
-        char input[INPUT_SIZE];
+        char input[1024];
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
         normalized_input[0]='\0';
@@ -45,7 +46,7 @@ int main(int argc, char *argv[])
         } while (normalized_input[0]=='\n' || normalized_input[0]=='\0');
         
         //printf(" normalized :%s\n",normalized_input);
-        //printf(" input :%s\n",input);
+        printf(" input :%s\n",input);
         decrypt(normalized_input);//variable globale ?
 
     }

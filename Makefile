@@ -1,16 +1,15 @@
-TARGET=emulMips
+TARGET=projet
 
 # noms des executables utilisés durant la compilation/edition des liens
 CC=`which gcc`
 LD=`which gcc`
 RM=`which rm` -f
-DOXYGEN=`which doxygen`
 
 #options de compilation/edition des liens
 INCLUDE=-I$(INCDIR)
 CFLAGS=-Wall $(INCLUDE)
 LFLAGS=-lreadline -lm -lcurses
-CFLAGS_DBG=$(CFLAGS) -g -DDEBUG -DVERBOSE
+CFLAGS_DBG=$(CFLAGS) -g -DVERBOSE
 CFLAGS_RLS=$(CFLAGS)
 
 
@@ -54,8 +53,6 @@ release : $(OBJ_RLS)
 %.dbg.o : %.c
 	$(CC) $< $(CFLAGS_DBG) -c -o $(basename $<).dbg.o
 
-doc : 
-	$(DOXYGEN)
 
 clean : 
 	$(RM) $(TARGET) $(SRCDIR)/*.o $(GARBAGE) 

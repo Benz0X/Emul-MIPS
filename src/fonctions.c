@@ -2,10 +2,13 @@
 #include "fonctions.h"
 #include <string.h>
 #include "notify.h"
+#include <ctype.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#define PROMPT_STRING "EmulMips : > "
 
 
-
-int getFromScript(FILE *fileptr,char input[])
+int getFromScript(FILE *fileptr,char * input)
 {
     if( fgets( input, INPUT_SIZE, fileptr ) == NULL)
     {
@@ -15,9 +18,14 @@ int getFromScript(FILE *fileptr,char input[])
 
     return 1;
 }
-int getFromUser(char input[])
+int getFromUser(char * input)
 {
-    fgets(input,INPUT_SIZE,stdin);
+    //fgets(input,INPUT_SIZE,stdin);
+    char* temp;
+     temp = readline( PROMPT_STRING );
+     add_history( temp );
+     strcpy(input, temp);
+     printf("l'entrée est %s\n",input);
     return 1;
 }
 
@@ -70,7 +78,7 @@ int what_type(char * word){
 			else return -1;
 			break ;
 		case HEXA:
-			if(isdigit(c) || (c <= 'f' && c >= 'a') || (c <= 'F' ) && ( c >= 'A' )) S=HEXA;
+			if(isdigit(c) || ((c <= 'f') && (c >= 'a')) || ((c <= 'F' ) && ( c >= 'A' ))) S=HEXA;
 			else return -1;
 			break ;
 		case DECIMAL:
