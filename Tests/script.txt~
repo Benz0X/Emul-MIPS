@@ -1,0 +1,5 @@
+ #fichier de test de l'émulateur
+load fichier.o 		#charge en mémoire le fichier objet
+disp reg all 		#affiche le contenu de tous les registres
+exit
+#sort du programme

@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
     
 
-/*test stuff
+//test stuff
     int i;
 
     for (i=0; i < 32; ++i)
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
         printf("input: %s reg value: %d\n  index : %d Read ?\n",string,reg_mips[index],index);
     }
 
-*/
+
 
 
 
@@ -62,7 +62,8 @@ int main(int argc, char *argv[])
 
     while(1)
     {
-
+        int test=isReg("t1");
+        printf("Test is registre : %d\n", test);
         char input[1024];
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
