@@ -17,10 +17,7 @@ int isDecimal(char * word);
 int isOctal(char * word);
 int nextword(char** token, char* input, int* n);
 void string_standardise( char* in, char* out );
-
-typedef struct {
-	int32_t zero;
-	int32_t at;
-} registres;
+int readReg(char * reg_name, int32_t* value); //lit la valeur d'un registre et la stocke dans value, renvoi -1 si erreur, sinon le num du registre
+int writeReg(char * reg_name,int32_t value); //écrit sur un registre, renvoi -1 si erreur, sinon le num du registre
 
 #endif

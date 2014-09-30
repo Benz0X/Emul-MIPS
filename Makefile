@@ -9,7 +9,7 @@ RM=`which rm` -f
 INCLUDE=-I$(INCDIR)
 CFLAGS=-Wall $(INCLUDE)
 LFLAGS=-lreadline -lm -lcurses
-CFLAGS_DBG=$(CFLAGS) -g -DVERBOSE
+CFLAGS_DBG=$(CFLAGS) -g -c -DVERBOSE
 CFLAGS_RLS=$(CFLAGS)
 
 

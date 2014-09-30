@@ -2,12 +2,44 @@
 #include <stdlib.h>
 #include "fonctions.h"
 #include "notify.h"
+#include "emul.h"
 
+int reg_mips[32];
 
 int main(int argc, char *argv[])
 {
+    
 
-    printf("%d\n",reg_mips.zero );
+/*test stuff
+    int i;
+
+    for (i=0; i < 32; ++i)
+    {
+        reg_mips[i]=-i;
+    }
+            char  string[200];
+            int regwrite;
+            int index;
+    while(1){
+        scanf("%s",string);
+        readReg(string, &i);
+        printf("input : %s reg value :%d \n Write ?\n", string,i);
+    
+        scanf("%s %d",string, &regwrite);
+        
+        index=writeReg(string,regwrite);
+        printf("input: %s reg value: %d\n  index : %d Read ?\n",string,reg_mips[index],index);
+    }
+
+*/
+
+
+
+
+
+
+
+
 
     FILE *script_file = NULL;
     int scriptmode=0;

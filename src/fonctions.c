@@ -1,7 +1,8 @@
 #include "user_int.h"
 #include "fonctions.h"
-#include <string.h>
 #include "notify.h"
+#include "emul.h"
+#include <string.h>
 #include <ctype.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -157,4 +158,109 @@ void string_standardise( char* in, char* out ) {
         else out[j++]=in[i];
     }
     out[j++]='\0';
+}
+
+int readReg(char * reg_name, int32_t* value){
+	char * string;
+	int index=-1;
+	
+	index = strtol(reg_name,&string,10);
+	if (isdigit(reg_name[0] && index<32 && index > -1)){*value=reg_mips[index]; return 0;}
+
+	else if (!isdigit(reg_name[0]))
+		{
+			if (!strcmp(string,"zero")){index=0;}
+			else if (!strcmp(string,"at")){index=1;}
+			else if (!strcmp(string,"v0")){index=2;}
+			else if (!strcmp(string,"v1")){index=3;}
+			else if (!strcmp(string,"a0")){index=4;}
+			else if (!strcmp(string,"a1")){index=5;}
+			else if (!strcmp(string,"a2")){index=6;}
+			else if (!strcmp(string,"a3")){index=7;}
+			else if (!strcmp(string,"t0")){index=8;}
+			else if (!strcmp(string,"t1")){index=9;}
+			else if (!strcmp(string,"t2")){index=10;}
+			else if (!strcmp(string,"t3")){index=11;}
+			else if (!strcmp(string,"t4")){index=12;}
+			else if (!strcmp(string,"t5")){index=13;}
+			else if (!strcmp(string,"t6")){index=14;}
+			else if (!strcmp(string,"t7")){index=15;}
+			else if (!strcmp(string,"s0")){index=16;}
+			else if (!strcmp(string,"s1")){index=17;}
+			else if (!strcmp(string,"s2")){index=18;}
+			else if (!strcmp(string,"s3")){index=19;}
+			else if (!strcmp(string,"s4")){index=20;}
+			else if (!strcmp(string,"s5")){index=21;}
+			else if (!strcmp(string,"s6")){index=22;}
+			else if (!strcmp(string,"s7")){index=23;}
+			else if (!strcmp(string,"t8")){index=24;}
+			else if (!strcmp(string,"t9")){index=25;}
+			else if (!strcmp(string,"k0")){index=26;}
+			else if (!strcmp(string,"k1")){index=27;}
+			else if (!strcmp(string,"gp")){index=28;}
+			else if (!strcmp(string,"sp")){index=29;}
+			else if (!strcmp(string,"fp")){index=30;}
+			else if (!strcmp(string,"ra")){index=31;}
+			else index=32;
+
+		}
+		if (index<32 && index > -1){*value=reg_mips[index]; return 0;}
+
+	else 
+				WARNING_MSG("%s isn't a valid register",reg_name);
+
+	return -1;
+}
+
+int writeReg(char * reg_name, int32_t value){
+char * string;
+	int index=-1;
+	
+	index = strtol(reg_name,&string,10);
+	if (isdigit(reg_name[0] && index<32 && index > -1)){reg_mips[index]=value; return index;}
+
+	else if (!isdigit(reg_name[0]))
+		{
+			if (!strcmp(string,"zero")){index=0;}
+			else if (!strcmp(string,"at")){index=1;}
+			else if (!strcmp(string,"v0")){index=2;}
+			else if (!strcmp(string,"v1")){index=3;}
+			else if (!strcmp(string,"a0")){index=4;}
+			else if (!strcmp(string,"a1")){index=5;}
+			else if (!strcmp(string,"a2")){index=6;}
+			else if (!strcmp(string,"a3")){index=7;}
+			else if (!strcmp(string,"t0")){index=8;}
+			else if (!strcmp(string,"t1")){index=9;}
+			else if (!strcmp(string,"t2")){index=10;}
+			else if (!strcmp(string,"t3")){index=11;}
+			else if (!strcmp(string,"t4")){index=12;}
+			else if (!strcmp(string,"t5")){index=13;}
+			else if (!strcmp(string,"t6")){index=14;}
+			else if (!strcmp(string,"t7")){index=15;}
+			else if (!strcmp(string,"s0")){index=16;}
+			else if (!strcmp(string,"s1")){index=17;}
+			else if (!strcmp(string,"s2")){index=18;}
+			else if (!strcmp(string,"s3")){index=19;}
+			else if (!strcmp(string,"s4")){index=20;}
+			else if (!strcmp(string,"s5")){index=21;}
+			else if (!strcmp(string,"s6")){index=22;}
+			else if (!strcmp(string,"s7")){index=23;}
+			else if (!strcmp(string,"t8")){index=24;}
+			else if (!strcmp(string,"t9")){index=25;}
+			else if (!strcmp(string,"k0")){index=26;}
+			else if (!strcmp(string,"k1")){index=27;}
+			else if (!strcmp(string,"gp")){index=28;}
+			else if (!strcmp(string,"sp")){index=29;}
+			else if (!strcmp(string,"fp")){index=30;}
+			else if (!strcmp(string,"ra")){index=31;}
+			else index=32;
+
+		}
+		if (index<32 && index > 0){reg_mips[index]=value; return index;}
+		else if (index==0){reg_mips[index]=0;return index;}
+
+	else 
+				WARNING_MSG("%s isn't a valid register",reg_name);
+
+	return -1;
 }
