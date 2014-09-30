@@ -33,7 +33,7 @@ command decrypt(char input [])
     switch (current_cmd){
 
 case LOAD:
-	INFO_MSG("Chargement d'un script");
+	INFO_MSG("Chargement d'un fichier...");
 	if(!nextword(&word,input,&n)){
 		WARNING_MSG("Too few arguments. Syntax is 'load <filename> [<adress>]'");
 	}else{
@@ -116,7 +116,7 @@ case BREAK:
 printf("%d \n",current_cmd);
     break;
 case UNKNOWN:
-printf("%d \n",current_cmd);
+	WARNING_MSG("Unknown command : %s",word);
     break;
 
 default:

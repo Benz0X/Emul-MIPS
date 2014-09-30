@@ -9,7 +9,7 @@ int reg_mips[32];
 int main(int argc, char *argv[])
 {
     
-
+/*
 //test stuff
     int i;
 
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
 
 
-
+*/
 
 
 
@@ -62,8 +62,8 @@ int main(int argc, char *argv[])
 
     while(1)
     {
-        int test=isReg("t1");
-        printf("Test is registre : %d\n", test);
+        //int test=isReg("t1");
+        //printf("Test is registre : %d\n", test);
         char input[1024];
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
@@ -75,14 +75,14 @@ int main(int argc, char *argv[])
             }
             else
             {
-                printf("execution en mode interactif, entrez une commande \n");
+                //printf("execution en mode interactif, entrez une commande \n");
                 getFromUser(input);
             }
             string_standardise(input,normalized_input);
         } while (normalized_input[0]=='\n' || normalized_input[0]=='\0');
         
         //printf(" normalized :%s\n",normalized_input);
-        printf(" input :%s\n",input);
+        //printf(" input :%s\n",input);
         decrypt(normalized_input);//variable globale ?
 
     }

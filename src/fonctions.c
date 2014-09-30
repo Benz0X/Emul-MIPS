@@ -26,7 +26,7 @@ int getFromUser(char * input)
      temp = readline( PROMPT_STRING );
      add_history( temp );
      strcpy(input, temp);
-     printf("l'entrée est %s\n",input);
+     //printf("l'entrée est %s\n",input);
     return 1;
 }
 
