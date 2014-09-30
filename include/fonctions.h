@@ -3,7 +3,6 @@
 #include "user_int.h"
 #include <stdio.h>
 #include <stdlib.h>
-
 #define INPUT_SIZE 1024
 
 
@@ -18,4 +17,10 @@ int isDecimal(char * word);
 int isOctal(char * word);
 int nextword(char** token, char* input, int* n);
 void string_standardise( char* in, char* out );
+
+typedef struct {
+	int32_t zero;
+	int32_t at;
+} registres;
+
 #endif

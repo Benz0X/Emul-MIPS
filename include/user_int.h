@@ -9,7 +9,7 @@ typedef enum {
     SET,
     ASSERT,
     DEBUG,
-    RESUME,
+	RESUME,
     RUN,
     STEP,
     BREAK,

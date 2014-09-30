@@ -6,6 +6,9 @@
 
 int main(int argc, char *argv[])
 {
+
+    printf("%d\n",reg_mips.zero );
+
     FILE *script_file = NULL;
     int scriptmode=0;
     if (argc > 1)
