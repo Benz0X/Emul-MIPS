@@ -190,14 +190,14 @@ int loadELF (char* name,...){
 
     //TODO allouer la pile (et donc modifier le nb de segments)
 
-    printf("\n------ Fichier ELF \"%s\" : sections lues lors du chargement ------\n", name) ;
-    print_mem(memory);
-    stab32_print( symtab);
+   // printf("\n------ Fichier ELF \"%s\" : sections lues lors du chargement ------\n", name) ;
+   // print_mem(memory);
+    //stab32_print( symtab);
 
     // on fait le ménage avant de partir
-    del_mem(memory);
-    del_stab(symtab);
+    //del_mem(memory);
+    //del_stab(symtab);
     fclose(pf_elf);
-    puts("");
+    //puts("");
     return 0;
 }

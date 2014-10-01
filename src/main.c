@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     }
             char  string[200];
             int regwrite;
-            int index;
+            int index; //test reg
     while(1){
         scanf("%s",string);
         readReg(string, &i);
@@ -29,11 +29,7 @@ int main(int argc, char *argv[])
         index=writeReg(string,regwrite);
         printf("input: %s reg value: %d\n  index : %d Read ?\n",string,reg_mips[index],index);
     }
-
-
-
 */
-
 
 
 

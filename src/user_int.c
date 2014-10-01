@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "common/notify.h"
+#include "mem.h"
+#include "emul.h"
+
 
 int scriptmode;
 
@@ -35,19 +38,21 @@ command decrypt(char input [])
     switch (current_cmd){
 
 case LOAD:
-	INFO_MSG("Chargement d'un fichier...");
 	if(!nextword(&word,input,&n)){
 		WARNING_MSG("Too few arguments. Syntax is 'load <filename> [<adress>]'");
 	}else{
-		printf("Fichier '%s' à charger ",word);
-
+		char filename[INPUT_SIZE];
+		strcpy(filename,word);
 		if(!nextword(&word,input,&n)){
-			printf(" sans specification d'adresse\n");		
+			INFO_MSG("Chargement du fichier '%s'",filename);
+				loadELF(filename);	
 		}else{
 			if(isHexa(word)==0){
 				WARNING_MSG("Adress must be hexadecimal");
 			}else{
-				printf("à l'adresse '%s'\n",word);
+				uint32_t adress = strtol(word,NULL,16);
+				INFO_MSG("Chargement du fichier '%s' à l'adresse '0x%8.8X'",filename,adress);
+				loadELF(filename,adress);
 			}
 		}
 	}
@@ -70,7 +75,8 @@ case DISP:
 			printf("Affichage memoire ");
 			if(nextword(&word,input,&n)){							//ICI le test n'est pas necessaire, car il y a le cas puit
 				if(strcmp(word,"map")==0){
-					printf("de la map\n");	
+					printf("de la map\n");
+					print_mem(memory);
 				}else if(1){ 			 //Il faut creer isplage
 					printf("de la plage\n");				
 				}else{
