@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "fonctions.h"
-#include "notify.h"
+#include "common/notify.h"
 #include "emul.h"
 
-int reg_mips[32];
+
 
 int main(int argc, char *argv[])
 {

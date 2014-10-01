@@ -1,6 +1,6 @@
 #include "user_int.h"
 #include "fonctions.h"
-#include "notify.h"
+#include "common/notify.h"
 #include "emul.h"
 #include <string.h>
 #include <ctype.h>

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "notify.h"
+#include "common/notify.h"
 
 /* syntaxe strtok
 
