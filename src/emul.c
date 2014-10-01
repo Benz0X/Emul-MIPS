@@ -20,7 +20,7 @@ int reg_mips[35];
 
 //init de la mémoire
 mem memory;
-
+stab symtab;
 
 
 
@@ -135,16 +135,69 @@ void print_segment_raw_content(segment* seg) {
 }
 
 
-void loadELF (char* name,...){
-va_list ap;
-uint32_t start_adress;
-	va_start(ap, name);
-	start_adress = va_arg(ap, uint32_t);
-	
+int loadELF (char* name,...){
+	va_list ap;
+	uint32_t start_adress;
+		va_start(ap, name);
+		start_adress = va_arg(ap, uint32_t);
+		
 
-	va_end(ap);
+		va_end(ap);
+
+	char* section_names[NB_SECTIONS]= {TEXT_SECTION_STR,RODATA_SECTION_STR,DATA_SECTION_STR,BSS_SECTION_STR};
+	unsigned int segment_permissions[NB_SECTIONS]= {R_X,R__,RW_,RW_};
+	unsigned int nsegments;
+	int i=0,j=0;
+	unsigned int type_machine;
+	unsigned int endianness;   //little ou big endian
+	unsigned int bus_width;    // 32 bits ou 64bits
+	unsigned int next_segment_start = start_adress; // compteur pour designer le début de la prochaine section
+
+	symtab=new_stab(0);
+
+	FILE * pf_elf;
 
 
+    if ((pf_elf = fopen(name,"r")) == NULL) {
+        ERROR_MSG("cannot open file %s", name);
+    }
+
+    if (!assert_elf_file(pf_elf))
+        ERROR_MSG("file %s is not an ELF file", name);
 
 
+    // recuperation des info de l'architecture
+    elf_get_arch_info(pf_elf, &type_machine, &endianness, &bus_width);
+    // et des symboles
+    elf_load_symtab(pf_elf, bus_width, endianness, &symtab);
+
+
+    nsegments = get_nsegments(symtab,section_names,NB_SECTIONS);
+
+    // allouer la memoire virtuelle
+    memory=init_mem(nsegments);
+
+    // Ne pas oublier d'allouer les differentes sections
+    j=0;
+    for (i=0; i<NB_SECTIONS; i++) {
+        if (is_in_symbols(section_names[i],symtab)) {
+            elf_load_section_in_memory(pf_elf,memory, section_names[i],segment_permissions[i],next_segment_start);
+            next_segment_start+= ((memory->seg[j].size._32+0x1000)>>12 )<<12; // on arrondit au 1k suppérieur
+//            print_segment_raw_content(&memory->seg[j]);
+            j++;
+        }
+    }
+
+    //TODO allouer la pile (et donc modifier le nb de segments)
+
+    printf("\n------ Fichier ELF \"%s\" : sections lues lors du chargement ------\n", name) ;
+    print_mem(memory);
+    stab32_print( symtab);
+
+    // on fait le ménage avant de partir
+    del_mem(memory);
+    del_stab(symtab);
+    fclose(pf_elf);
+    puts("");
+    return 0;
 }

@@ -9,6 +9,7 @@
 
 extern int32_t reg_mips[35];
 extern mem memory;
+extern stab symtab;
 
 
 // Fonction permettant de verifier si une chaine de caracteres

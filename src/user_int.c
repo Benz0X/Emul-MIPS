@@ -5,6 +5,8 @@
 #include <string.h>
 #include "common/notify.h"
 
+int scriptmode;
+
 /* syntaxe strtok
 
    const char str[80] = "This is - www.tutorialspoint.com - website";
@@ -101,10 +103,12 @@ case ASSERT:
 printf("%d \n",current_cmd);
     break;
 case DEBUG:
-printf("%d \n",current_cmd);
+	INFO_MSG("Mode interactif debug");
+	scriptmode=0;
     break;
 case RESUME:
-printf("%d \n",current_cmd);
+	INFO_MSG("Resume script");
+	scriptmode=1;
     break;
 case RUN:
 printf("%d \n",current_cmd);

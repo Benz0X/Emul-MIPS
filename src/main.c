@@ -3,8 +3,7 @@
 #include "fonctions.h"
 #include "common/notify.h"
 #include "emul.h"
-
-int scriptmode=0;
+#include "user_int.h"
 
 int main(int argc, char *argv[])
 {
@@ -42,7 +41,7 @@ int main(int argc, char *argv[])
 
 
     FILE *script_file = NULL;
-    int scriptmode=0;
+    scriptmode=0;
     if (argc > 1)
     {
         script_file = fopen (argv[1], "r");
@@ -63,7 +62,7 @@ int main(int argc, char *argv[])
     while(1)
     {
         //int test=isReg("t1");
-        //printf("Test is registre : %d\n", test);
+        //printf("Test scriptmode : %d\n", scriptmode);
         char input[1024];
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
