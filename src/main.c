@@ -4,7 +4,7 @@
 #include "common/notify.h"
 #include "emul.h"
 
-
+int scriptmode=0;
 
 int main(int argc, char *argv[])
 {

@@ -7,7 +7,7 @@
 #include "elf/elf.h"
 #include "elf/syms.h"
 
-extern int32_t reg_mips[32];
+extern int32_t reg_mips[35];
 extern mem memory;
 
 
@@ -37,5 +37,8 @@ unsigned int get_nsegments(stab symtab,char* section_names[],int nb_sections);
 
 void print_segment_raw_content(segment* seg);
 
+
+//charge un ELF en mémoire
+int loadELF (char* name,...);
 
 #endif

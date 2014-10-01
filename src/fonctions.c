@@ -225,6 +225,10 @@ int isReg(char* reg_name){
 			else if (!strcmp(string,"sp")){index=29;}
 			else if (!strcmp(string,"fp")){index=30;}
 			else if (!strcmp(string,"ra")){index=31;}
+			else if (!strcmp(string,"HI")){index=32;}
+			else if (!strcmp(string,"LO")){index=33;}
+			else if (!strcmp(string,"PC")){index=34;}
+
 			else index=-1;
 	}
 	return index;

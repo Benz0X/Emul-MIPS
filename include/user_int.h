@@ -1,6 +1,8 @@
 #ifndef _user_int_h
 #define _user_int_h
 
+extern int scriptmode;
+
 typedef enum {
     LOAD,
     EXIT,

@@ -1,3 +1,8 @@
+//Base de la machine virtuelle et chargement d'un fichier ELF
+
+
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include "common/bits.h"
@@ -5,9 +10,11 @@
 #include "elf/elf.h"
 #include "elf/syms.h"
 #include "mem.h"
+#include <stdarg.h>
+
 
 //init des registres RAJOUTER HI LOW PC
-int reg_mips[32];
+int reg_mips[35];
 
 
 
@@ -20,7 +27,6 @@ mem memory;
 
 // On fixe ici une adresse basse dans la mémoire virtuelle. Le premier segment
 // ira se loger à cette adresse.
-#define START_MEM 0x3000
 // nombre max de sections que l'on extraira du fichier ELF
 #define NB_SECTIONS 4
 
@@ -126,4 +132,19 @@ void print_segment_raw_content(segment* seg) {
             printf("%08x ",	word);
         }
     }
+}
+
+
+void loadELF (char* name,...){
+va_list ap;
+uint32_t start_adress;
+	va_start(ap, name);
+	start_adress = va_arg(ap, uint32_t);
+	
+
+	va_end(ap);
+
+
+
+
 }
