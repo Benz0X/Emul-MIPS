@@ -164,11 +164,76 @@ int decrypt(char input [])
 
 
     case DISASM:
-        printf("%d \n",current_cmd);
+        INFO_MSG("Desassemblage");
+
+        if(!nextword(&word,input,&n)){                              
+            WARNING_MSG("Too few arguments. Syntax is :\t'disasm <plage>+ (uint:uint or uint+uint for a shift)'");
+        }else{
+            //manque save word 
+            if(nextword(&word,input,&n)){
+                WARNING_MSG("Too much arguments. Syntax is :\t'disasm <plage>+ (uint:uint or uint+uint for a shift)'");
+            }else{
+                //manque isplage et le desassemblage
+            }                       
+                    
+        }
+        
         break;
+
     case SET:
-        printf("%d \n",current_cmd);
+        INFO_MSG("Modification memoire");
+
+        if(!nextword(&word,input,&n)){                              
+            WARNING_MSG("Too few arguments. Syntax is :\n\t'set mem <type> <adress> <value>'  or\n\t'set reg <register> <value>'");
+        }else{
+            if(strcmp(word,"mem")==0){                              //set mem
+                printf("Modification memoire ");
+                if(nextword(&word,input,&n)){                           
+                    if(strcmp(word,"byte")==0){
+                        printf("du byte ");
+                            if(nextword(&word,input,&n)&& isHexa(word)){  //soucis?
+                                printf("%s ",word);                             //affichage de l'adress               
+                                if(nextword(&word,input,&n)){
+                                    //SET MEM BYTE ADRESS VALUE
+                                }else{
+                                    WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
+                                }
+                            }else{
+                                WARNING_MSG("Second argument of 'disp mem' must be : \t<adress> (hexadecimal 32bits)");
+                            }
+                    }else if(strcmp(word,"word")==0){       
+                        printf("du word ");             
+                    }else{
+                        WARNING_MSG("First argument of 'disp mem' must be : \t<type> (byte or word)");
+                    }
+                }else{
+                    WARNING_MSG("First argument of 'set mem' must be : \t<type> (byte or word)");
+                }
+                
+            }else if(strcmp(word,"reg")==0){                    //set reg
+                if(!nextword(&word,input,&n)){
+                    WARNING_MSG("Too few arguments. Syntax is : 'set reg <register> <value>");
+                    return -1;
+                }else{
+                    char* reg_name=NULL;
+                    strcpy(reg_name,word);
+                    if(isReg(reg_name)<0){WARNING_MSG("%s isn't a valid register",reg_name); return -1;}
+                    else if(nextword(&word,input,&n)){
+                        
+                        //writeReg(reg_name,value);
+
+                    }else{WARNING_MSG("Set reg missing value"); return -1;}
+
+                }
+            }else{
+                WARNING_MSG("Syntax error : arguments of set are 'mem' or 'reg'");
+                return -1;
+            }     
+        }
         break;
+
+
+
     case ASSERT:
         printf("%d \n",current_cmd);
         break;
