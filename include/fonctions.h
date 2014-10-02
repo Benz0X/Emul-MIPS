@@ -21,6 +21,6 @@ int readReg(char * reg_name, int32_t* value); //lit la valeur d'un registre et l
 int writeReg(char * reg_name,int32_t value); //écrit sur un registre, renvoi -1 si erreur, sinon le num du registre
 
 int isReg(char* reg_name); //test si le nom ou numero de registre est correct et renvoie l'entier associe.
-
+int parseReg(int index, char** regname); //Prends un numéro de registre et associe regname au nom de registre adequat. renvoie -1 si index est innaproprié
 
 #endif

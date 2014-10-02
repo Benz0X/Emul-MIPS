@@ -30,26 +30,29 @@ int scriptmode;
 
 int decrypt(char input [])
 {
-    int n=1;
-    char* word;
+	int i;						//compteur
+    int n=1;					//indice du mot
+    char* word;					//buffer du mot
     word = strtok(input, " \n");
-    command current_cmd=getCommand(word);
+    command current_cmd=getCommand(word);	// On recupere la prochaine commande
 
-    switch (current_cmd) {
+    switch (current_cmd) {		//Return -1 en cas d'erreur, 0 sinon
 
     case LOAD:
         if(!nextword(&word,input,&n)) {
             WARNING_MSG("Too few arguments. Syntax is 'load <filename> [<adress>]'");
+            return -1;
         } else {
-            char filename[INPUT_SIZE];
+            char filename[INPUT_SIZE]; //On retient le nom du fichier
             strcpy(filename,word);
-            if(!nextword(&word,input,&n)) {
+            if(!nextword(&word,input,&n)) { //Si il n'y a pas d'autre argument, on loadElf
                 //INFO_MSG("Chargement du fichier '%s'",filename); Déplacé dans loadELF
                 return loadELF(filename,1);
             } else {
                 if(isHexa(word)==0) {
                     WARNING_MSG("Adress must be hexadecimal");
-                } else {
+                    return -1;
+                } else {		//Sinon si l'arguement suivant est une adresse hexa, on charge à cette adresse.
                     uint32_t adress = strtol(word,NULL,16);
                     INFO_MSG("Chargement du fichier '%s' à l'adresse '0x%8.8X'(arrondi au ko superieur)",filename,adress);
                     return loadELF(filename,adress,2);
@@ -69,6 +72,7 @@ int decrypt(char input [])
 
         if(!nextword(&word,input,&n)) {
             WARNING_MSG("Too few arguments. Syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+'");
+            return -1;
         } else {
             if(strcmp(word,"mem")==0) {								//Disp mem
                 if(nextword(&word,input,&n)) {
@@ -113,19 +117,42 @@ int decrypt(char input [])
                                 }
                             }
                             WARNING_MSG("Syntax Error, syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+'");
+                            return -1;
 
                         } else {
                             WARNING_MSG("Second argument of 'disp mem' must be : \t<plage>+ (uint:uint)   or map");
+                            return -1;
                         }
                     } else {
                         WARNING_MSG("Second argument of 'disp mem' must be : \t<plage>+ (uint:uint)   or map");
                         return -1;
                     }
                 }
-            } else if(strcmp(word,"reg")==0) {							//Disp reg
+            } else if(strcmp(word,"reg")==0) {	//Disp reg
+            	int index;						
                 while(nextword(&word,input,&n)) {
-                    printf("registre \n");
+                    if(strcmp(word,"all")==0){
+                    	for(i=0;i<35;i++){					//Si all, on boucle
+                            char* name;
+                    		parseReg(i,&name);				//Recuperation du nom complet
+                    		if(i%4==0){printf("\n");}		//Affichage 4 par ligne
+                    		printf("%s: %d\t\t",name,reg_mips[i]);   //Affichage du registre         		
+                    	}
+                    	
+                    }else{									//Meme principe pour un seul, mais on cherche d'abord l'index
+                    	index=isReg(word);
+                    	if (index!=-1){
+                    		if(i%4==0){printf("\n");}		
+                    		parseReg(index,&word);
+                    		printf("%s: %d\t\t",word,reg_mips[index]);   //Affichage du registre   
+                            i++;
+                    	}else{
+                    		WARNING_MSG("Le registre '%s' n'existe pas",word); //On ne renvoie pas -1, on continue à lire les prochains arguments.
+                    	}
+                    }
                 }
+                printf("\n");
+                return 0; //Affichage registre terminé
 
             } else {
                 WARNING_MSG("First argument of 'disp' must be : \tmem    or reg");
