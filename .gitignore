@@ -1,3 +1,4 @@
+!/Tests
 *.exe
 *.o
 *.a
@@ -12,3 +13,4 @@ projet
 *~
 mipself_test.c.old
 *.out
+!Tests/*.o

@@ -40,6 +40,6 @@ void print_segment_raw_content(segment* seg);
 
 
 //charge un ELF en mémoire
-int loadELF (char* name,...);
-
+int loadELF (char* name,int nbparam,...);
+int dispmemPlage(uint32_t start_adrr,uint32_t size);
 #endif

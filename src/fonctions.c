@@ -13,7 +13,7 @@ int getFromScript(FILE *fileptr,char * input)
 {
     if( fgets( input, INPUT_SIZE, fileptr ) == NULL)
     {
-        printf("end of file\n");
+        //printf("end of file\n");
         return 0;
     }
 
@@ -232,4 +232,8 @@ int isReg(char* reg_name){
 			else index=-1;
 	}
 	return index;
-};
+}
+
+
+
+

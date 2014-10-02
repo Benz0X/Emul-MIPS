@@ -1,0 +1,4 @@
+#fichier de test de l'émulateur
+debug
+exit
+#sort du programme

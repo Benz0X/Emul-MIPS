@@ -19,7 +19,7 @@ int reg_mips[35];
 
 
 //init de la mémoire
-mem memory;
+mem memory=NULL;
 stab symtab;
 
 
@@ -135,12 +135,16 @@ void print_segment_raw_content(segment* seg) {
 }
 
 
-int loadELF (char* name,...){
+int loadELF (char* name,int nbparam,...){
 	va_list ap;
-	uint32_t start_adress;
-		va_start(ap, name);
-		start_adress = va_arg(ap, uint32_t);
-		
+	uint32_t start_adress=0x3000;
+		va_start(ap, nbparam);
+		if(nbparam>1){
+		va_arg(ap, uint32_t); //dirty
+		start_adress = va_arg(ap, uint32_t);}
+ 		if(start_adress%0x1000>0){ 
+		start_adress = start_adress+0x1000-start_adress%0x1000;
+		}
 
 		va_end(ap);
 
@@ -159,12 +163,14 @@ int loadELF (char* name,...){
 
 
     if ((pf_elf = fopen(name,"r")) == NULL) {
-        ERROR_MSG("cannot open file %s", name);
+        WARNING_MSG("cannot open file '%s'", name);
+	return -1;
     }
 
-    if (!assert_elf_file(pf_elf))
-        ERROR_MSG("file %s is not an ELF file", name);
-
+    if (!assert_elf_file(pf_elf)){
+        WARNING_MSG("file %s is not an ELF file", name);
+	return -1;
+    }
 
     // recuperation des info de l'architecture
     elf_get_arch_info(pf_elf, &type_machine, &endianness, &bus_width);
@@ -197,7 +203,34 @@ int loadELF (char* name,...){
     // on fait le ménage avant de partir
     //del_mem(memory);
     //del_stab(symtab);
+    INFO_MSG("Chargement du fichier '%s'",name);
     fclose(pf_elf);
     //puts("");
     return 0;
 }
+
+
+int dispmemPlage(uint32_t start_addr,uint32_t size){
+	if(memory==NULL) {
+		WARNING_MSG("No memory loaded");
+		return -1;
+	}
+	uint32_t i=0;
+	uint32_t current_addr=start_addr;
+	int j=0;
+	while (i<size){
+		if (i%16==0){
+			printf("\n0x%8.8X ",current_addr);
+		}
+		//parse adress
+		
+		while(current_addr>=memory->seg[j].start._32)
+		{j++;}
+		//printf("SA:0x%8.8X CA:0x%8.8X\n",memory->seg[j-1].start._32,current_addr);
+		printf("%2.2X ",memory->seg[j-1].content[current_addr-memory->seg[j-1].start._32]);
+	
+	
+	current_addr++;
+	i++;}
+	printf("\n");
+return 0;}

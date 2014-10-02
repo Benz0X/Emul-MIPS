@@ -43,7 +43,6 @@ int main(int argc, char *argv[])
         script_file = fopen (argv[1], "r");
         if (script_file != NULL)
         {
-            printf("execution en mode script, le script contient : \n");
             scriptmode=1;
         }
         else
