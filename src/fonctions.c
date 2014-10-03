@@ -275,6 +275,7 @@ int parseReg(int index, char* reg_name){
 		case 32 : strcpy(reg_name,"HI");return 0;
 		case 33 : strcpy(reg_name,"LO");return 0;
 		case 34 : strcpy(reg_name,"PC");return 0;
+		
 		default : return -1;
 	}
 }

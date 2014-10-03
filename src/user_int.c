@@ -34,6 +34,7 @@ int decrypt(char input [])
     int n=1;					//indice du mot
     char* word;					//buffer du mot
     word = strtok(input, " \n");
+    
     command current_cmd=getCommand(word);	// On recupere la prochaine commande
 
     switch (current_cmd) {		//Return -1 en cas d'erreur, 0 sinon
@@ -128,12 +129,14 @@ int decrypt(char input [])
                         return -1;
                     }
                 }
-            } else if(strcmp(word,"reg")==0) {	//Disp reg
+            } 
+
+            else if(strcmp(word,"reg")==0) {	//Disp reg
             	int index;						
+            	char name[INPUT_SIZE];
                 while(nextword(&word,input,&n)) {
                     if(strcmp(word,"all")==0){
                     	for(i=0;i<35;i++){					//Si all, on boucle
-                            char name[20];
                     		parseReg(i,name);				//Recuperation du nom complet
                     		if(i%4==0){printf("\n");}		//Affichage 4 par ligne
                     		printf("%s: %d\t\t",name,reg_mips[i]);   //Affichage du registre         		
@@ -144,10 +147,11 @@ int decrypt(char input [])
                     	
                     	if (index!=-1){
                     		if(i%4==0){printf("\n");}		
-                    		parseReg(index,word);
-                    		printf("%s: %d\t\t",word,reg_mips[index]);   //Affichage du registre   
+                    		parseReg(index,name);
+                    		printf("%s: %d\t\t",name,reg_mips[index]);   //Affichage du registre   
                             i++;
-                    	}else{
+                    	}
+                    	else{
                     		WARNING_MSG("Le registre '%s' n'existe pas",word); //On ne renvoie pas -1, on continue à lire les prochains arguments.
                     	}
                     }
