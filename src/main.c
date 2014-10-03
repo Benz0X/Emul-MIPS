@@ -7,7 +7,14 @@
 
 int main(int argc, char *argv[])
 {
-    
+    int i;
+
+    for (i=0; i < 32; ++i)
+    {
+        reg_mips[i]=-i;
+    }
+    char string[20];
+    parseReg(1,string);
 /*
 //test stuff
     int i;
@@ -65,7 +72,14 @@ int main(int argc, char *argv[])
         do{
             if (scriptmode==1)
             {
-                scriptmode=getFromScript(script_file,input);
+                if (!(script_file==NULL)){
+                    getFromScript(script_file,input);
+                }
+                else{
+                    WARNING_MSG("No open script, use ./EXENAME SCRIPTNAME to run with a script");
+                    scriptmode=0;
+                
+                }
             }
             else
             {

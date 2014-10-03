@@ -1,4 +1,7 @@
 #fichier de test de l'émulateur
+load Tests/boucle.o
+disp mem map
 debug
+disp reg all
 exit
 #sort du programme

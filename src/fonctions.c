@@ -9,17 +9,15 @@
 #define PROMPT_STRING "EmulMips : > "
 
 
-int getFromScript(FILE *fileptr,char * input)
+void getFromScript(FILE *fileptr,char * input)
 {
     if( fgets( input, INPUT_SIZE, fileptr ) == NULL)
     {
-        //printf("end of file\n");
-        return 0;
+        scriptmode=0;
     }
 
-    return 1;
 }
-int getFromUser(char * input)
+void getFromUser(char * input)
 {
     //fgets(input,INPUT_SIZE,stdin);
     char* temp;
@@ -27,8 +25,7 @@ int getFromUser(char * input)
      add_history( temp );
      strcpy(input, temp);
      //printf("l'entrée est %s\n",input);
-    return 1;
-}
+    }
 
 command getCommand(char word[]){
 if (!strcmp(word,"load"))
@@ -117,11 +114,11 @@ int isOctal(char * word){
 
 int nextword(char** token, char* input, int* n){
 	if(*n==0){
-		*token=strtok(input, " \n");
+		*token=strtok(input, " ");
 		*n=*n+1;	
 	}else{
-		*token=strtok(NULL, " \n");
-		*n=*n+1;	
+		*token=strtok(NULL, " ");
+		*n=*n+1;
 	}
 	//printf("prochain mot : %s\n",*token);
 	if(*token==NULL){return 0;}else{return 1;}
@@ -192,10 +189,12 @@ int isReg(char* reg_name){
 
 	int index=-1;
 	index = strtol(reg_name,&string,10);
+	//printf("reg_name= %s string =%s, index=%d\n",reg_name,string,index );
 
-	if (isdigit(reg_name[0]) && index<32 && index > -1){
+	if (isdigit(reg_name[0]) && index<34 && index > -1){
 		return index;
-	}else if (!isdigit(reg_name[0])){
+	}
+	else if (!isdigit(reg_name[0])){
 			if (!strcmp(string,"zero")){index=0;}
 			else if (!strcmp(string,"at")){index=1;}
 			else if (!strcmp(string,"v0")){index=2;}
@@ -233,47 +232,49 @@ int isReg(char* reg_name){
 			else if (!strcmp(string,"PC")){index=34;}
 
 			else index=-1;
+			return index;
 	}
+	index=-1;
 	return index;
 }
 
-int parseReg(int index, char** reg_name){
+int parseReg(int index, char* reg_name){
 	switch(index){
-		case 0 : strcpy(*reg_name,"zero");return 0;
-		case 1 : strcpy(*reg_name,"at");return 0;
-		case 2 : strcpy(*reg_name,"v0");return 0;
-		case 3 : strcpy(*reg_name,"v1");return 0;
-		case 4 : strcpy(*reg_name,"a0");return 0;
-		case 5 : strcpy(*reg_name,"a1");return 0;
-		case 6 : strcpy(*reg_name,"a2");return 0;
-		case 7 : strcpy(*reg_name,"a3");return 0;
-		case 8 : strcpy(*reg_name,"t0");return 0;
-		case 9 : strcpy(*reg_name,"t1");return 0;
-		case 10 : strcpy(*reg_name,"t2");return 0;
-		case 11 : strcpy(*reg_name,"t3");return 0;
-		case 12 : strcpy(*reg_name,"t4");return 0;
-		case 13 : strcpy(*reg_name,"t5");return 0;
-		case 14 : strcpy(*reg_name,"t6");return 0;
-		case 15 : strcpy(*reg_name,"t7");return 0;
-		case 16 : strcpy(*reg_name,"s0");return 0;
-		case 17 : strcpy(*reg_name,"s1");return 0;
-		case 18 : strcpy(*reg_name,"s2");return 0;
-		case 19 : strcpy(*reg_name,"s3");return 0;
-		case 20 : strcpy(*reg_name,"s4");return 0;
-		case 21 : strcpy(*reg_name,"s5");return 0;
-		case 22 : strcpy(*reg_name,"s6");return 0;
-		case 23 : strcpy(*reg_name,"s7");return 0;
-		case 24 : strcpy(*reg_name,"t8");return 0;
-		case 25 : strcpy(*reg_name,"t9");return 0;
-		case 26 : strcpy(*reg_name,"k0");return 0;
-		case 27 : strcpy(*reg_name,"k1");return 0;
-		case 28 : strcpy(*reg_name,"gp");return 0;
-		case 29 : strcpy(*reg_name,"sp");return 0;
-		case 30 : strcpy(*reg_name,"fp");return 0;
-		case 31 : strcpy(*reg_name,"ra");return 0;
-		case 32 : strcpy(*reg_name,"HI");return 0;
-		case 33 : strcpy(*reg_name,"LO");return 0;
-		case 34 : strcpy(*reg_name,"PC");return 0;
+		case 0 : strcpy(reg_name,"zero");return 0;
+		case 1 : strcpy(reg_name,"at");return 0;
+		case 2 : strcpy(reg_name,"v0");return 0;
+		case 3 : strcpy(reg_name,"v1");return 0;
+		case 4 : strcpy(reg_name,"a0");return 0;
+		case 5 : strcpy(reg_name,"a1");return 0;
+		case 6 : strcpy(reg_name,"a2");return 0;
+		case 7 : strcpy(reg_name,"a3");return 0;
+		case 8 : strcpy(reg_name,"t0");return 0;
+		case 9 : strcpy(reg_name,"t1");return 0;
+		case 10 : strcpy(reg_name,"t2");return 0;
+		case 11 : strcpy(reg_name,"t3");return 0;
+		case 12 : strcpy(reg_name,"t4");return 0;
+		case 13 : strcpy(reg_name,"t5");return 0;
+		case 14 : strcpy(reg_name,"t6");return 0;
+		case 15 : strcpy(reg_name,"t7");return 0;
+		case 16 : strcpy(reg_name,"s0");return 0;
+		case 17 : strcpy(reg_name,"s1");return 0;
+		case 18 : strcpy(reg_name,"s2");return 0;
+		case 19 : strcpy(reg_name,"s3");return 0;
+		case 20 : strcpy(reg_name,"s4");return 0;
+		case 21 : strcpy(reg_name,"s5");return 0;
+		case 22 : strcpy(reg_name,"s6");return 0;
+		case 23 : strcpy(reg_name,"s7");return 0;
+		case 24 : strcpy(reg_name,"t8");return 0;
+		case 25 : strcpy(reg_name,"t9");return 0;
+		case 26 : strcpy(reg_name,"k0");return 0;
+		case 27 : strcpy(reg_name,"k1");return 0;
+		case 28 : strcpy(reg_name,"gp");return 0;
+		case 29 : strcpy(reg_name,"sp");return 0;
+		case 30 : strcpy(reg_name,"fp");return 0;
+		case 31 : strcpy(reg_name,"ra");return 0;
+		case 32 : strcpy(reg_name,"HI");return 0;
+		case 33 : strcpy(reg_name,"LO");return 0;
+		case 34 : strcpy(reg_name,"PC");return 0;
 		default : return -1;
 	}
 }

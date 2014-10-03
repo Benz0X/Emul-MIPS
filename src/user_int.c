@@ -133,17 +133,18 @@ int decrypt(char input [])
                 while(nextword(&word,input,&n)) {
                     if(strcmp(word,"all")==0){
                     	for(i=0;i<35;i++){					//Si all, on boucle
-                            char* name;
-                    		parseReg(i,&name);				//Recuperation du nom complet
+                            char name[20];
+                    		parseReg(i,name);				//Recuperation du nom complet
                     		if(i%4==0){printf("\n");}		//Affichage 4 par ligne
                     		printf("%s: %d\t\t",name,reg_mips[i]);   //Affichage du registre         		
                     	}
                     	
-                    }else{									//Meme principe pour un seul, mais on cherche d'abord l'index
+                    }else{
                     	index=isReg(word);
+                    	
                     	if (index!=-1){
                     		if(i%4==0){printf("\n");}		
-                    		parseReg(index,&word);
+                    		parseReg(index,word);
                     		printf("%s: %d\t\t",word,reg_mips[index]);   //Affichage du registre   
                             i++;
                     	}else{
