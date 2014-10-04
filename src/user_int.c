@@ -228,7 +228,7 @@ int decrypt(char input [])
                     else if(nextword(&word,input,&n)){
                         
                         int32_t value=strtol(word,NULL,0);
-                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments",reg_name); return -1;}
+                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
                         writeReg(reg_name,value);
                         //printf("Registre : %s\t Value : %d\n",reg_name,value);
                         //printf("%d\n", reg_mips[isReg(reg_name)]);
@@ -250,7 +250,33 @@ int decrypt(char input [])
 
 
     case ASSERT:
-        printf("%d \n",current_cmd);
+        INFO_MSG("Test de valeur");
+
+        if(!nextword(&word,input,&n)){                              
+            WARNING_MSG("Too few arguments. Syntax is :\n\t'assert reg <register> <value>'  or\n\t'assert <type> <adress> <value>'");
+        }else{
+            if(strcmp(word,"reg")==0){                      //assert reg
+                if(!nextword(&word,input,&n)){
+                    WARNING_MSG("Too few arguments. Syntax is : 'set reg <register> <value>");
+                    return -1;
+                }else{                     
+                    char reg_name[INPUT_SIZE];
+                    strcpy(reg_name,word);
+                    if(isReg(reg_name)<0){WARNING_MSG("%s isn't a valid register",reg_name); return -1;}
+                    else if(nextword(&word,input,&n)){
+                        int32_t value=strtol(word,NULL,0);
+                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
+                        if(reg_mips[isReg(reg_name)]==value){
+                            printf("Le test est correct\n");
+                        }else{
+                            printf("Le test est incorrect\n");
+                            return -1;
+                        }
+                        return 0;
+                    }else{WARNING_MSG("Assert reg missing value"); return -1;}
+                }   
+            }  
+        }
         break;
     case DEBUG:
         INFO_MSG("Mode interactif debug");
