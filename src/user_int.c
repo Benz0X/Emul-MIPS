@@ -131,7 +131,7 @@ int decrypt(char input [])
                 }
             } 
 
-            else if(strcmp(word,"reg")==0) {	//Disp reg
+            else if(strcmp(word,"reg")==0) {	           //Disp reg
             	int index;						
             	char name[INPUT_SIZE];
                 while(nextword(&word,input,&n)) {
@@ -220,16 +220,26 @@ int decrypt(char input [])
                     WARNING_MSG("Too few arguments. Syntax is : 'set reg <register> <value>");
                     return -1;
                 }else{
-                    char* reg_name=NULL;
+                    char reg_name[INPUT_SIZE];
+                    
                     strcpy(reg_name,word);
-                    if(isReg(reg_name)<0){WARNING_MSG("%s isn't a valid register",reg_name); return -1;}
+
+                    if(isReg(reg_name)<1){WARNING_MSG("%s isn't a valid register",reg_name); return -1;}
                     else if(nextword(&word,input,&n)){
                         
-                        //writeReg(reg_name,value);
+                        int32_t value=strtol(word,NULL,0);
+                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments",reg_name); return -1;}
+                        writeReg(reg_name,value);
+                        //printf("Registre : %s\t Value : %d\n",reg_name,value);
+                        //printf("%d\n", reg_mips[isReg(reg_name)]);
+                        return 0;
 
                     }else{WARNING_MSG("Set reg missing value"); return -1;}
 
                 }
+
+
+
             }else{
                 WARNING_MSG("Syntax error : arguments of set are 'mem' or 'reg'");
                 return -1;
