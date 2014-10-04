@@ -268,11 +268,11 @@ int decrypt(char input [])
                         if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
                         if(reg_mips[isReg(reg_name)]==value){
                             printf("Le test est correct\n");
+                            return 0;
                         }else{
                             printf("Le test est incorrect\n");
                             return -1;
                         }
-                        return 0;
                     }else{WARNING_MSG("Assert reg missing value"); return -1;}
                 }   
             }  
