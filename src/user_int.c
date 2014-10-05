@@ -30,11 +30,11 @@ int scriptmode;
 
 int decrypt(char input [])
 {
-	int i;						//compteur
+    int i;						//compteur
     int n=1;					//indice du mot
     char* word;					//buffer du mot
     word = strtok(input, " \n");
-    
+
     command current_cmd=getCommand(word);	// On recupere la prochaine commande
 
     switch (current_cmd) {		//Return -1 en cas d'erreur, 0 sinon
@@ -85,8 +85,8 @@ int decrypt(char input [])
                         INFO_MSG("Affichage de la map mémoire");
                         print_mem(memory);
                         return 0;
-                    } else if(isHexa(word)) {  //il faudrait vérifier qu'il est <0 et prendre en compte le décimal pour 
-                                                //coller au cahier des charges mais faudrait utiliser un uint64
+                    } else if(isHexa(word)) {  //il faudrait vérifier qu'il est <0 et prendre en compte le décimal pour
+                        //coller au cahier des charges mais faudrait utiliser un uint64
                         uint32_t adress1=strtol(word,NULL,16);
                         if(nextword(&word,input,&n)) {
                             if (!strcmp(word,":")) {
@@ -130,31 +130,35 @@ int decrypt(char input [])
                         return -1;
                     }
                 }
-            } 
+            }
 
             else if(strcmp(word,"reg")==0) {	           //Disp reg
-            	int index;						
-            	char name[INPUT_SIZE];
+                int index;
+                char name[INPUT_SIZE];
                 while(nextword(&word,input,&n)) {
-                    if(strcmp(word,"all")==0){
-                    	for(i=0;i<35;i++){					//Si all, on boucle
-                    		parseReg(i,name);				//Recuperation du nom complet
-                    		if(i%4==0){printf("\n");}		//Affichage 4 par ligne
-                    		printf("%s: %d\t\t",name,reg_mips[i]);   //Affichage du registre         		
-                    	}
-                    	
-                    }else{
-                    	index=isReg(word);
-                    	
-                    	if (index!=-1){
-                    		if(i%4==0){printf("\n");}		
-                    		parseReg(index,name);
-                    		printf("%s: %d\t\t",name,reg_mips[index]);   //Affichage du registre   
+                    if(strcmp(word,"all")==0) {
+                        for(i=0; i<35; i++) {					//Si all, on boucle
+                            parseReg(i,name);				//Recuperation du nom complet
+                            if(i%4==0) {
+                                printf("\n");   //Affichage 4 par ligne
+                            }
+                            printf("%s: %d\t\t",name,reg_mips[i]);   //Affichage du registre
+                        }
+
+                    } else {
+                        index=isReg(word);
+
+                        if (index!=-1) {
+                            if(i%4==0) {
+                                printf("\n");
+                            }
+                            parseReg(index,name);
+                            printf("%s: %d\t\t",name,reg_mips[index]);   //Affichage du registre
                             i++;
-                    	}
-                    	else{
-                    		WARNING_MSG("Le registre '%s' n'existe pas",word); //On ne renvoie pas -1, on continue à lire les prochains arguments.
-                    	}
+                        }
+                        else {
+                            WARNING_MSG("Le registre '%s' n'existe pas",word); //On ne renvoie pas -1, on continue à lire les prochains arguments.
+                        }
                     }
                 }
                 printf("\n");
@@ -172,127 +176,146 @@ int decrypt(char input [])
     case DISASM:
         INFO_MSG("Desassemblage");
 
-        if(!nextword(&word,input,&n)){                              
+        if(!nextword(&word,input,&n)) {
             WARNING_MSG("Too few arguments. Syntax is :\t'disasm <plage>+ (uint:uint or uint+uint for a shift)'");
-        }else{
-            //manque save word 
-            if(nextword(&word,input,&n)){
+        } else {
+            //manque save word
+            if(nextword(&word,input,&n)) {
                 WARNING_MSG("Too much arguments. Syntax is :\t'disasm <plage>+ (uint:uint or uint+uint for a shift)'");
-            }else{
+            } else {
                 //manque isplage et le desassemblage
-            }                       
-                    
+            }
+
         }
-        
+
         break;
 
     case SET:
         INFO_MSG("Modification memoire");
 
-        if(!nextword(&word,input,&n)){                              
+        if(!nextword(&word,input,&n)) {
             WARNING_MSG("Too few arguments. Syntax is :\n\t'set mem <type> <adress> <value>'  or\n\t'set reg <register> <value>'");
             return -1;
-        }else{
-            if(strcmp(word,"mem")==0){                              //set mem
-                if(nextword(&word,input,&n)){                           
-                    if(strcmp(word,"byte")==0){
-                            if(nextword(&word,input,&n)&& isHexa(word)){  //soucis?
-                                printf("%s ",word);                             //affichage de l'adress               
-                                uint32_t adress=strtol(word,NULL,16);
-                                if(nextword(&word,input,&n)){
-                                        int8_t value;
-                                        if(isHexa(word)){value=strtol(word,NULL,16);}
-                                        else if(isDecimal(word)){value=strtol(word,NULL,10);}
-                                        else if(isOctal(word)){value=strtol(word,NULL,8);}
-                                        else {
-                                            WARNING_MSG("Value must be a 8 bits int");
-                                            return -1;
-                                        }
-                                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
-
-                                        INFO_MSG("set %d in byte 0x%8.8X ", value, adress);
-                                        //writeMem(something);
-
-                                }else{
-                                    WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
+        } else {
+            if(strcmp(word,"mem")==0) {                             //set mem
+                if(nextword(&word,input,&n)) {
+                    if(strcmp(word,"byte")==0) {
+                        if(nextword(&word,input,&n)&& isHexa(word)) { //soucis?
+                            printf("%s ",word);                             //affichage de l'adress
+                            uint32_t adress=strtol(word,NULL,16);
+                            if(nextword(&word,input,&n)) {
+                                int8_t value;
+                                if(what_type(word)>1) {
+                                    value=strtol(word,NULL,0);
+                                }
+                                else {
+                                    WARNING_MSG("Value must be a 8 bits int");
                                     return -1;
                                 }
-                            }else{
-                                WARNING_MSG("Second argument of 'disp mem' must be : \t<adress> (hexadecimal 32bits)");
-                                return -1;
-                            }
-                    }else if(strcmp(word,"word")==0){       
-                        if(nextword(&word,input,&n) && isHexa(word)){  //soucis?
-                                printf("%s ",word);                             //affichage de l'adress               
-                                uint32_t adress=strtol(word,NULL,16);
-                                if(nextword(&word,input,&n)){
-                                        int32_t value;
-                                        if(isHexa(word)){value=strtol(word,NULL,16);}
-                                        else if(isDecimal(word)){value=strtol(word,NULL,10);}
-                                        else if(isOctal(word)){value=strtol(word,NULL,8);}
-                                        else {WARNING_MSG("Value must be an int");
-                                        return -1;}
-
-                                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
-
-                                        INFO_MSG("set %d in word 0x%8.8X ", value, adress);
-                                        //writeMem(something);
-
-                                }else{
-                                    WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
+                                if(nextword(&word,input,&n)) {
+                                    WARNING_MSG("Too much arguments");
                                     return -1;
                                 }
-                            }else{
-                                WARNING_MSG("Second argument of 'disp mem' must be : \t<adress> (hexadecimal 32bits)");
+
+                                INFO_MSG("set %d in byte 0x%8.8X ", value, adress);
+                                //writeMem(something);
+
+                            } else {
+                                WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
                                 return -1;
                             }
-                    }else{
+                        } else {
+                            WARNING_MSG("Second argument of 'disp mem' must be : \t<adress> (hexadecimal 32bits)");
+                            return -1;
+                        }
+                    } else if(strcmp(word,"word")==0) {
+                        if(nextword(&word,input,&n) && isHexa(word)) { //soucis?
+                            printf("%s ",word);                             //affichage de l'adress
+                            uint32_t adress=strtol(word,NULL,16);
+                            if(nextword(&word,input,&n)) {
+                                int32_t value;
+                                if(what_type(word)>1) {
+                                    value=strtol(word,NULL,0);
+                                }
+                                else {
+                                    WARNING_MSG("Value must be an int");
+                                    return -1;
+                                }
+
+                                if(nextword(&word,input,&n)) {
+                                    WARNING_MSG("Too much arguments");
+                                    return -1;
+                                }
+
+                                INFO_MSG("set %d in word 0x%8.8X ", value, adress);
+                                //writeMem(something);
+
+                            } else {
+                                WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
+                                return -1;
+                            }
+                        } else {
+                            WARNING_MSG("Second argument of 'disp mem' must be : \t<adress> (hexadecimal 32bits)");
+                            return -1;
+                        }
+                    } else {
                         WARNING_MSG("First argument of 'disp mem' must be : \t<type> (byte or word)");
                         return -1;
                     }
-                }else{
+                } else {
                     WARNING_MSG("First argument of 'set mem' must be : \t<type> (byte or word)");
                     return -1;
                 }
-                
-            }else if(strcmp(word,"reg")==0){                    //set reg
-                if(!nextword(&word,input,&n)){
+
+            } else if(strcmp(word,"reg")==0) {                   //set reg
+                if(!nextword(&word,input,&n)) {
                     WARNING_MSG("Too few arguments. Syntax is : 'set reg <register> <value>");
                     return -1;
-                }else{
+                } else {
                     char reg_name[INPUT_SIZE];
-                    
+
                     strcpy(reg_name,word);
 
-                    if(isReg(reg_name)<1){WARNING_MSG("%s isn't a valid register",reg_name); return -1;}
-                    else if(nextword(&word,input,&n)){
+                    if(isReg(reg_name)<1) {
+                        WARNING_MSG("%s isn't a valid register",reg_name);
+                        return -1;
+                    }
+                    else if(nextword(&word,input,&n)) {
                         int32_t value;
-                        if(isHexa(word)){value=strtol(word,NULL,16);}
-                        else if(isDecimal(word)){value=strtol(word,NULL,10);}
-                        else if(isOctal(word)){value=strtol(word,NULL,8);}
-                        else {WARNING_MSG("Value must be an int");
-                            return -1;}
-                        
-                         
-                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
-                        
+                        if(what_type(word)>1) {
+                            value=strtol(word,NULL,0);
+                        }
+                        else {
+                            WARNING_MSG("Value must be an int");
+                            return -1;
+                        }
+
+
+                        if(nextword(&word,input,&n)) {
+                            WARNING_MSG("Too much arguments");
+                            return -1;
+                        }
+
                         writeReg(reg_name,value);
                         //printf("Registre : %s\t Value : %d\n",reg_name,value);
                         //printf("%d\n", reg_mips[isReg(reg_name)]);
                         INFO_MSG("set %d in reg %s ", value, reg_name);
 
                         return 0;
-                        
-                    }else{WARNING_MSG("Set reg missing value"); return -1;}
+
+                    } else {
+                        WARNING_MSG("Set reg missing value");
+                        return -1;
+                    }
 
                 }
 
 
 
-            }else{
+            } else {
                 WARNING_MSG("Syntax error : arguments of set are 'mem' or 'reg'");
                 return -1;
-            }     
+            }
         }
         break;
 
@@ -301,31 +324,116 @@ int decrypt(char input [])
     case ASSERT:
         INFO_MSG("Test de valeur");
 
-        if(!nextword(&word,input,&n)){                              
+        if(!nextword(&word,input,&n)) {
             WARNING_MSG("Too few arguments. Syntax is :\n\t'assert reg <register> <value>'  or\n\t'assert <type> <adress> <value>'");
             return -1;
-        }else{
-            if(strcmp(word,"reg")==0){                      //assert reg
-                if(!nextword(&word,input,&n)){
+        } else {
+            if(strcmp(word,"reg")==0) {                     //assert reg
+                if(!nextword(&word,input,&n)) {
                     WARNING_MSG("Too few arguments. Syntax is : 'set reg <register> <value>");
                     return -1;
-                }else{                     
+                } else {
                     char reg_name[INPUT_SIZE];
                     strcpy(reg_name,word);
-                    if(isReg(reg_name)<0){WARNING_MSG("%s isn't a valid register",reg_name); return -1;}
-                    else if(nextword(&word,input,&n)){
-                        int32_t value=strtol(word,NULL,0);
-                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
-                        if(reg_mips[isReg(reg_name)]==value){
-                            printf("Le test est correct\n");
-                            return 0;
-                        }else{
-                            printf("Le test est incorrect\n");
+                    if(isReg(reg_name)<0) {
+                        WARNING_MSG("%s isn't a valid register",reg_name);
+                        return -1;
+                    }
+                    else if(nextword(&word,input,&n)) {
+                        if (what_type(word)>1)
+                        {
+                            int32_t value=strtol(word,NULL,0);
+                            if(nextword(&word,input,&n)) {
+                                WARNING_MSG("Too much arguments");
+                                return -1;
+                            }
+                            if(reg_mips[isReg(reg_name)]==value) {
+                                printf("Le test est correct\n");
+                                return 0;
+                            } else {
+                                printf("Le test est incorrect\n");
+                                return 1;
+                            }
+                        } else {
+                            WARNING_MSG("Value must be an int");
                             return -1;
                         }
-                    }else{WARNING_MSG("Assert reg missing value"); return -1;}
-                }   
-            }  
+                    } else {
+                        WARNING_MSG("Assert reg missing value");
+                        return -1;
+                    }
+                }
+            }
+            else if(strcmp(word,"word")==0) {                     //assert reg
+                if(!nextword(&word,input,&n)) {
+                    WARNING_MSG("Too few arguments. Syntax is : 'set word <adress> <value>");
+                    return -1;
+                } else {
+                    if(isHexa(word)) {
+                        uint32_t adress=strtol(word,NULL,0);
+
+
+                        if(nextword(&word,input,&n)) {
+                            if(what_type(word)>1) {
+                                int32_t value=strtol(word,NULL,0);
+                            }
+                            if(nextword(&word,input,&n)) {
+                                WARNING_MSG("Too much arguments");
+                                return -1;
+                            }
+
+
+                            //readmem and compare
+                            return 0;
+
+
+
+                        } else {
+                            WARNING_MSG("Assert word missing value");
+                            return -1;
+                        }
+                    }
+                    else {
+                        WARNING_MSG("Adress must be hexadecimal");
+                        return -1;
+                    }
+                }
+            }
+            if(strcmp(word,"byte")==0) {                     //assert reg
+                if(!nextword(&word,input,&n)) {
+                    WARNING_MSG("Too few arguments. Syntax is : 'set byte <adress> <value>");
+                    return -1;
+                } else {
+                    if(isHexa(word)) {
+                        uint32_t adress=strtol(word,NULL,0);
+
+
+                        if(nextword(&word,input,&n)) {
+                            if(what_type(word)>1) {
+                                int8_t value=strtol(word,NULL,0);
+                            }
+                            if(nextword(&word,input,&n)) {
+                                WARNING_MSG("Too much arguments");
+                                return -1;
+                            }
+
+
+                            //readmem and compare
+                            return 0;
+
+
+
+                        } else {
+                            WARNING_MSG("Assert byte missing value");
+                            return -1;
+                        }
+                    }
+                    else {
+                        WARNING_MSG("Adress must be hexadecimal");
+                        return -1;
+                    }
+                }
+            }
         }
         break;
     case DEBUG:
