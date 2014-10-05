@@ -14,7 +14,7 @@ $ make archive
 
 **pour executer**
 
-  emulMips [fichier de scripts] 
+  ./EXENAME [fichier de scripts] 
 
 
 
