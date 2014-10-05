@@ -201,7 +201,6 @@ int decrypt(char input [])
                 if(nextword(&word,input,&n)) {
                     if(strcmp(word,"byte")==0) {
                         if(nextword(&word,input,&n)&& isHexa(word)) { //soucis?
-                            printf("%s ",word);                             //affichage de l'adress
                             uint32_t adress=strtol(word,NULL,16);
                             if(nextword(&word,input,&n)) {
                                 int8_t value;
@@ -219,6 +218,7 @@ int decrypt(char input [])
 
                                 INFO_MSG("set %d in byte 0x%8.8X ", value, adress);
                                 //writeMem(something);
+                                return 0;
 
                             } else {
                                 WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
@@ -230,7 +230,6 @@ int decrypt(char input [])
                         }
                     } else if(strcmp(word,"word")==0) {
                         if(nextword(&word,input,&n) && isHexa(word)) { //soucis?
-                            printf("%s ",word);                             //affichage de l'adress
                             uint32_t adress=strtol(word,NULL,16);
                             if(nextword(&word,input,&n)) {
                                 int32_t value;
@@ -249,6 +248,7 @@ int decrypt(char input [])
 
                                 INFO_MSG("set %d in word 0x%8.8X ", value, adress);
                                 //writeMem(something);
+                                return 0;
 
                             } else {
                                 WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
