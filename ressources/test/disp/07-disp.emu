@@ -1,7 +1,7 @@
 #-------
 #TEST_RETURN_CODE=FAIL        
-#TEST_COMMENT="disp mem"
+#TEST_COMMENT="disp wrong arg"
 #-------
 load Tests/boucle.o
-disp mem 0x3005:0x3000
+disp $7 $8 $zero 
 exit

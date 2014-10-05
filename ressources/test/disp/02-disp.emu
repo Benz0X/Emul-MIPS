@@ -3,5 +3,5 @@
 #TEST_COMMENT="disp reg OK"
 #-------
 load Tests/boucle.o
-disp reg  0 1 2 3 v0 at $0 $10 $31 $v0 $at HI LO PC $HI $LO $PC
+disp reg  0 1 2 3 v0 at $0 $10 $34 $v0 $at HI LO PC $HI $LO $PC
 exit

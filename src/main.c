@@ -13,8 +13,7 @@ int main(int argc, char *argv[])
     {
         reg_mips[i]=-i;
     }
-    char string[20];
-    parseReg(1,string);
+
 /*
 //test stuff
     int i;

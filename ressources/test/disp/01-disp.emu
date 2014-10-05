@@ -1,7 +1,7 @@
 #-------
 #TEST_RETURN_CODE=PASS        
-#TEST_COMMENT="disp mem"
+#TEST_COMMENT="disp reg"
 #-------
 load Tests/boucle.o
-disp mem 0x3000+20
+disp reg all
 exit

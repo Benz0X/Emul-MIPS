@@ -85,7 +85,8 @@ int decrypt(char input [])
                         INFO_MSG("Affichage de la map mémoire");
                         print_mem(memory);
                         return 0;
-                    } else if(isHexa(word)) {
+                    } else if(isHexa(word)) {  //il faudrait vérifier qu'il est <0 et prendre en compte le décimal pour 
+                                                //coller au cahier des charges mais faudrait utiliser un uint64
                         uint32_t adress1=strtol(word,NULL,16);
                         if(nextword(&word,input,&n)) {
                             if (!strcmp(word,":")) {

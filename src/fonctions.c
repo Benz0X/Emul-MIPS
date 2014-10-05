@@ -150,6 +150,11 @@ void string_standardise( char* in, char* out ) {
         else if (in[i]=='#') {
             out[j++]='\0';
         }
+        /*remove nextline*/
+        else if (in[i]=='\n') {
+            out[j++]='\0';
+        }
+
         /* translate tabs into white spaces*/
         else if (isblank((int) in[i])) out[j++]=' ';
         else out[j++]=in[i];
@@ -191,7 +196,7 @@ int isReg(char* reg_name){
 	index = strtol(reg_name,&string,10);
 	//printf("reg_name= %s string =%s, index=%d\n",reg_name,string,index );
 
-	if (isdigit(reg_name[0]) && index<34 && index > -1){
+	if (isdigit(reg_name[0]) && index<32 && index > -1){
 		return index;
 	}
 	else if (!isdigit(reg_name[0])){

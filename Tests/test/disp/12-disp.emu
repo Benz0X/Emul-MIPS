@@ -3,5 +3,5 @@
 #TEST_COMMENT="disp mem fail"
 #-------
 load Tests/boucle.o
-disp mem 0x123:10
+disp mem 0x123+10
 exit

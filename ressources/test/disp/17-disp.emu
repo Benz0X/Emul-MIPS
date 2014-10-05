@@ -1,7 +1,7 @@
 #-------
-#TEST_RETURN_CODE=fail        
+#TEST_RETURN_CODE=FAIL        
 #TEST_COMMENT="disp mem"
 #-------
 load Tests/boucle.o
-disp mem 5+10
+disp mem azerty
 exit
