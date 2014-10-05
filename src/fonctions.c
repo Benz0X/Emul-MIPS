@@ -65,7 +65,8 @@ int what_type(char * word){
 			i++;
 			switch (S) {
 		case INIT:
-			if (isdigit(c)){
+			if(c=='-'){S=DECIMAL;}
+			else if (isdigit(c)){
 				S = ( c=='0') ? DECIMAL_ZERO : DECIMAL ;
 			}
 			else return -1;

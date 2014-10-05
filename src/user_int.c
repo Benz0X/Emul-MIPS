@@ -199,7 +199,18 @@ int decrypt(char input [])
                         printf("du byte ");
                             if(nextword(&word,input,&n)&& isHexa(word)){  //soucis?
                                 printf("%s ",word);                             //affichage de l'adress               
+                                uint32_t adress=strtol(word,NULL,16);
                                 if(nextword(&word,input,&n)){
+                                        int32_t value;
+                                        if(isHexa(word)){value=strtol(word,NULL,16);}
+                                        else if(isDecimal(word)){value=strtol(word,NULL,10);}
+                                        else if(isOctal(word)){value=strtol(word,NULL,8);}
+                                        else {WARNING_MSG("Value must be an int");
+                                        return -1;}
+
+                                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
+
+
                                     //SET MEM BYTE ADRESS VALUE
                                 }else{
                                     WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
@@ -227,8 +238,14 @@ int decrypt(char input [])
 
                     if(isReg(reg_name)<1){WARNING_MSG("%s isn't a valid register",reg_name); return -1;}
                     else if(nextword(&word,input,&n)){
+                        int32_t value;
+                        if(isHexa(word)){value=strtol(word,NULL,16);}
+                        else if(isDecimal(word)){value=strtol(word,NULL,10);}
+                        else if(isOctal(word)){value=strtol(word,NULL,8);}
+                        else {WARNING_MSG("Value must be an int");
+                            return -1;}
                         
-                        int32_t value=strtol(word,NULL,0);
+                         
                         if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
                         writeReg(reg_name,value);
                         //printf("Registre : %s\t Value : %d\n",reg_name,value);
