@@ -191,13 +191,38 @@ int decrypt(char input [])
 
         if(!nextword(&word,input,&n)){                              
             WARNING_MSG("Too few arguments. Syntax is :\n\t'set mem <type> <adress> <value>'  or\n\t'set reg <register> <value>'");
+            return -1;
         }else{
             if(strcmp(word,"mem")==0){                              //set mem
-                printf("Modification memoire ");
                 if(nextword(&word,input,&n)){                           
                     if(strcmp(word,"byte")==0){
-                        printf("du byte ");
                             if(nextword(&word,input,&n)&& isHexa(word)){  //soucis?
+                                printf("%s ",word);                             //affichage de l'adress               
+                                uint32_t adress=strtol(word,NULL,16);
+                                if(nextword(&word,input,&n)){
+                                        int8_t value;
+                                        if(isHexa(word)){value=strtol(word,NULL,16);}
+                                        else if(isDecimal(word)){value=strtol(word,NULL,10);}
+                                        else if(isOctal(word)){value=strtol(word,NULL,8);}
+                                        else {
+                                            WARNING_MSG("Value must be a 8 bits int");
+                                            return -1;
+                                        }
+                                        if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
+
+                                        INFO_MSG("set %d in byte 0x%8.8X ", value, adress);
+                                        //writeMem(something);
+
+                                }else{
+                                    WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
+                                    return -1;
+                                }
+                            }else{
+                                WARNING_MSG("Second argument of 'disp mem' must be : \t<adress> (hexadecimal 32bits)");
+                                return -1;
+                            }
+                    }else if(strcmp(word,"word")==0){       
+                        if(nextword(&word,input,&n) && isHexa(word)){  //soucis?
                                 printf("%s ",word);                             //affichage de l'adress               
                                 uint32_t adress=strtol(word,NULL,16);
                                 if(nextword(&word,input,&n)){
@@ -210,21 +235,24 @@ int decrypt(char input [])
 
                                         if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
 
+                                        INFO_MSG("set %d in word 0x%8.8X ", value, adress);
+                                        //writeMem(something);
 
-                                    //SET MEM BYTE ADRESS VALUE
                                 }else{
                                     WARNING_MSG("Third argument of 'disp mem' must be : \t<value>");
+                                    return -1;
                                 }
                             }else{
                                 WARNING_MSG("Second argument of 'disp mem' must be : \t<adress> (hexadecimal 32bits)");
+                                return -1;
                             }
-                    }else if(strcmp(word,"word")==0){       
-                        printf("du word ");             
                     }else{
                         WARNING_MSG("First argument of 'disp mem' must be : \t<type> (byte or word)");
+                        return -1;
                     }
                 }else{
                     WARNING_MSG("First argument of 'set mem' must be : \t<type> (byte or word)");
+                    return -1;
                 }
                 
             }else if(strcmp(word,"reg")==0){                    //set reg
@@ -247,11 +275,14 @@ int decrypt(char input [])
                         
                          
                         if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
+                        
                         writeReg(reg_name,value);
                         //printf("Registre : %s\t Value : %d\n",reg_name,value);
                         //printf("%d\n", reg_mips[isReg(reg_name)]);
-                        return 0;
+                        INFO_MSG("set %d in reg %s ", value, reg_name);
 
+                        return 0;
+                        
                     }else{WARNING_MSG("Set reg missing value"); return -1;}
 
                 }
@@ -272,6 +303,7 @@ int decrypt(char input [])
 
         if(!nextword(&word,input,&n)){                              
             WARNING_MSG("Too few arguments. Syntax is :\n\t'assert reg <register> <value>'  or\n\t'assert <type> <adress> <value>'");
+            return -1;
         }else{
             if(strcmp(word,"reg")==0){                      //assert reg
                 if(!nextword(&word,input,&n)){
