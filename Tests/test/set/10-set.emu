@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=FAIL     
+#TEST_COMMENT="set mem"
+#-------
+load Tests/boucle.o
+set mem noteAType
+exit

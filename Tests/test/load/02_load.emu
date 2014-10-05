@@ -1,5 +1,6 @@
 #-------
 #TEST_RETURN_CODE=FAIL        
-#TEST_COMMENT="Teste fonctionnement standard"
+#TEST_COMMENT="Charge fichier inexistant"
 #-------
 load Tests/boucle0.o
+exit

@@ -1,8 +1,7 @@
 #-------
 #TEST_RETURN_CODE=PASS           
-#TEST_COMMENT="Teste fonctionnement standard"
+#TEST_COMMENT="charge fichier"
 #-------
 
 load Tests/boucle.o
-disp mem map
 exit

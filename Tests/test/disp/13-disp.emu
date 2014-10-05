@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=PASS        
+#TEST_COMMENT="disp mem"
+#-------
+load Tests/boucle.o
+disp mem 5:10
+exit

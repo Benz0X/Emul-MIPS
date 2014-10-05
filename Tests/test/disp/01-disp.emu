@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=PASS        
+#TEST_COMMENT="disp reg"
+#-------
+load Tests/boucle.o
+disp reg all
+exit

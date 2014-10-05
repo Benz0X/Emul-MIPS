@@ -1,0 +1,6 @@
+#-------
+#TEST_RETURN_CODE=FAIL        
+#TEST_COMMENT="Charge fichier + mauvaise adresse"
+#-------
+load Tests/boucle.o azerty
+exit

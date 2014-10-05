@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=FAIL        
+#TEST_COMMENT="disp wrong arg"
+#-------
+load Tests/boucle.o
+disp $7 $8 $zero 
+exit

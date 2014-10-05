@@ -1,0 +1,8 @@
+#-------
+#TEST_RETURN_CODE=PASS     
+#TEST_COMMENT="assert"
+#-------
+load Tests/boucle.o
+set mem byte 0x4000 0x12
+assert byte 0x4000 0x12
+exit

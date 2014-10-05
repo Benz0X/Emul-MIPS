@@ -1,0 +1,6 @@
+#-------
+#TEST_RETURN_CODE=PASS        
+#TEST_COMMENT="Charge fichier + adresse"
+#-------
+load Tests/boucle.o 0x123
+exit

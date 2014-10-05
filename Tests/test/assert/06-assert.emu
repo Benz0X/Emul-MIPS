@@ -1,0 +1,8 @@
+#-------
+#TEST_RETURN_CODE=FAIL     
+#TEST_COMMENT="assert wrong"
+#-------
+load Tests/boucle.o
+set reg at 10
+assert reg at 12
+exit

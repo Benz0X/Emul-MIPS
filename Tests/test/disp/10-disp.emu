@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=FAIL        
+#TEST_COMMENT="disp mem fail"
+#-------
+load Tests/boucle.o
+disp mem 0x123 0x456
+exit

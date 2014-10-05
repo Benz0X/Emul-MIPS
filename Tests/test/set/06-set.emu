@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=FAIL     
+#TEST_COMMENT="set wrong value"
+#-------
+load Tests/boucle.o
+set reg at NotAValue
+exit

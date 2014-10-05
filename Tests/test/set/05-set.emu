@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=FAIL     
+#TEST_COMMENT="set wrong reg"
+#-------
+load Tests/boucle.o
+set reg aze 10
+exit

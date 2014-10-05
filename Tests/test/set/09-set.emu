@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=PASS     
+#TEST_COMMENT="set reg"
+#-------
+load Tests/boucle.o
+set reg at -150
+exit
