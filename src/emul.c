@@ -125,21 +125,30 @@ int memRead(uint32_t start_addr,int type, int* value){
         WARNING_MSG("No memory loaded");
         return -1;
     }
-    int j=1;
+    int j=0;
 
-    while(start_addr>=memory->seg[j].start._32)
-    {j++;}
-
+    while(start_addr>=memory->seg[j].start._32&& j <= memory->nseg+1)
+        {j++;}
+//printf("%d, current addr = 0x%X, start addr = 0x%X, size = %d",j,start_addr,memory->seg[j-1].start._32,memory->seg[j-1].size._32);
     if(type==0){
+        if(j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)){
         *value=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
+           // printf(" \nécriture\n");
+
+        }
+        else{return -1;}
     }else{
+        if (j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32) && (start_addr+3 < memory->seg[j-1].start._32+memory->seg[j-1].size._32))
+        {
         *value=256*256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
         *value+=256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1];
         *value+=256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2];
         *value+=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3];
     }
-    
-    return 0;
+    else{return -1;}
+   }
+   //printf("0x%x\n",*value );
+   return 0;
 }
 
 int memWrite(uint32_t start_addr,int type, int value){
@@ -153,14 +162,20 @@ int memWrite(uint32_t start_addr,int type, int value){
     {j++;}
 
     if(type==0){
+        if(j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)){
         memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=value;
+        }
+        else{return -1;}
     }else{
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=(value/256/256/256-1)%256;
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1]=(value/256/256-1)%256;
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2]=(value/256-1)%256;
+        if (j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32) && (start_addr+3 < memory->seg[j-1].start._32+memory->seg[j-1].size._32))
+        {
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=(value/256/256/256)%256;
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1]=(value/256/256)%256;
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2]=(value/256)%256;
         memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3]=value%256;
     }
-    
+     else{return -1;}
+   }
     return 0;
 }
 
@@ -264,18 +279,16 @@ int dispmemPlage(uint32_t start_addr,uint32_t size){
         }
         uint32_t i=0;
         uint32_t current_addr=start_addr;
-        int j=0;
+        int value;
         while (i<size){
                 if (i%16==0){
                         printf("\n0x%8.8X ",current_addr);
                 }
-                //parse adress
-               
-                while(current_addr>=memory->seg[j].start._32&& j <= memory->nseg+1)
-                {j++;}
+
+                        
 //    printf("j= %d i=%d, current_addr= %d ,start= %d, size = %d, diff=%d \n",j,i,current_addr,memory->seg[j-1].start._32,memory->seg[j-1].size._32,current_addr-memory->seg[j-1].start._32+memory->seg[j-1].size._32);
-        if(j>0 && (current_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)){ //on vérifie qu'il soit dans une plage mémoire valide
-           printf("%2.2X ",memory->seg[j-1].content[current_addr-memory->seg[j-1].start._32]);
+        if(memRead(current_addr,0,&value)==0){ //on vérifie qu'il soit dans une plage mémoire valide
+           printf("%2.2X ",value);
         }
             else printf("XX ");
        

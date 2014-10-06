@@ -206,7 +206,9 @@ int decrypt(char input [])
 
                                     if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
                                     else{
-                                        memWrite(adress,0,value);
+                                        if(memWrite(adress,0,value)==0){
+                                            return 0;}
+                                        else{WARNING_MSG("Out of memory map"); return -1;}
                                     }
 
 
@@ -229,7 +231,9 @@ int decrypt(char input [])
 
                                     if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
                                     else{
-                                        memWrite(adress,1,value);
+                                        if(memWrite(adress,1,value)==0){
+                                            return 0;}
+                                        else{WARNING_MSG("Out of memory map"); return -1;}
                                     }
 
 
@@ -337,15 +341,18 @@ int decrypt(char input [])
                         if(what_type(word)>1){
                         int value1=strtol(word,NULL,0);
                         int value2;
-                        memRead(adress,1,&value2);
+                        
                         if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
+                        if(memRead(adress,1,&value2)==0){
                         if(value1==value2){
                             printf("Le test est correct\n");
                             return 0;
                         }else{
                             printf("Le test est incorrect\n");
                             return -1;
-                        }}
+                        }
+                    }else{WARNING_MSG("Out of memory map"); return -1;}
+                    }
                         else{WARNING_MSG("Assert byte missing value"); return -1;}
                     }else{WARNING_MSG("Assert word missing value"); return -1;}
                     }else{WARNING_MSG("Adress must be hexadecimal");
@@ -365,15 +372,17 @@ int decrypt(char input [])
                         if(what_type(word)>1){
                         int value1=strtol(word,NULL,0);
                         int value2;
-                        memRead(adress,0,&value2);
                         if(nextword(&word,input,&n)){WARNING_MSG("Too much arguments"); return -1;}
+                        if(memRead(adress,0,&value2)==0){
                         if(value1==value2){
                             printf("Le test est correct\n");
                             return 0;
                         }else{
                             printf("Le test est incorrect\n");
                             return -1;
-                        }}
+                        }
+                    }else{WARNING_MSG("Out of memory map"); return -1;}
+                    }
                         else{WARNING_MSG("Value must be an int"); return -1;}
                     }else{WARNING_MSG("Assert byte missing value"); return -1;}
                 }else{WARNING_MSG("Adress must be hexadecimal");
