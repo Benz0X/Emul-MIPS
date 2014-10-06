@@ -44,6 +44,10 @@ int main(int argc, char *argv[])
 
     FILE *script_file = NULL;
     scriptmode=0;
+    if ( argc > 2 ) {
+        ERROR_MSG("Too much argument");
+        exit( -1 );
+    }
     if (argc > 1)
     {
         script_file = fopen (argv[1], "r");
@@ -65,6 +69,7 @@ int main(int argc, char *argv[])
         //int test=isReg("t1");
         //printf("Test scriptmode : %d\n", scriptmode);
         char input[1024];
+        int return_value=-1;
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
         normalized_input[0]='\0';
@@ -90,7 +95,7 @@ int main(int argc, char *argv[])
         
         //printf(" normalized :%s\n",normalized_input);
         //printf(" input :%s\n",input);
-        decrypt(normalized_input);//variable globale ?
+        return_value=decrypt(normalized_input);//variable globale ?
 
     }
     return 0;

@@ -120,6 +120,53 @@ int elf_load_section_in_memory(FILE* fp, mem memory, char* scn,unsigned int perm
     return 0;
 }
 
+int memRead(uint32_t start_addr,int type, int* value){
+    if(memory==NULL) {
+        WARNING_MSG("No memory loaded");
+        return -1;
+    }
+    int j=1;
+
+    while(start_addr>=memory->seg[j].start._32)
+    {j++;}
+
+    if(type==0){
+        *value=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
+    }else{
+        *value=256*256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
+        *value+=256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1];
+        *value+=256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2];
+        *value+=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3];
+    }
+    
+    return 0;
+}
+
+int memWrite(uint32_t start_addr,int type, int value){
+    if(memory==NULL) {
+        WARNING_MSG("No memory loaded");
+        return -1;
+    }
+    int j=1;
+
+    while(start_addr>=memory->seg[j].start._32)
+    {j++;}
+
+    if(type==0){
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=value;
+    }else{
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=(value/256/256/256-1)%256;
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1]=(value/256/256-1)%256;
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2]=(value/256-1)%256;
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3]=value%256;
+    }
+    
+    return 0;
+}
+
+
+
+
 
 void print_segment_raw_content(segment* seg) {
     int k;
@@ -154,10 +201,10 @@ int loadELF (char* name,int nbparam,...){
 	int i=0,j=0;
 	unsigned int type_machine;
 	unsigned int endianness;   //little ou big endian
-	unsigned int bus_width;    // 32 bits ou 64bits
+    unsigned int bus_width;    // 32 bits ou 64bits
 	unsigned int next_segment_start = start_adress; // compteur pour designer le début de la prochaine section
 
-	symtab=new_stab(0);
+    symtab=new_stab(0);
 
 	FILE * pf_elf;
 
@@ -211,26 +258,29 @@ int loadELF (char* name,int nbparam,...){
 
 
 int dispmemPlage(uint32_t start_addr,uint32_t size){
-	if(memory==NULL) {
-		WARNING_MSG("No memory loaded");
-		return -1;
-	}
-	uint32_t i=0;
-	uint32_t current_addr=start_addr;
-	int j=0;
-	while (i<size){
-		if (i%16==0){
-			printf("\n0x%8.8X ",current_addr);
-		}
-		//parse adress
-		
-		while(current_addr>=memory->seg[j].start._32)
-		{j++;}
-		//printf("SA:0x%8.8X CA:0x%8.8X\n",memory->seg[j-1].start._32,current_addr);
-		printf("%2.2X ",memory->seg[j-1].content[current_addr-memory->seg[j-1].start._32]);
-	
-	
-	current_addr++;
-	i++;}
-	printf("\n");
+        if(memory==NULL) {
+                WARNING_MSG("No memory loaded");
+                return -1;
+        }
+        uint32_t i=0;
+        uint32_t current_addr=start_addr;
+        int j=0;
+        while (i<size){
+                if (i%16==0){
+                        printf("\n0x%8.8X ",current_addr);
+                }
+                //parse adress
+               
+                while(current_addr>=memory->seg[j].start._32&& j <= memory->nseg+1)
+                {j++;}
+//    printf("j= %d i=%d, current_addr= %d ,start= %d, size = %d, diff=%d \n",j,i,current_addr,memory->seg[j-1].start._32,memory->seg[j-1].size._32,current_addr-memory->seg[j-1].start._32+memory->seg[j-1].size._32);
+        if(j>0 && (current_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)){ //on vérifie qu'il soit dans une plage mémoire valide
+           printf("%2.2X ",memory->seg[j-1].content[current_addr-memory->seg[j-1].start._32]);
+        }
+            else printf("XX ");
+       
+        current_addr++;
+        i++;}
+        printf("\n");
 return 0;}
+

@@ -42,4 +42,6 @@ void print_segment_raw_content(segment* seg);
 //charge un ELF en mémoire
 int loadELF (char* name,int nbparam,...);
 int dispmemPlage(uint32_t start_adrr,uint32_t size);
+int memRead(uint32_t start_addr,int type, int* value);
+int memWrite(uint32_t start_addr,int type, int value);
 #endif
