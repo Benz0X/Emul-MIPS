@@ -3,5 +3,5 @@
 #TEST_COMMENT="set mem"
 #-------
 load Tests/boucle.o
-set mem byte 0x123 0x12 
+set mem byte 0x3000 0x12 
 exit

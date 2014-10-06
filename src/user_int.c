@@ -65,7 +65,7 @@ int decrypt(char input [])
 
     case EXIT:
         INFO_MSG("Sortie du programme");
-        exit(0);
+        return 2;
         break;
 
 

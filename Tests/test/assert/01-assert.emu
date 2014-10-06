@@ -5,4 +5,3 @@
 load Tests/boucle.o
 set reg at 10
 assert  
-exit

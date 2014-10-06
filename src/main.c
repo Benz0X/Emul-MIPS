@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
         //int test=isReg("t1");
         //printf("Test scriptmode : %d\n", scriptmode);
         char input[1024];
-        int return_value=-1;
+        int res=-1;
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
         normalized_input[0]='\0';
@@ -95,7 +95,39 @@ int main(int argc, char *argv[])
         
         //printf(" normalized :%s\n",normalized_input);
         //printf(" input :%s\n",input);
-        return_value=decrypt(normalized_input);//variable globale ?
+        res=decrypt(normalized_input);
+
+
+
+
+        switch(res) {
+            case 0:
+                break;
+            case 2:
+                /* sortie propre du programme */
+                if ( scriptmode==1 ) {
+                    fclose( script_file );
+                }
+                
+                exit(0);
+                break;
+            default:
+                /* erreur durant l'execution de la commande */
+                /* En mode "fichier" toute erreur implique la fin du programme ! */
+                if (scriptmode==1) {
+                    fclose( script_file );
+                    /*macro ERROR_MSG : message d'erreur puis fin de programme ! */
+                    ERROR_MSG("ERREUR DETECTEE. Aborts");
+                }
+                break;
+            }
+        
+        if( scriptmode==1 && feof(script_file) ) {
+            /* mode fichier, fin de fichier => sortie propre du programme */
+            DEBUG_MSG("FIN DE FICHIER");
+            fclose( script_file );
+            exit(0);
+        }
 
     }
     return 0;
