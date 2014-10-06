@@ -55,7 +55,7 @@ return UNKNOWN;
 }
 
 
-int what_type(char * word){
+int what_type(char * word){				// Test si une chaine de caractere est numerique et renvoie sa base.
 	enum { INIT , DECIMAL_ZERO , HEXA , DECIMAL , OCTAL } ;
 	int i=0;
 	int c ;
@@ -113,7 +113,7 @@ int isOctal(char * word){
 	return 0;
 }
 
-int nextword(char** token, char* input, int* n){
+int nextword(char** token, char* input, int* n){				//Recupere dans un buffer le prochain mot d'un chaine de caractere.
 	if(*n==0){
 		*token=strtok(input, " ");
 		*n=*n+1;	
@@ -163,7 +163,7 @@ void string_standardise( char* in, char* out ) {
     out[j++]='\0';
 }
 
-int readReg(char * reg_name, int32_t* value){
+int readReg(char * reg_name, int32_t* value){		//Lit dans un registre a travers value
 	int i=isReg(reg_name);
 	if(i==-1){								//test -1 et 0 non modifiable
 		WARNING_MSG("%s isn't a valid register",reg_name);
@@ -174,7 +174,7 @@ int readReg(char * reg_name, int32_t* value){
 	}
 }
 
-int writeReg(char * reg_name, int32_t value){
+int writeReg(char * reg_name, int32_t value){		// Ecrit value dans un registre
 	int i=isReg(reg_name);
 	if(i<1){								//test -1 et 0 non modifiable
 		WARNING_MSG("%s isn't a valid register",reg_name);
@@ -187,7 +187,7 @@ int writeReg(char * reg_name, int32_t value){
 
 
 
-int isReg(char* reg_name){
+int isReg(char* reg_name){					//Test si une chaine de caractere est un registre valide
 	if(reg_name[0]=='$'){
 		return isReg(reg_name+1); 					//Prise en charge du $ pour les reg
 	}
@@ -244,7 +244,7 @@ int isReg(char* reg_name){
 	return index;
 }
 
-int parseReg(int index, char* reg_name){
+int parseReg(int index, char* reg_name){			//Parse les registres a l'envers
 	switch(index){
 		case 0 : strcpy(reg_name,"zero");return 0;
 		case 1 : strcpy(reg_name,"at");return 0;

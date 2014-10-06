@@ -120,7 +120,7 @@ int elf_load_section_in_memory(FILE* fp, mem memory, char* scn,unsigned int perm
     return 0;
 }
 
-int memRead(uint32_t start_addr,int type, int* value){
+int memRead(uint32_t start_addr,int type, int* value){              //Lit la memoire et stock dans value
     if(memory==NULL) {
         WARNING_MSG("No memory loaded");
         return -1;
@@ -151,7 +151,7 @@ int memRead(uint32_t start_addr,int type, int* value){
    return 0;
 }
 
-int memWrite(uint32_t start_addr,int type, int value){
+int memWrite(uint32_t start_addr,int type, int value){          // Ecrit value dans la memoire
     if(memory==NULL) {
         WARNING_MSG("No memory loaded");
         return -1;
@@ -169,9 +169,9 @@ int memWrite(uint32_t start_addr,int type, int value){
     }else{
         if (j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32) && (start_addr+3 < memory->seg[j-1].start._32+memory->seg[j-1].size._32))
         {
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=(value/256/256/256)%256;
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1]=(value/256/256)%256;
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2]=(value/256)%256;
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=(value/256/256/256);
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1]=(value/256/256);
+        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2]=(value/256);
         memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3]=value%256;
     }
      else{return -1;}
@@ -183,7 +183,7 @@ int memWrite(uint32_t start_addr,int type, int value){
 
 
 
-void print_segment_raw_content(segment* seg) {
+void print_segment_raw_content(segment* seg) {      //Affiche un segment donné
     int k;
     int word =0;
     if (seg!=NULL && seg->size._32>0) {
@@ -272,7 +272,7 @@ int loadELF (char* name,int nbparam,...){
 }
 
 
-int dispmemPlage(uint32_t start_addr,uint32_t size){
+int dispmemPlage(uint32_t start_addr,uint32_t size){            //Affiche une plage memoire 
         if(memory==NULL) {
                 WARNING_MSG("No memory loaded");
                 return -1;

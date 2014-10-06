@@ -193,12 +193,9 @@ int decrypt(char input [])
             WARNING_MSG("Too few arguments. Syntax is :\n\t'set mem <type> <adress> <value>'  or\n\t'set reg <register> <value>'");
         }else{
             if(strcmp(word,"mem")==0){                              //set mem
-                printf("Modification memoire ");
                 if(nextword(&word,input,&n)){                           
                     if(strcmp(word,"byte")==0){
-                        printf("du byte ");
-                        if(nextword(&word,input,&n)&& isHexa(word)){  //soucis?
-                            printf("%s ",word);                             //affichage de l'adress               
+                        if(nextword(&word,input,&n)&& isHexa(word)){  //soucis?         
                             uint32_t adress=strtol(word,NULL,0);
                             if(nextword(&word,input,&n)){
                                 if(what_type(word)>1){
@@ -221,9 +218,7 @@ int decrypt(char input [])
                             WARNING_MSG("Second argument of 'set mem' must be : \t<adress>");
                         }
                     }else if(strcmp(word,"word")==0){       
-                        printf("du word ");
-                        if(nextword(&word,input,&n)&& isHexa(word)){  //soucis?
-                            printf("%s ",word);                             //affichage de l'adress               
+                        if(nextword(&word,input,&n)&& isHexa(word)){  //soucis?           
                             uint32_t adress=strtol(word,NULL,0);
                             if(nextword(&word,input,&n)){
                                 if(what_type(word)>1){

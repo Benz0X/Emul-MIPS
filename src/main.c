@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 
     for (i=0; i < 32; ++i)
     {
-        reg_mips[i]=-i;
+        reg_mips[i]=-i;				//Initialisation des registres pour debug avant load
     }
 
 /*
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
 
     FILE *script_file = NULL;
-    scriptmode=0;
+    scriptmode=0;						//Mode interactif par defaut
     if ( argc > 2 ) {
         ERROR_MSG("Too much argument");
         exit( -1 );
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
         script_file = fopen (argv[1], "r");
         if (script_file != NULL)
         {
-            scriptmode=1;
+            scriptmode=1;				//Si on a un argument, et que l'ouverture du script est possible, on passe en mode script
         }
         else
         {
@@ -65,12 +65,10 @@ int main(int argc, char *argv[])
     }
 
 
-    while(1)
+    while(1)							//Boucle infinie de l'interpreteur
     {
-        //int test=isReg("t1");
-        //printf("Test scriptmode : %d\n", scriptmode);
-        char input[1024];
-        int res=-1;
+        char input[1024];				//Buffer
+        int res=-1;						//Resultat d'execution
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
         normalized_input[0]='\0';
@@ -78,7 +76,7 @@ int main(int argc, char *argv[])
             if (scriptmode==1)
             {
                 if (!(script_file==NULL)){
-                    getFromScript(script_file,input);
+                    getFromScript(script_file,input);	//En mode script, on lit le fichier : cf fonctions.c
                 }
                 else{
                     WARNING_MSG("No open script, use ./EXENAME SCRIPTNAME to run with a script");
@@ -89,19 +87,18 @@ int main(int argc, char *argv[])
             else
             {
                 //printf("execution en mode interactif, entrez une commande \n");
-                getFromUser(input);
+                getFromUser(input);					//En mode interactif, on lit stdin
             }
-            string_standardise(input,normalized_input);
-        } while (normalized_input[0]=='\n' || normalized_input[0]=='\0');
+            string_standardise(input,normalized_input);		//On normalise l'entree - echappement, commentaires, etc
+        } while (normalized_input[0]=='\n' || normalized_input[0]=='\0'); //Jusqu'à une fin de chaine.
         
-        //printf(" normalized :%s\n",normalized_input);
-        //printf(" input :%s\n",input);
-        res=decrypt(normalized_input);
+
+        res=decrypt(normalized_input);				 //On execute la commande : cf user_int.c
 
 
 
 
-        switch(res) {
+        switch(res) { 	//
             case 0:
                 break;
             case 2:
