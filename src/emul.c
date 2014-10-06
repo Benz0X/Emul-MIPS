@@ -156,7 +156,7 @@ int memWrite(uint32_t start_addr,int type, int value){          // Ecrit value d
         WARNING_MSG("No memory loaded");
         return -1;
     }
-    int j=1;
+    int j=0;
 
     while(start_addr>=memory->seg[j].start._32)
     {j++;}
