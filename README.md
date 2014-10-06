@@ -26,3 +26,9 @@ $ make archive
 
 **Les fichiers de script de test se trouvent dans**
 ./Tests/tests
+
+Pour les exécuter, se placer dans le fichier de l'exécutable et entrer :
+./Tests/simpleUnitTest.sh -e projet -b Tests/test/set/*.emu
+
+Ici, la commande set sera testée.
+La plupart de nos tests chargent un fichier boucle.o à l'adresse par défaut présent dans ./Tests
