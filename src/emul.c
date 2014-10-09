@@ -145,10 +145,12 @@ int memRead(uint32_t start_addr,int type, int* value) {             //Lit la mem
     } else {
         if (j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32) && (start_addr+3 < memory->seg[j-1].start._32+memory->seg[j-1].size._32))
         {
-            *value=256*256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
-            *value+=256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1];
-            *value+=256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2];
-            *value+=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3];
+            struct_word temp; //copier directement le tableau dans le utint ?
+            temp.b1=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
+            temp.b2=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1];
+            temp.b3=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2];
+            temp.b4=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3];
+            memcpy(value,&temp,4);
         }
         else {
             return -1;
@@ -158,7 +160,7 @@ int memRead(uint32_t start_addr,int type, int* value) {             //Lit la mem
     return 0;
 }
 
-int memWrite(uint32_t start_addr,int type, int value) {         // Ecrit value dans la memoire
+int memWrite(uint32_t start_addr,int type, int32_t value) {         // Ecrit value dans la memoire
     if(memory==NULL) {
         WARNING_MSG("No memory loaded");
         return -1;
@@ -180,10 +182,12 @@ int memWrite(uint32_t start_addr,int type, int value) {         // Ecrit value d
     } else {
         if (j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32) && (start_addr+3 < memory->seg[j-1].start._32+memory->seg[j-1].size._32))
         {
-            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=(value/256/256/256);
-            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1]=(value/256/256);
-            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2]=(value/256);
-            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3]=value%256;
+            struct_word temp;
+            memcpy(&temp,&value,4); //copier directement le uint dans le tableau ?
+            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=temp.b1;
+            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1]=temp.b2;
+            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2]=temp.b3;
+            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3]=temp.b4;
         }
         else {
             return -1;

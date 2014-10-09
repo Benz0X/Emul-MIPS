@@ -4,5 +4,5 @@
 #-------
 load Tests/boucle.o
 set mem word 0x3000 0xDEADBEEF
-assert word 0x3000 0xDEADBEFF
+assert word 0x3000 0xDEADBEEF
 exit

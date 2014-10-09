@@ -94,7 +94,7 @@ int decrypt(char input [])
                                 if(nextword(&word,input,&n)) {
                                     if(isHexa(word)) {
                                         uint32_t adress2=strtol(word,NULL,16);
-                                        int size=adress2-adress1;
+                                        uint64_t size=adress2-adress1;
                                         if(size<0) {
                                             WARNING_MSG("Adress 2 must be superior to adress 1");
                                             return -1;
@@ -204,7 +204,7 @@ int decrypt(char input [])
                             uint32_t adress=strtol(word,NULL,0);
                             if(nextword(&word,input,&n)) {
                                 if(what_type(word)>1) {
-                                    int value=strtol(word,NULL,0);
+                                    int32_t value=strtol(word,NULL,0);
 
                                     if(nextword(&word,input,&n)) {
                                         WARNING_MSG("Too much arguments");
@@ -237,7 +237,7 @@ int decrypt(char input [])
                             uint32_t adress=strtol(word,NULL,0);
                             if(nextword(&word,input,&n)) {
                                 if(what_type(word)>1) {
-                                    int value=strtol(word,NULL,0);
+                                    int32_t value=strtol(word,NULL,0);
 
                                     if(nextword(&word,input,&n)) {
                                         WARNING_MSG("Too much arguments");
@@ -376,8 +376,8 @@ int decrypt(char input [])
                         //Il faut ici tester les depassements de memoire
                         if(nextword(&word,input,&n)) {
                             if(what_type(word)>1) {
-                                int value1=strtol(word,NULL,0);
-                                int value2;
+                                int32_t value1=strtol(word,NULL,0);
+                                int32_t value2;
 
                                 if(nextword(&word,input,&n)) {
                                     WARNING_MSG("Too much arguments");
@@ -421,8 +421,8 @@ int decrypt(char input [])
                         //Il faut ici tester les depassements de memoire
                         if(nextword(&word,input,&n)) {
                             if(what_type(word)>1) {
-                                int value1=strtol(word,NULL,0);
-                                int value2;
+                                int32_t value1=strtol(word,NULL,0);
+                                int32_t value2;
                                 if(nextword(&word,input,&n)) {
                                     WARNING_MSG("Too much arguments");
                                     return -1;
