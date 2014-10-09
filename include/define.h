@@ -29,6 +29,22 @@ short nb_arg;
 char* argname[MAX_INSTR_ARG];
 }dico_info;
 
+typedef struct{
+uint opcode:6,rs:5,rt:5,rd:5,sa:5,function:6;
+} r_type;
+typedef struct{
+uint opcode:6,rs:5,rt:5,immediate:16;
+} i_type;
+typedef struct{
+uint opcode:6,target:26;
+} j_type;
+
+typedef union{
+r_type r;
+i_type i;
+j_type j;
+}instruction;
+
 typedef enum {
     LOAD,
     EXIT,
