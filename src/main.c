@@ -6,6 +6,7 @@
 #include "emul.h"
 #include "user_int.h"
 
+
 int main(int argc, char *argv[])
 {
 
@@ -16,6 +17,16 @@ int main(int argc, char *argv[])
         reg_mips[i]=-i;				//Initialisation des registres pour debug avant load
     }
 
+    readDico("dico.dico");
+    /*
+    for (i = 0; i < 10; ++i)
+    {
+        printf("%d\n %s",dico_data[i].type,dico_data[i].name);
+    }
+    */
+
+
+    
     /*
     //test stuff
         int i;
@@ -68,7 +79,7 @@ int main(int argc, char *argv[])
 
     while(1)							//Boucle infinie de l'interpreteur
     {
-        char input[1024];				//Buffer
+        char input[INPUT_SIZE];				//Buffer
         int res=-1;						//Resultat d'execution
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
@@ -91,7 +102,7 @@ int main(int argc, char *argv[])
                 getFromUser(input);					//En mode interactif, on lit stdin
             }
             string_standardise(input,normalized_input);		//On normalise l'entree - echappement, commentaires, etc
-        } while (normalized_input[0]=='\n' || normalized_input[0]=='\0'); //Jusqu'à une fin de chaine.
+        } while (normalized_input[0]=='\0'); //Jusqu'à une fin de chaine.
 
 
         res=decrypt(normalized_input);				 //On execute la commande : cf user_int.c

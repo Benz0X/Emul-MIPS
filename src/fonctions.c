@@ -1,13 +1,14 @@
+#include <string.h>
+#include <ctype.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "define.h"
 #include "user_int.h"
 #include "fonctions.h"
 #include "common/notify.h"
 #include "emul.h"
-#include <string.h>
-#include <ctype.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-
 
 void getFromScript(FILE *fileptr,char * input)
 {
@@ -162,7 +163,7 @@ void string_standardise( char* in, char* out ) {
             while (isblank((int) in[i+1])) i++;
         }
 
-        /* remove command */
+        /* remove comment */
         else if (in[i]=='#') {
             out[j++]='\0';
         }
@@ -440,4 +441,37 @@ int parseReg(int index, char* reg_name) {			//Parse les registres a l'envers
     default :
         return -1;
     }
+}
+
+int readDico(char* dico_name){
+	FILE* dico_file=NULL;
+	dico_file = fopen (dico_name, "r");
+        if (dico_file == NULL)
+        {
+            WARNING_MSG("Impossible d'ouvrir le dictionnaire '%s'",dico_name);
+            return 1;
+        }
+    char line[INPUT_SIZE];
+    char normalized_line[INPUT_SIZE];
+    int nbentry,i;
+    do{
+        getFromScript(dico_file,line);
+        string_standardise(line, normalized_line);
+    }while (normalized_line[0]=='\0');
+//on obtient le nombre d'entrée du dico
+    sscanf(line, "%d",&nbentry);
+    dico_data=calloc(nbentry,sizeof(dico_info));
+    for ( i = 0; i < nbentry; ++i)
+    {
+    	do{
+        	getFromScript(dico_file,line);
+        	string_standardise(line, normalized_line);
+    	}while (normalized_line[0]=='\0');
+
+
+    	//how to : 
+    	dico_data[i].type=i;
+    	strcpy(dico_data[i].name,"aze");
+    }
+return 0;
 }

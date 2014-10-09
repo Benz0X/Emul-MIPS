@@ -1,11 +1,6 @@
 #ifndef _emul_h
 #define _emul_h
-#include "fonctions.h"
-#include "mem.h"
-#include "common/bits.h"
-#include "common/notify.h"
-#include "elf/elf.h"
-#include "elf/syms.h"
+
 
 
 

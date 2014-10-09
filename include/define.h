@@ -7,12 +7,7 @@
 #define INPUT_SIZE 1024
 #define PROMPT_STRING "EmulMips : > "
 #define MAX_INSTR_ARG 3
-
-extern int32_t reg_mips[35];
-extern mem memory;
-extern stab symtab;
-extern int scriptmode;
-
+#define MAX_NAME_SIZE 10
 typedef struct {
 	uint b4:8,
 	b3:8,
@@ -21,7 +16,7 @@ typedef struct {
 } struct_word; //ATTENTION AU SENS, PT A CHANGER
 
 typedef struct {
-char* name;
+char name[MAX_NAME_SIZE];
 uint32_t mask;
 uint32_t instr;
 short type;
@@ -60,6 +55,11 @@ typedef enum {
     UNKNOWN
 } command ;
 
+extern int32_t reg_mips[35];
+extern mem memory;
+extern stab symtab;
+extern int scriptmode;
+extern dico_info* dico_data;
 
 
 #endif

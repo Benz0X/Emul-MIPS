@@ -3,25 +3,30 @@
 
 
 
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
 #include "define.h"
 #include "common/bits.h"
 #include "common/notify.h"
 #include "elf/elf.h"
 #include "elf/syms.h"
 #include "mem.h"
-#include <stdarg.h>
+#include "emul.h"
+#include "fonctions.h"
+
+
 
 
 //init des registres RAJOUTER HI LOW PC
 int reg_mips[35];
 
-
-
 //init de la mémoire
 mem memory=NULL;
 stab symtab;
+
+//du dictionnaire
+dico_info* dico_data=NULL;
 
 
 
