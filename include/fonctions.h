@@ -3,7 +3,6 @@
 #include "user_int.h"
 #include <stdio.h>
 #include <stdlib.h>
-#define INPUT_SIZE 1024
 
 
 void getFromScript(FILE *fileptr,char* input);//recupere ligne par ligne, renvoi 1 si le programme doit se quitter

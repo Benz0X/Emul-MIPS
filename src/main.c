@@ -1,3 +1,4 @@
+#include "define.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "fonctions.h"
@@ -15,28 +16,28 @@ int main(int argc, char *argv[])
         reg_mips[i]=-i;				//Initialisation des registres pour debug avant load
     }
 
-/*
-//test stuff
-    int i;
+    /*
+    //test stuff
+        int i;
 
-    for (i=0; i < 32; ++i)
-    {
-        reg_mips[i]=-i;
-    }
-            char  string[200];
-            int regwrite;
-            int index; //test reg
-    while(1){
-        scanf("%s",string);
-        readReg(string, &i);
-        printf("input : %s reg value :%d \n Write ?\n", string,i);
-    
-        scanf("%s %d",string, &regwrite);
-        
-        index=writeReg(string,regwrite);
-        printf("input: %s reg value: %d\n  index : %d Read ?\n",string,reg_mips[index],index);
-    }
-*/
+        for (i=0; i < 32; ++i)
+        {
+            reg_mips[i]=-i;
+        }
+                char  string[200];
+                int regwrite;
+                int index; //test reg
+        while(1){
+            scanf("%s",string);
+            readReg(string, &i);
+            printf("input : %s reg value :%d \n Write ?\n", string,i);
+
+            scanf("%s %d",string, &regwrite);
+
+            index=writeReg(string,regwrite);
+            printf("input: %s reg value: %d\n  index : %d Read ?\n",string,reg_mips[index],index);
+        }
+    */
 
 
 
@@ -72,16 +73,16 @@ int main(int argc, char *argv[])
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
         normalized_input[0]='\0';
-        do{
+        do {
             if (scriptmode==1)
             {
-                if (!(script_file==NULL)){
+                if (!(script_file==NULL)) {
                     getFromScript(script_file,input);	//En mode script, on lit le fichier : cf fonctions.c
                 }
-                else{
+                else {
                     WARNING_MSG("No open script, use ./EXENAME SCRIPTNAME to run with a script");
                     scriptmode=0;
-                
+
                 }
             }
             else
@@ -91,7 +92,7 @@ int main(int argc, char *argv[])
             }
             string_standardise(input,normalized_input);		//On normalise l'entree - echappement, commentaires, etc
         } while (normalized_input[0]=='\n' || normalized_input[0]=='\0'); //Jusqu'à une fin de chaine.
-        
+
 
         res=decrypt(normalized_input);				 //On execute la commande : cf user_int.c
 
@@ -99,27 +100,27 @@ int main(int argc, char *argv[])
 
 
         switch(res) { 	//
-            case 0:
-                break;
-            case 2:
-                /* sortie propre du programme */
-                if ( scriptmode==1 ) {
-                    fclose( script_file );
-                }
-                
-                exit(0);
-                break;
-            default:
-                /* erreur durant l'execution de la commande */
-                /* En mode "fichier" toute erreur implique la fin du programme ! */
-                if (scriptmode==1) {
-                    fclose( script_file );
-                    /*macro ERROR_MSG : message d'erreur puis fin de programme ! */
-                    ERROR_MSG("ERREUR DETECTEE. Aborts");
-                }
-                break;
+        case 0:
+            break;
+        case 2:
+            /* sortie propre du programme */
+            if ( scriptmode==1 ) {
+                fclose( script_file );
             }
-        
+
+            exit(0);
+            break;
+        default:
+            /* erreur durant l'execution de la commande */
+            /* En mode "fichier" toute erreur implique la fin du programme ! */
+            if (scriptmode==1) {
+                fclose( script_file );
+                /*macro ERROR_MSG : message d'erreur puis fin de programme ! */
+                ERROR_MSG("ERREUR DETECTEE. Aborts");
+            }
+            break;
+        }
+
         if( scriptmode==1 && feof(script_file) ) {
             /* mode fichier, fin de fichier => sortie propre du programme */
             DEBUG_MSG("FIN DE FICHIER");

@@ -5,6 +5,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include "define.h"
 #include "common/bits.h"
 #include "common/notify.h"
 #include "elf/elf.h"
@@ -120,7 +121,7 @@ int elf_load_section_in_memory(FILE* fp, mem memory, char* scn,unsigned int perm
     return 0;
 }
 
-int memRead(uint32_t start_addr,int type, int* value){              //Lit la memoire et stock dans value
+int memRead(uint32_t start_addr,int type, int* value) {             //Lit la memoire et stock dans value
     if(memory==NULL) {
         WARNING_MSG("No memory loaded");
         return -1;
@@ -128,30 +129,36 @@ int memRead(uint32_t start_addr,int type, int* value){              //Lit la mem
     int j=0;
 
     while(start_addr>=memory->seg[j].start._32&& j <= memory->nseg+1)
-        {j++;}
+    {
+        j++;
+    }
 //printf("%d, current addr = 0x%X, start addr = 0x%X, size = %d",j,start_addr,memory->seg[j-1].start._32,memory->seg[j-1].size._32);
-    if(type==0){
-        if(j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)){
-        *value=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
-           // printf(" \nécriture\n");
+    if(type==0) {
+        if(j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)) {
+            *value=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
+            // printf(" \nécriture\n");
 
         }
-        else{return -1;}
-    }else{
+        else {
+            return -1;
+        }
+    } else {
         if (j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32) && (start_addr+3 < memory->seg[j-1].start._32+memory->seg[j-1].size._32))
         {
-        *value=256*256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
-        *value+=256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1];
-        *value+=256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2];
-        *value+=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3];
+            *value=256*256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
+            *value+=256*256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1];
+            *value+=256*memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2];
+            *value+=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3];
+        }
+        else {
+            return -1;
+        }
     }
-    else{return -1;}
-   }
-   //printf("0x%x\n",*value );
-   return 0;
+    //printf("0x%x\n",*value );
+    return 0;
 }
 
-int memWrite(uint32_t start_addr,int type, int value){          // Ecrit value dans la memoire
+int memWrite(uint32_t start_addr,int type, int value) {         // Ecrit value dans la memoire
     if(memory==NULL) {
         WARNING_MSG("No memory loaded");
         return -1;
@@ -159,23 +166,29 @@ int memWrite(uint32_t start_addr,int type, int value){          // Ecrit value d
     int j=0;
 
     while(start_addr>=memory->seg[j].start._32)
-    {j++;}
+    {
+        j++;
+    }
 
-    if(type==0){
-        if(j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)){
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=value;
+    if(type==0) {
+        if(j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)) {
+            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=value;
         }
-        else{return -1;}
-    }else{
+        else {
+            return -1;
+        }
+    } else {
         if (j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32) && (start_addr+3 < memory->seg[j-1].start._32+memory->seg[j-1].size._32))
         {
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=(value/256/256/256);
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1]=(value/256/256);
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2]=(value/256);
-        memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3]=value%256;
+            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32]=(value/256/256/256);
+            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+1]=(value/256/256);
+            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+2]=(value/256);
+            memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32+3]=value%256;
+        }
+        else {
+            return -1;
+        }
     }
-     else{return -1;}
-   }
     return 0;
 }
 
@@ -197,41 +210,42 @@ void print_segment_raw_content(segment* seg) {      //Affiche un segment donné
 }
 
 
-int loadELF (char* name,int nbparam,...){
-	va_list ap;
-	uint32_t start_adress=0x3000;
-		va_start(ap, nbparam);
-		if(nbparam>1){
-		va_arg(ap, uint32_t); //dirty
-		start_adress = va_arg(ap, uint32_t);}
- 		if(start_adress%0x1000>0){ 
-		start_adress = start_adress+0x1000-start_adress%0x1000;
-		}
+int loadELF (char* name,int nbparam,...) {
+    va_list ap;
+    uint32_t start_adress=0x3000;
+    va_start(ap, nbparam);
+    if(nbparam>1) {
+        va_arg(ap, uint32_t); //dirty
+        start_adress = va_arg(ap, uint32_t);
+    }
+    if(start_adress%0x1000>0) {
+        start_adress = start_adress+0x1000-start_adress%0x1000;
+    }
 
-		va_end(ap);
+    va_end(ap);
 
-	char* section_names[NB_SECTIONS]= {TEXT_SECTION_STR,RODATA_SECTION_STR,DATA_SECTION_STR,BSS_SECTION_STR};
-	unsigned int segment_permissions[NB_SECTIONS]= {R_X,R__,RW_,RW_};
-	unsigned int nsegments;
-	int i=0,j=0;
-	unsigned int type_machine;
-	unsigned int endianness;   //little ou big endian
+    char* section_names[NB_SECTIONS]= {TEXT_SECTION_STR,RODATA_SECTION_STR,DATA_SECTION_STR,BSS_SECTION_STR};
+    unsigned int segment_permissions[NB_SECTIONS]= {R_X,R__,RW_,RW_};
+    unsigned int nsegments;
+    int i=0,j=0;
+    unsigned int type_machine;
+    unsigned int endianness;   //little ou big endian
     unsigned int bus_width;    // 32 bits ou 64bits
-	unsigned int next_segment_start = start_adress; // compteur pour designer le début de la prochaine section
+    unsigned int next_segment_start = start_adress; // compteur pour designer le début de la prochaine section
 
     symtab=new_stab(0);
 
-	FILE * pf_elf;
+    FILE * pf_elf;
 
 
     if ((pf_elf = fopen(name,"r")) == NULL) {
         WARNING_MSG("cannot open file '%s'", name);
-	return -1;
+        return -1;
     }
 
-    if (!assert_elf_file(pf_elf)){
+    if (!assert_elf_file(pf_elf)) {
         WARNING_MSG("file %s is not an ELF file", name);
-	return -1;
+        return -1;
     }
 
     // recuperation des info de l'architecture
@@ -258,8 +272,8 @@ int loadELF (char* name,int nbparam,...){
 
     //TODO allouer la pile (et donc modifier le nb de segments)
 
-   // printf("\n------ Fichier ELF \"%s\" : sections lues lors du chargement ------\n", name) ;
-   // print_mem(memory);
+    // printf("\n------ Fichier ELF \"%s\" : sections lues lors du chargement ------\n", name) ;
+    // print_mem(memory);
     //stab32_print( symtab);
 
     // on fait le ménage avant de partir
@@ -272,28 +286,30 @@ int loadELF (char* name,int nbparam,...){
 }
 
 
-int dispmemPlage(uint32_t start_addr,uint32_t size){            //Affiche une plage memoire 
-        if(memory==NULL) {
-                WARNING_MSG("No memory loaded");
-                return -1;
+int dispmemPlage(uint32_t start_addr,uint32_t size) {           //Affiche une plage memoire
+    if(memory==NULL) {
+        WARNING_MSG("No memory loaded");
+        return -1;
+    }
+    uint32_t i=0;
+    uint32_t current_addr=start_addr;
+    int value;
+    while (i<size) {
+        if (i%16==0) {
+            printf("\n0x%8.8X ",current_addr);
         }
-        uint32_t i=0;
-        uint32_t current_addr=start_addr;
-        int value;
-        while (i<size){
-                if (i%16==0){
-                        printf("\n0x%8.8X ",current_addr);
-                }
 
-                        
+
 //    printf("j= %d i=%d, current_addr= %d ,start= %d, size = %d, diff=%d \n",j,i,current_addr,memory->seg[j-1].start._32,memory->seg[j-1].size._32,current_addr-memory->seg[j-1].start._32+memory->seg[j-1].size._32);
-        if(memRead(current_addr,0,&value)==0){ //on vérifie qu'il soit dans une plage mémoire valide
-           printf("%2.2X ",value);
+        if(memRead(current_addr,0,&value)==0) { //on vérifie qu'il soit dans une plage mémoire valide
+            printf("%2.2X ",value);
         }
-            else printf("XX ");
-       
+        else printf("XX ");
+
         current_addr++;
-        i++;}
-        printf("\n");
-return 0;}
+        i++;
+    }
+    printf("\n");
+    return 0;
+}
 
