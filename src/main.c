@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
     }
 
     readDico("dico.dico");
-    /*
-    for (i = 0; i < 10; ++i)
+    
+    /*for (i = 0; i < 10; ++i)
     {
-        printf("%d\n %s",dico_data[i].type,dico_data[i].name);
+        printf("%s %X %X %d %d %s \n ",dico_data[i].name,dico_data[i].mask,dico_data[i].instr,dico_data[i].type,dico_data[i].nb_arg,dico_data[i].argname[0]);
     }
     */
 

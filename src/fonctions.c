@@ -453,7 +453,7 @@ int readDico(char* dico_name){
         }
     char line[INPUT_SIZE];
     char normalized_line[INPUT_SIZE];
-    int nbentry,i;
+    int nbentry,i,j,k;
     do{
         getFromScript(dico_file,line);
         string_standardise(line, normalized_line);
@@ -463,15 +463,53 @@ int readDico(char* dico_name){
     dico_data=calloc(nbentry,sizeof(dico_info));
     for ( i = 0; i < nbentry; ++i)
     {
+    	k=0;
     	do{
         	getFromScript(dico_file,line);
         	string_standardise(line, normalized_line);
     	}while (normalized_line[0]=='\0');
-
-
-    	//how to : 
-    	dico_data[i].type=i;
-    	strcpy(dico_data[i].name,"aze");
+    	char* word;
+    	//printf("%s\n",normalized_line );
+    	if(nextword(&word, normalized_line,&k)){
+    		strcpy(dico_data[i].name,word);
+    	//	printf("%s\n",dico_data[i].name );
+    	}
+    	else{ERROR_MSG("Error reading name in dictionnary for entry %d",i);}
+    	if((nextword(&word, normalized_line,&k))&& (isHexa(word))){
+    		dico_data[i].mask=strtol(word,NULL,16);}
+    	else{ERROR_MSG("Error reading mask in dictionnary for entry %d",i);}	
+		if((nextword(&word, normalized_line,&k))&& (isHexa(word))){
+		 		dico_data[i].instr=strtol(word,NULL,16);}
+		else{ERROR_MSG("Error reading instr in dictionnary for entry %d",i);}
+    	if((nextword(&word, normalized_line,&k))){
+    		if(!strcmp(word,"r")||!strcmp(word,"R")){
+		 		dico_data[i].type=0;
+    		}
+    		else if (!strcmp(word,"i")||!strcmp(word,"I"))
+    		{
+    			dico_data[i].type=1;
+    		}
+    		else if (!strcmp(word,"j")||!strcmp(word,"J"))
+    		{
+    			dico_data[i].type=1;
+    		}
+    		else{ERROR_MSG("Error reading type in dictionnary for entry %d",i);}
+		 }
+		else{ERROR_MSG("Error reading type in dictionnary for entry %d",i);}
+		if((nextword(&word, normalized_line,&k))&& (isDecimal(word))){
+		 		dico_data[i].nb_arg=strtol(word,NULL,10);}
+		else{ERROR_MSG("Error reading number of arg in dictionnary for entry %d",i);}
+		for (j = 0; j < dico_data[i].nb_arg; ++j)
+		{
+			if((nextword(&word, normalized_line,&k))){
+				//printf("%s,%d,%d\n",word,i,j);
+				dico_data[i].argname[j]=word;
+			}
+			else{ERROR_MSG("Error reading argument dictionnary for entry %d, argument %d",i,j);}
+		}
+    	if((nextword(&word, normalized_line,&k))){
+    		WARNING_MSG("Too much argument in dictionnary data for instruction %d",i);
+    	}
     }
 return 0;
 }
