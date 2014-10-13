@@ -25,13 +25,13 @@ char* argname[MAX_INSTR_ARG];
 }dico_info;
 
 typedef struct{
-uint opcode:6,rs:5,rt:5,rd:5,sa:5,function:6;
+uint function:6,sa:5,rd:5,rt:5,rs:5,opcode:6;
 } r_type;
 typedef struct{
-uint opcode:6,rs:5,rt:5,immediate:16;
+uint immediate:16,rt:5,rs:5,opcode:6;
 } i_type;
 typedef struct{
-uint opcode:6,target:26;
+uint target:26,opcode:6;
 } j_type;
 
 typedef union{

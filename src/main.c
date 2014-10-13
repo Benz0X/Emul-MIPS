@@ -18,7 +18,13 @@ int main(int argc, char *argv[])
     }
 
     readDico("dico.dico");
-    
+    loadELF("Tests/boucle.o",1);
+    printf("dictionnaire et fichier boucle.o chargé\n");
+    instruction current_instr;
+    getInstr(0x3000,&current_instr);
+    printf("R type : %X %X %X %X %X %X\nI type : %X %X %X %X\n",current_instr.r.opcode,current_instr.r.rs,current_instr.r.rt,current_instr.r.rd,current_instr.r.sa,current_instr.r.function,current_instr.i.opcode,current_instr.i.rs,current_instr.i.rt,current_instr.i.immediate );
+    getInstr(0x3008,&current_instr);
+    printf("R type : %X %X %X %X %X %X\nI type : %X %X %X %X\n",current_instr.r.opcode,current_instr.r.rs,current_instr.r.rt,current_instr.r.rd,current_instr.r.sa,current_instr.r.function,current_instr.i.opcode,current_instr.i.rs,current_instr.i.rt,current_instr.i.immediate );
     /*for (i = 0; i < 10; ++i)
     {
         printf("%s %X %X %d %d %s \n ",dico_data[i].name,dico_data[i].mask,dico_data[i].instr,dico_data[i].type,dico_data[i].nb_arg,dico_data[i].argname[0]);
@@ -111,6 +117,110 @@ int main(int argc, char *argv[])
 
 
         switch(res) { 	//
+        case 0:
+            break;
+        case 2:
+            /* sortie propre du programme */
+            if ( scriptmode==1 ) {
+                fclose( script_file );
+            }
+
+            exit(0);
+            break;
+        default:
+            /* erreur durant l'execution de la commande */
+            /* En mode "fichier" toute erreur implique la fin du programme ! */
+            if (scriptmode==1) {
+                fclose( script_file );
+                /*macro ERROR_MSG : message d'erreur puis fin de programme ! */
+                ERROR_MSG("ERREUR DETECTEE. Aborts");
+            }
+            break;
+        }
+
+        if( scriptmode==1 && feof(script_file) ) {
+            /* mode fichier, fin de fichier => sortie propre du programme */
+            DEBUG_MSG("FIN DE FICHIER");
+            fclose( script_file );
+            exit(0);
+        }
+
+    }
+    return 0;
+}
+
+
+
+
+int mainProjet(int argc, char *argv[])
+{
+
+    int i;
+
+    for (i=0; i < 32; ++i)
+    {
+        reg_mips[i]=-i;             //Initialisation des registres pour debug avant load
+    }
+
+    readDico("dico.dico");
+    
+
+    FILE *script_file = NULL;
+    scriptmode=0;                       //Mode interactif par defaut
+    if ( argc > 2 ) {
+        ERROR_MSG("Too much argument");
+        exit( -1 );
+    }
+    if (argc > 1)
+    {
+        script_file = fopen (argv[1], "r");
+        if (script_file != NULL)
+        {
+            scriptmode=1;               //Si on a un argument, et que l'ouverture du script est possible, on passe en mode script
+        }
+        else
+        {
+            //renvoi d'erreur
+            printf("erreur a l'ouverture du script\n");
+            exit(1);
+        }
+    }
+
+
+    while(1)                            //Boucle infinie de l'interpreteur
+    {
+        char input[INPUT_SIZE];             //Buffer
+        int res=-1;                     //Resultat d'execution
+        char normalized_input[INPUT_SIZE];
+        input[0]='\0';
+        normalized_input[0]='\0';
+        do {
+            if (scriptmode==1)
+            {
+                if (!(script_file==NULL)) {
+                    getFromScript(script_file,input);   //En mode script, on lit le fichier : cf fonctions.c
+                }
+                else {
+                    WARNING_MSG("No open script, use ./EXENAME SCRIPTNAME to run with a script");
+                    scriptmode=0;
+
+                }
+            }
+            else
+            {
+                //printf("execution en mode interactif, entrez une commande \n");
+                getFromUser(input);                 //En mode interactif, on lit stdin
+            }
+            string_standardise(input,normalized_input);     //On normalise l'entree - echappement, commentaires, etc
+        } while (normalized_input[0]=='\0'); //Jusqu'à une fin de chaine.
+
+
+        res=decrypt(normalized_input);               //On execute la commande : cf user_int.c
+
+
+
+
+        switch(res) {   //
         case 0:
             break;
         case 2:

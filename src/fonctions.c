@@ -9,6 +9,7 @@
 #include "fonctions.h"
 #include "common/notify.h"
 #include "emul.h"
+#include "common/bits.h"
 
 void getFromScript(FILE *fileptr,char * input)
 {
@@ -512,4 +513,13 @@ int readDico(char* dico_name){
     	}
     }
 return 0;
+}
+
+int getInstr(uint32_t adress, instruction* instr_ptr){
+	int32_t temp;
+	memRead(adress,1,&temp);
+	//FLIP_ENDIANNESS(temp);
+	memcpy(instr_ptr,&temp,4);
+	printf("content : %X\n",temp);
+	return 1;
 }

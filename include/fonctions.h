@@ -19,5 +19,6 @@ int writeReg(char * reg_name,int32_t value); //écrit sur un registre, renvoi -1
 
 int isReg(char* reg_name); //test si le nom ou numero de registre est correct et renvoie l'entier associe.
 int parseReg(int index, char* regname); //Prends un numéro de registre et associe regname au nom de registre adequat. renvoie -1 si index est innaproprié
-int readDico(char* dico_name);
+int readDico(char* dico_name); //Stocke les info du dico en mémoire dans la variable globale Dico.
+int getInstr(uint32_t adress, instruction* instr_ptr);//Recupere une instruction en memoire
 #endif
