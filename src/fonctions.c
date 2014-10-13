@@ -334,109 +334,109 @@ int isReg(char* reg_name) {					//Test si une chaine de caractere est un registr
 int parseReg(int index, char* reg_name) {			//Parse les registres a l'envers
     switch(index) {
     case 0 :
-        strcpy(reg_name,"zero");
+        strcpy(reg_name,"$zero");
         return 0;
     case 1 :
-        strcpy(reg_name,"at");
+        strcpy(reg_name,"$at");
         return 0;
     case 2 :
-        strcpy(reg_name,"v0");
+        strcpy(reg_name,"$v0");
         return 0;
     case 3 :
-        strcpy(reg_name,"v1");
+        strcpy(reg_name,"$v1");
         return 0;
     case 4 :
-        strcpy(reg_name,"a0");
+        strcpy(reg_name,"$a0");
         return 0;
     case 5 :
-        strcpy(reg_name,"a1");
+        strcpy(reg_name,"$a1");
         return 0;
     case 6 :
-        strcpy(reg_name,"a2");
+        strcpy(reg_name,"$a2");
         return 0;
     case 7 :
-        strcpy(reg_name,"a3");
+        strcpy(reg_name,"$a3");
         return 0;
     case 8 :
-        strcpy(reg_name,"t0");
+        strcpy(reg_name,"$t0");
         return 0;
     case 9 :
-        strcpy(reg_name,"t1");
+        strcpy(reg_name,"$t1");
         return 0;
     case 10 :
-        strcpy(reg_name,"t2");
+        strcpy(reg_name,"$t2");
         return 0;
     case 11 :
-        strcpy(reg_name,"t3");
+        strcpy(reg_name,"$t3");
         return 0;
     case 12 :
-        strcpy(reg_name,"t4");
+        strcpy(reg_name,"$t4");
         return 0;
     case 13 :
-        strcpy(reg_name,"t5");
+        strcpy(reg_name,"$t5");
         return 0;
     case 14 :
-        strcpy(reg_name,"t6");
+        strcpy(reg_name,"$t6");
         return 0;
     case 15 :
-        strcpy(reg_name,"t7");
+        strcpy(reg_name,"$t7");
         return 0;
     case 16 :
-        strcpy(reg_name,"s0");
+        strcpy(reg_name,"$s0");
         return 0;
     case 17 :
-        strcpy(reg_name,"s1");
+        strcpy(reg_name,"$s1");
         return 0;
     case 18 :
-        strcpy(reg_name,"s2");
+        strcpy(reg_name,"$s2");
         return 0;
     case 19 :
-        strcpy(reg_name,"s3");
+        strcpy(reg_name,"$s3");
         return 0;
     case 20 :
-        strcpy(reg_name,"s4");
+        strcpy(reg_name,"$s4");
         return 0;
     case 21 :
-        strcpy(reg_name,"s5");
+        strcpy(reg_name,"$s5");
         return 0;
     case 22 :
-        strcpy(reg_name,"s6");
+        strcpy(reg_name,"$s6");
         return 0;
     case 23 :
-        strcpy(reg_name,"s7");
+        strcpy(reg_name,"$s7");
         return 0;
     case 24 :
-        strcpy(reg_name,"t8");
+        strcpy(reg_name,"$t8");
         return 0;
     case 25 :
-        strcpy(reg_name,"t9");
+        strcpy(reg_name,"$t9");
         return 0;
     case 26 :
-        strcpy(reg_name,"k0");
+        strcpy(reg_name,"$k0");
         return 0;
     case 27 :
-        strcpy(reg_name,"k1");
+        strcpy(reg_name,"$k1");
         return 0;
     case 28 :
-        strcpy(reg_name,"gp");
+        strcpy(reg_name,"$gp");
         return 0;
     case 29 :
-        strcpy(reg_name,"sp");
+        strcpy(reg_name,"$sp");
         return 0;
     case 30 :
-        strcpy(reg_name,"fp");
+        strcpy(reg_name,"$fp");
         return 0;
     case 31 :
-        strcpy(reg_name,"ra");
+        strcpy(reg_name,"$ra");
         return 0;
     case 32 :
-        strcpy(reg_name,"HI");
+        strcpy(reg_name,"$HI");
         return 0;
     case 33 :
-        strcpy(reg_name,"LO");
+        strcpy(reg_name,"$LO");
         return 0;
     case 34 :
-        strcpy(reg_name,"PC");
+        strcpy(reg_name,"$PC");
         return 0;
 
     default :

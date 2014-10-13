@@ -94,8 +94,9 @@ int decrypt(char input [])
                                 if(nextword(&word,input,&n)) {
                                     if(isHexa(word)) {
                                         uint32_t adress2=strtol(word,NULL,16);
-                                        uint64_t size=adress2-adress1;
-                                        if(size<0) {
+                                        int size=adress2-adress1;
+                                        printf("%d\n",size );
+                                        if((int)size<0) {
                                             WARNING_MSG("Adress 2 must be superior to adress 1");
                                             return -1;
                                         }

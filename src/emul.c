@@ -133,7 +133,7 @@ int memRead(uint32_t start_addr,int type, int* value) {             //Lit la mem
     }
     int j=0;
 
-    while(start_addr>=memory->seg[j].start._32&& j <= memory->nseg+1)
+    while(start_addr>=memory->seg[j].start._32 && j < memory->nseg)
     {
         j++;
     }
@@ -172,7 +172,7 @@ int memWrite(uint32_t start_addr,int type, int32_t value) {         // Ecrit val
     }
     int j=0;
 
-    while(start_addr>=memory->seg[j].start._32)
+    while(start_addr>=memory->seg[j].start._32 && j < memory->nseg)
     {
         j++;
     }

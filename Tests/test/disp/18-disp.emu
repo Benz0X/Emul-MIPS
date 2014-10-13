@@ -3,5 +3,5 @@
 #TEST_COMMENT="disp mem"
 #-------
 load Tests/boucle.o
-disp reg mem
+disp mem reg
 exit
