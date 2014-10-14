@@ -97,6 +97,10 @@ int what_type(char * word) {				// Test si une chaine de caractere est numerique
             return -1;
         }
     }
+    if (S==DECIMAL_ZERO)
+    {
+    	S=DECIMAL;
+    }
     return S;
 }
 
@@ -464,8 +468,11 @@ int readDico(char* dico_name){
     dico_data=calloc(nbentry,sizeof(dico_info));
     for ( i = 0; i < nbentry; ++i)
     {
+
     	k=0;
     	do{
+    		if(feof(dico_file)){WARNING_MSG("End of dictionnary file reached, incorrect number of entry");
+	return -1;}
         	getFromScript(dico_file,line);
         	string_standardise(line, normalized_line);
     	}while (normalized_line[0]=='\0');

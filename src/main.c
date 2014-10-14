@@ -19,12 +19,13 @@ int main(int argc, char *argv[])
 
     readDico("dico.dico");
     loadELF("Tests/boucle.o",1);
-    printf("dictionnaire et fichier boucle.o chargé\n");
+    /*
     instruction current_instr;
     getInstr(0x3000,&current_instr);
     printf("R type : %X %X %X %X %X %X\nI type : %X %X %X %X\n",current_instr.r.opcode,current_instr.r.rs,current_instr.r.rt,current_instr.r.rd,current_instr.r.sa,current_instr.r.function,current_instr.i.opcode,current_instr.i.rs,current_instr.i.rt,current_instr.i.immediate );
     getInstr(0x3008,&current_instr);
     printf("R type : %X %X %X %X %X %X\nI type : %X %X %X %X\n",current_instr.r.opcode,current_instr.r.rs,current_instr.r.rt,current_instr.r.rd,current_instr.r.sa,current_instr.r.function,current_instr.i.opcode,current_instr.i.rs,current_instr.i.rt,current_instr.i.immediate );
+    */
     /*for (i = 0; i < 10; ++i)
     {
         printf("%s %X %X %d %d %s \n ",dico_data[i].name,dico_data[i].mask,dico_data[i].instr,dico_data[i].type,dico_data[i].nb_arg,dico_data[i].argname[0]);

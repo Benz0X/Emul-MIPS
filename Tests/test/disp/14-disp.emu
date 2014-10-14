@@ -1,5 +1,5 @@
 #-------
-#TEST_RETURN_CODE=fail        
+#TEST_RETURN_CODE=PASS        
 #TEST_COMMENT="disp mem"
 #-------
 load Tests/boucle.o

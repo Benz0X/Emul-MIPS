@@ -86,14 +86,14 @@ int decrypt(char input [])
                         INFO_MSG("Affichage de la map mémoire");
                         print_mem(memory);
                         return 0;
-                    } else if(isHexa(word)) {  //il faudrait vérifier qu'il est <0 et prendre en compte le décimal pour
+                    } else if(what_type(word)>1) {  //il faudrait vérifier qu'il est <0 et prendre en compte le décimal pour
                         //coller au cahier des charges mais faudrait utiliser un uint64
-                        uint32_t adress1=strtol(word,NULL,16);
+                        uint32_t adress1=strtol(word,NULL,0);
                         if(nextword(&word,input,&n)) {
                             if (!strcmp(word,":")) {
                                 if(nextword(&word,input,&n)) {
-                                    if(isHexa(word)) {
-                                        uint32_t adress2=strtol(word,NULL,16);
+                                    if(what_type(word)>1) {
+                                        uint32_t adress2=strtol(word,NULL,0);
                                         int size=adress2-adress1;
                                         printf("%d\n",size );
                                         if((int)size<0) {
