@@ -7,6 +7,9 @@
 #include "common/notify.h"
 #include "mem.h"
 #include "emul.h"
+#include "disasm.h"
+#include "common/bits.h"
+
 
 
 int scriptmode;
@@ -95,7 +98,6 @@ int decrypt(char input [])
                                     if(what_type(word)>1) {
                                         uint32_t adress2=strtol(word,NULL,0);
                                         int size=adress2-adress1;
-                                        printf("%d\n",size );
                                         if((int)size<0) {
                                             WARNING_MSG("Adress 2 must be superior to adress 1");
                                             return -1;
@@ -176,20 +178,58 @@ int decrypt(char input [])
 
 
     case DISASM:
-        INFO_MSG("Desassemblage");
-
         if(!nextword(&word,input,&n)) {
-            WARNING_MSG("Too few arguments. Syntax is :\t'disasm <plage>+ (uint:uint or uint+uint for a shift)'");
+            WARNING_MSG("Too few arguments. Syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+'");
+            return -1;
         } else {
-            //manque save word
-            if(nextword(&word,input,&n)) {
-                WARNING_MSG("Too much arguments. Syntax is :\t'disasm <plage>+ (uint:uint or uint+uint for a shift)'");
+            if(what_type(word)>1) {  //il faudrait vérifier qu'il est <0 et prendre en compte le décimal pour
+                //coller au cahier des charges mais faudrait utiliser un uint64
+                uint32_t adress1=strtol(word,NULL,0);
+                if(nextword(&word,input,&n)) {
+                    if (!strcmp(word,":")) {
+                        if(nextword(&word,input,&n)) {
+                            if(what_type(word)>1) {
+                                uint32_t adress2=strtol(word,NULL,0);
+                                int size=adress2-adress1;
+                                if((int)size<0) {
+                                    WARNING_MSG("Adress 2 must be superior to adress 1");
+                                    return -1;
+                                }
+                                INFO_MSG("Désassemblage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress2);
+                                disasm(adress1,size);
+                                return 0;
+                            }
+                            WARNING_MSG("Adresses must be hexadecimal");//en fait non faut que ce soit un uint c'est tout->a changer
+                            return -1;
+                        }
+                    }
+                    else if (!strcmp(word,"+")) {
+                        if(nextword(&word,input,&n)) {
+                            if(isDecimal(word)) {
+                                uint32_t size=strtol(word,NULL,10);
+                                INFO_MSG("Désassemblage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress1+size);
+                                disasm(adress1,size);
+                                return 0;
+                            }
+                            WARNING_MSG("Range must be decimal");
+                            return -1;
+                        }
+                    }
+                    WARNING_MSG("Syntax Error, syntax is :\n\t'Disasm <plage>+ (uint:uint) or (uint+uint)");
+                    return -1;
+
+                } else {
+                    WARNING_MSG("Second argument of 'disasm' must be : \t<plage>+ (uint:uint) or (uint+uint)");
+                    return -1;
+                }
             } else {
-                //manque isplage et le desassemblage
+                WARNING_MSG("Second argument of 'disasm' must be : \t<plage>+ (uint:uint) or (uint+uint)");
+                return -1;
             }
 
-        }
 
+
+        }
         break;
 
     case SET:

@@ -464,7 +464,7 @@ int readDico(char* dico_name){
         string_standardise(line, normalized_line);
     }while (normalized_line[0]=='\0');
 //on obtient le nombre d'entrée du dico
-    sscanf(line, "%d",&nbentry);
+    sscanf(line, "%d",&nbentry); //retour d'erreur ?
     dico_data=calloc(nbentry,sizeof(dico_info));
     for ( i = 0; i < nbentry; ++i)
     {
@@ -527,6 +527,6 @@ int getInstr(uint32_t adress, instruction* instr_ptr){
 	memRead(adress,1,&temp);
 	//FLIP_ENDIANNESS(temp);
 	memcpy(instr_ptr,&temp,4);
-	printf("content : %X\n",temp);
+	//printf("content : %X\n",temp);
 	return 1;
 }
