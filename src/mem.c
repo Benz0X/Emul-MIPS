@@ -31,7 +31,7 @@ char *strdup( const char * );
 
 mem  init_mem( uint32_t nseg ) {
 
-    mem vm = calloc( nseg, sizeof( *vm ) );
+    mem vm = calloc( nseg+3, sizeof( *vm ) );
 
     if ( NULL == vm ) {
         WARNING_MSG( "Unable to allocate host memory for vmem" );
@@ -40,7 +40,7 @@ mem  init_mem( uint32_t nseg ) {
     else {
         uint i;
 
-        vm->seg = calloc( nseg, sizeof( *(vm->seg) ) );
+        vm->seg = calloc( nseg+3, sizeof( *(vm->seg) ) );
         if ( NULL == vm->seg ) {
             WARNING_MSG( "Unable to allocate host memory for vmem segment" );
             free( vm );
@@ -58,7 +58,31 @@ mem  init_mem( uint32_t nseg ) {
             vm->seg[i].attr      = 0x0;
         }
 
-        vm->nseg = nseg;
+	//Definition de lib
+		vm->seg[i].name=calloc(5, sizeof(int));
+		strcpy(vm->seg[i].name,"[lib]");
+		vm->seg[i].start._32 = 0xFF7FD000;
+		vm->seg[i].size._32  = 0x00002000;
+		vm->seg[i].content   = calloc(1, vm->seg[i].size._64);
+		vm->seg[i].attr      = 0x00002002; //32 bit RW
+	//Definition de stack
+		vm->seg[i+1].name=calloc(7, sizeof(int));
+		strcpy(vm->seg[i+1].name,"[stack]");
+		vm->seg[i+1].start._64 = 0xFF7FF000;
+		vm->seg[i+1].size._64  = 0x00800000;
+		vm->seg[i+1].content   = calloc(1, vm->seg[i+1].size._64);
+		vm->seg[i+1].attr      = 0x00002002;
+	//Definition de vsyscall
+		vm->seg[i+2].name=calloc(10, sizeof(int));
+		strcpy(vm->seg[i+2].name,"[vsyscall]");
+		vm->seg[i+2].start._64 = 0xFFFFF000;
+		vm->seg[i+2].size._64  = 0x00000FFF;
+		vm->seg[i+2].content   = calloc(1, vm->seg[i+2].size._64);
+		vm->seg[i+2].attr      = 0x00002003;
+
+
+
+        vm->nseg = nseg+3;
     }
 
     return vm;

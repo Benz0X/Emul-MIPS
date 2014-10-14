@@ -21,14 +21,14 @@ uint32_t mask;
 uint32_t instr;
 short type;
 short nb_arg;
-char* argname[MAX_INSTR_ARG];
+char argname[MAX_NAME_SIZE][MAX_INSTR_ARG];
 }dico_info;
 
 typedef struct{
 uint function:6,sa:5,rd:5,rt:5,rs:5,opcode:6;
 } r_type;
 typedef struct{
-uint immediate:16,rt:5,rs:5,opcode:6;
+int immediate:16; uint rt:5,rs:5,opcode:6;
 } i_type;
 typedef struct{
 uint target:26,opcode:6;
@@ -60,6 +60,7 @@ extern mem memory;
 extern stab symtab;
 extern int scriptmode;
 extern dico_info* dico_data;
+extern int nbinstr;
 
 
 #endif

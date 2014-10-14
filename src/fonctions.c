@@ -1,8 +1,8 @@
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include "define.h"
 #include "user_int.h"
@@ -10,6 +10,8 @@
 #include "common/notify.h"
 #include "emul.h"
 #include "common/bits.h"
+
+int nbinstr=0;
 
 void getFromScript(FILE *fileptr,char * input)
 {
@@ -458,15 +460,15 @@ int readDico(char* dico_name){
         }
     char line[INPUT_SIZE];
     char normalized_line[INPUT_SIZE];
-    int nbentry,i,j,k;
+    int i,j,k;
     do{
         getFromScript(dico_file,line);
         string_standardise(line, normalized_line);
     }while (normalized_line[0]=='\0');
 //on obtient le nombre d'entrée du dico
-    sscanf(line, "%d",&nbentry); //retour d'erreur ?
-    dico_data=calloc(nbentry,sizeof(dico_info));
-    for ( i = 0; i < nbentry; ++i)
+    sscanf(line, "%d",&nbinstr); //retour d'erreur ?
+    dico_data=calloc(nbinstr,sizeof(dico_info));
+    for ( i = 0; i < nbinstr; ++i)
     {
 
     	k=0;
@@ -511,7 +513,8 @@ int readDico(char* dico_name){
 		{
 			if((nextword(&word, normalized_line,&k))){
 				//printf("%s,%d,%d\n",word,i,j);
-				dico_data[i].argname[j]=word;
+				
+				strcpy(dico_data[i].argname[j],word);
 			}
 			else{ERROR_MSG("Error reading argument dictionnary for entry %d, argument %d",i,j);}
 		}
