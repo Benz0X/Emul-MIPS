@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     }
 
     readDico("dico.dico");
-    loadELF("../test_all.o",1);
+    loadELF("Tests/test_all.o",1);
     /*for (i = 0; i < nbinstr; ++i)
     {
         printf("%s %X\n",dico_data[i].name,dico_data[i].mask );

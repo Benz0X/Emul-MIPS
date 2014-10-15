@@ -126,12 +126,12 @@ int disasm(uint32_t start_addr,uint32_t size) {
                     if(!strcmp("RS",dico_data[dico_entry].argname[0])) {
                         char regname1[MAX_NAME_SIZE];
                         parseReg(current_instr.r.rs,regname1);
-                        printf("%s",regname1);
+                        printf(" %s",regname1);
                     }
                     else if(!strcmp("RD",dico_data[dico_entry].argname[0])) {
                         char regname1[MAX_NAME_SIZE];
                         parseReg(current_instr.r.rd,regname1);
-                        printf("%s",regname1);
+                        printf(" %s",regname1);
                     }
                     else {
                         WARNING_MSG("Unknown arg for R command");
