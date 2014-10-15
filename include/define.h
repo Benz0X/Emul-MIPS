@@ -21,7 +21,7 @@ uint32_t mask;
 uint32_t instr;
 short type;
 short nb_arg;
-char argname[MAX_NAME_SIZE][MAX_INSTR_ARG];
+char argname[MAX_INSTR_ARG][MAX_NAME_SIZE];
 }dico_info;
 
 typedef struct{

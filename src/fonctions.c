@@ -501,7 +501,7 @@ int readDico(char* dico_name){
     		}
     		else if (!strcmp(word,"j")||!strcmp(word,"J"))
     		{
-    			dico_data[i].type=1;
+    			dico_data[i].type=2;
     		}
     		else{ERROR_MSG("Error reading type in dictionnary for entry %d",i);}
 		 }
@@ -522,6 +522,24 @@ int readDico(char* dico_name){
     		WARNING_MSG("Too much argument in dictionnary data for instruction %d",i);
     	}
     }
+    //tri dico pour éviter les mauvaises combi mask/instr,
+    // la flemme d'implémenter un tri fusion
+    i=0;
+    dico_info temp;
+    while(i<nbinstr){
+        if (dico_data[i].mask<dico_data[i+1].mask)
+        {
+            memcpy(&temp,&dico_data[i+1],sizeof(dico_info));
+            memcpy(&dico_data[i+1],&dico_data[i],sizeof(dico_info));
+            memcpy(&dico_data[i],&temp,sizeof(dico_info));
+            i=0;
+        }
+        else i++;
+    }
+
+
+
+
 return 0;
 }
 

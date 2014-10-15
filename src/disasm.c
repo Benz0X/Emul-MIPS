@@ -42,6 +42,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
             if (dico_entry>=nbinstr)
             {
                 WARNING_MSG("invalid instruction at adress %X",current_addr);
+                printf("\n");
                 return -1;
             }
             else printf("%s",dico_data[dico_entry].name );
@@ -79,7 +80,8 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
                     }
                     else {
-                        WARNING_MSG("Unknown command");
+                        WARNING_MSG("Unknown arg 1-3 for R command");
+                        printf("\n");
                         return -1;
                     }
                     break;
@@ -113,7 +115,8 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
                     }
                     else {
-                        WARNING_MSG("Unknown command");
+                        WARNING_MSG("Unknown arg 1 or 2 for R command");
+                        printf("\n");
                         return -1;
                     }
 
@@ -131,7 +134,8 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         printf("%s",regname1);
                     }
                     else {
-                        WARNING_MSG("Unknown command");
+                        WARNING_MSG("Unknown arg for R command");
+                        printf("\n");
                         return -1;
                     }
 
@@ -142,11 +146,10 @@ int disasm(uint32_t start_addr,uint32_t size) {
                     break;
 
                 default:
-                    WARNING_MSG("Unknown command");
+                    WARNING_MSG("Unknown R command");
+                    printf("\n");
                     return -1;
                     break;
-
-
                 }
                 break;
 
@@ -184,27 +187,37 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
                     }
                     else {
-                        WARNING_MSG("Unknown command");
+                        WARNING_MSG("Unknown arg 1-3 for I command : %s %s %s", dico_data[dico_entry].argname[0],dico_data[dico_entry].argname[1],dico_data[dico_entry].argname[2]);
+                        printf("\n");
                         return -1;
                     }
 
                     break;
                 case 2:
-                    if(!strcmp("RS",dico_data[dico_entry].argname[0]) && !strcmp("OFFSET",dico_data[dico_entry].argname[2])) {
+                    if(!strcmp("RS",dico_data[dico_entry].argname[0]) && !strcmp("OFFSET",dico_data[dico_entry].argname[1])) {
                         char regname1[MAX_NAME_SIZE];
                         parseReg(current_instr.i.rs,regname1);
 
                         printf(" %s, %d",regname1,current_instr.i.immediate);
 
                     }
+                    else if(!strcmp("RT",dico_data[dico_entry].argname[0]) && !strcmp("IM",dico_data[dico_entry].argname[1])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.i.rt,regname1);
+
+                        printf(" %s, %d",regname1,current_instr.i.immediate);
+
+                    }
                     else {
-                        WARNING_MSG("Unknown command");
+                        WARNING_MSG("Unknown arg 1 or 2 for I command");
+                        printf("\n");
                         return -1;
                     }
 
                     break;
                 default:
-                    WARNING_MSG("Unknown command");
+                    WARNING_MSG("Wrong arg number for I command");
+                    printf("\n");
                     return -1;
                     break;
 
@@ -216,10 +229,11 @@ int disasm(uint32_t start_addr,uint32_t size) {
                 //type J
                 if(!strcmp("TARGET",dico_data[dico_entry].argname[0])) {
 
-                    printf("%d",current_instr.j.target);
+                    printf(" %d",current_instr.j.target);
                 }
                 else {
-                    WARNING_MSG("Unknown command");
+                    WARNING_MSG("Unknown J command");
+                    printf("\n");
                     return -1;
                 }
 
@@ -227,7 +241,8 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
             default:
 
-                WARNING_MSG("Unknown command");
+                WARNING_MSG("Unknown type");
+                printf("\n");
                 return -1;
                 break;
 
