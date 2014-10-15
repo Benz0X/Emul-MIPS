@@ -5,6 +5,7 @@
 *.so
 *.script
 *.cbp
+*.orig
 bin
 obj
 projet.depend
