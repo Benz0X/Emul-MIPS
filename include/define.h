@@ -8,6 +8,7 @@
 #define PROMPT_STRING "EmulMips : > "
 #define MAX_INSTR_ARG 3
 #define MAX_NAME_SIZE 10
+
 typedef struct {
 	uint b4:8,
 	b3:8,

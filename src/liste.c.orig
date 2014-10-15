@@ -1,0 +1,33 @@
+#include "liste.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+liste creer_liste(void) {
+    return NULL;
+}
+
+int est_vide(liste L) {
+    return !L;
+}
+
+liste ajout_tete(ELEMENT e, Llste L){
+   Liste p=(Liste) calloc(1,sizeof(*p));
+    if (p==NULL) return NULL;
+    p->val=strdup(e);
+    p->suiv=L;
+    return p;
+}
+
+liste rech(ELEMENT e, liste L){ 
+  liste p=L;
+    while(!est_vide(p)&&(strcasecmp(p->val,e)!=0)) p=p->suiv;
+    return p;
+}
+
+void visualiser(liste L) {
+    liste p;
+    for(p=L; !est_vide(p); p=p->suiv) {
+        printf("%d \t",p->val);
+    }
+    puts("");
+}
