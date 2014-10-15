@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "fonctions.h"
+#include "liste.h"
 #include "common/notify.h"
 #include "emul.h"
 #include "user_int.h"
@@ -62,7 +63,15 @@ int main(int argc, char *argv[])
     */
 
 
-
+//Tests liste
+  liste L=NULL;
+  ajout_tete((element)4,L);
+  ajout_tete((element)5,L);
+  //ajout_tete(6,L);
+  //ajout_tete(10,L);
+  visualiser(L);
+  //ajout_tri(7,L);
+  //visualiser(L);
 
 
 
