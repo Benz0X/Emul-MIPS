@@ -45,8 +45,20 @@ int disasm(uint32_t start_addr,uint32_t size) {
                 printf("\n");
                 return -1;
             }
-            else printf("%s",dico_data[dico_entry].name );
+            else {
+            	int k;
+            	for (k = 1; k < symtab.size; ++k)
+            	{
+            		if(((current_addr-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)){
+            			//printf("curr-start= %d size : %d %s\n", current_addr-memory->seg[j-1].start._32,symtab.sym[k].size,symtab.sym[k].name);
+            			printf("%s: ",symtab.sym[k].name);
+            		}
+            	}
+            	
 
+
+            	printf("%s",dico_data[dico_entry].name );
+            }
             switch (dico_data[dico_entry].type) {
 
             case 0: 									//R TYPE

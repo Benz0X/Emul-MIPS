@@ -6,6 +6,7 @@
 #include "common/notify.h"
 #include "emul.h"
 #include "user_int.h"
+#include "elf/syms.h"
 
 
 int main(int argc, char *argv[])
@@ -19,7 +20,14 @@ int main(int argc, char *argv[])
     }
 
     readDico("dico.dico");
-    loadELF("Tests/test_all.o",1);
+    loadELF("Tests/calc_puiss.o",1);
+/*
+    WARNING_MSG("print mem");
+    print_mem(memory);
+    WARNING_MSG("stab32_print");
+    stab32_print(symtab);
+    WARNING_MSG("sym32_print");
+    //sym32_print(symtab);*/
     /*for (i = 0; i < nbinstr; ++i)
     {
         printf("%s %X\n",dico_data[i].name,dico_data[i].mask );
