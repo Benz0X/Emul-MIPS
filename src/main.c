@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     WARNING_MSG("print mem");
     print_mem(memory);
     WARNING_MSG("stab32_print");*/
-    stab32_print(symtab);
+    //stab32_print(symtab);
     //WARNING_MSG("sym32_print");
     //sym32_print(symtab);*/
     /*for (i = 0; i < nbinstr; ++i)
