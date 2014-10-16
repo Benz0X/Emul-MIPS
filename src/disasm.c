@@ -14,7 +14,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
     instruction current_instr;
     uint32_t instr_value;
 
-    int j;
+    int j,k,l=0;
 
     while (i<size) {
         j=0;
@@ -46,12 +46,12 @@ int disasm(uint32_t start_addr,uint32_t size) {
                 return -1;
             }
             else {
-            	int k;
             	for (k = 1; k < symtab.size; ++k)
             	{
             		if(((current_addr-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)){
             			//printf("curr-start= %d size : %d %s\n", current_addr-memory->seg[j-1].start._32,symtab.sym[k].size,symtab.sym[k].name);
             			printf("%s: ",symtab.sym[k].name);
+            			break;
             		}
             	}
             	
@@ -186,8 +186,18 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         char regname2[MAX_NAME_SIZE];
                         parseReg(current_instr.i.rt,regname2);
 
-                        printf(" %s, %s, %d",regname1,regname2,current_instr.i.immediate);
-
+                        for (k = 1; k < symtab.size; ++k){
+			            		if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)){
+			            			printf(" %s, %s, %s",regname1,regname2,symtab.sym[k].name);
+			            			l=1;
+			            			break;
+			            	}
+			            }
+			            if (l!=1)
+			            {
+			            	printf(" %s, %s, %d",regname1,regname2,current_instr.i.immediate);
+			            }
+			            l=0;
                     }
                     else if(!strcmp("BASE",dico_data[dico_entry].argname[0]) && !strcmp("RT",dico_data[dico_entry].argname[1]) && !strcmp("OFFSET",dico_data[dico_entry].argname[2])) {
                         char regname1[MAX_NAME_SIZE];
@@ -210,7 +220,18 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         char regname1[MAX_NAME_SIZE];
                         parseReg(current_instr.i.rs,regname1);
 
-                        printf(" %s, %d",regname1,current_instr.i.immediate);
+                        for (k = 1; k < symtab.size; ++k){
+			            		if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)){
+			            			printf(" %s, %s",regname1,symtab.sym[k].name);
+			            			l=1;
+			            			break;
+			            	}
+			            }
+			            if (l!=1)
+			            {
+			            	printf(" %s, %d",regname1,current_instr.i.immediate);
+			            }
+			            l=0;
 
                     }
                     else if(!strcmp("RT",dico_data[dico_entry].argname[0]) && !strcmp("IM",dico_data[dico_entry].argname[1])) {
@@ -241,7 +262,22 @@ int disasm(uint32_t start_addr,uint32_t size) {
                 //type J
                 if(!strcmp("TARGET",dico_data[dico_entry].argname[0])) {
 
-                    printf(" %d",current_instr.j.target);
+
+
+                	for (k = 1; k < symtab.size; ++k){
+			            		if(((4*current_instr.j.target)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)){
+			            			printf(" %s",symtab.sym[k].name);
+			            			l=1;
+			            			break;
+			            	}
+			            }
+			            if (l!=1)
+			            {
+			            	printf(" %d",current_instr.j.target);
+			            }
+			            l=0;
+
+                    
                 }
                 else {
                     WARNING_MSG("Unknown J command");

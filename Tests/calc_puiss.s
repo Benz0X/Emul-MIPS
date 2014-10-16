@@ -1,5 +1,6 @@
 .set noreorder
 .text
+
 debut :
 addi $a0,$zero,15 # on met 15 dans le 1er argument
 addi $a1,$zero, 3 # on met 3 dans le 2e argument
@@ -19,3 +20,7 @@ mflo $v0 # on stocke le r´esultat dans $v0
 sortie:
 jr $31 # on sort de la fonction
 fin:
+
+
+.data 
+X: .byte 4
