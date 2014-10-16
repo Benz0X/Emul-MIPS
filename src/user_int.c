@@ -9,7 +9,7 @@
 #include "emul.h"
 #include "disasm.h"
 #include "common/bits.h"
-
+#include <ctype.h>
 
 
 int scriptmode;
@@ -112,13 +112,13 @@ int decrypt(char input [])
                             }
                             else if (!strcmp(word,"+")) {
                                 if(nextword(&word,input,&n)) {
-                                    if(isDecimal(word)) {
+                                    if(isDecimal(word)&& isdigit(word[0])) {
                                         uint32_t size=strtol(word,NULL,10);
                                         INFO_MSG("Affichage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress1+size);
                                         dispmemPlage(adress1,size);
                                         return 0;
                                     }
-                                    WARNING_MSG("Range must be decimal");
+                                    WARNING_MSG("Range must be >0 decimal");
                                     return -1;
                                 }
                             }
@@ -205,7 +205,7 @@ int decrypt(char input [])
                     }
                     else if (!strcmp(word,"+")) {
                         if(nextword(&word,input,&n)) {
-                            if(isDecimal(word)) {
+                            if(isDecimal(word)&& isdigit(word[0])) {
                                 uint32_t size=strtol(word,NULL,10);
                                 INFO_MSG("Désassemblage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress1+size);
                                 disasm(adress1,size);
