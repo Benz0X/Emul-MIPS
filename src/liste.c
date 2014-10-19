@@ -46,6 +46,23 @@ list insert(element e, list L) {
     return L;
 }
 
+list del(element e, list L) {
+    list p; //parcours de L
+
+    if(!L)return L;
+
+    if(L->val==e){
+      p =L->suiv;
+      free(L);
+      p=del(e,p);
+      return p;
+    }else{
+      L->suiv=del(e,L->suiv);
+      return L;
+    }
+}
+
+
 list present(element e, list L) {
     list p=L;
     while(!empty(p)&&(p->val!=e)) p=p->suiv;
@@ -55,7 +72,7 @@ list present(element e, list L) {
 void printList(list L) {
     list p=L;
     for(p=L; !empty(p); p=p->suiv) {
-        printf("%d \t",p->val);
+        printf("0x%8.8X \t",p->val);
     }
     puts("");
 }

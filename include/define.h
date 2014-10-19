@@ -1,6 +1,7 @@
 #ifndef _define_h
 #define _define_h
 #include "mem.h"
+#include "liste.h"
 #include "elf/elf.h"
 #include "elf/syms.h"
 
@@ -62,6 +63,7 @@ extern stab symtab;
 extern int scriptmode;
 extern dico_info* dico_data;
 extern int nbinstr;
+extern list breaklist; //Liste des points d'arrets
 
 
 #endif

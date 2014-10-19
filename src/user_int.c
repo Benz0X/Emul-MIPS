@@ -1,6 +1,7 @@
 #include "define.h"
 #include "user_int.h"
 #include "fonctions.h"
+#include "liste.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,8 +12,9 @@
 #include "common/bits.h"
 #include <ctype.h>
 
-
+//Declaration des variables globales
 int scriptmode;
+list breaklist;                     //Initialisation de la liste de points d'arret
 
 /* syntaxe strtok
 
@@ -511,13 +513,68 @@ int decrypt(char input [])
         return 0;
         break;
     case RUN:
-        printf("%d \n",current_cmd);
+        
         break;
     case STEP:
         printf("%d \n",current_cmd);
         break;
+
     case BREAK:
-        printf("%d \n",current_cmd);
+        if(!nextword(&word,input,&n)) {
+            WARNING_MSG("Too few arguments. Syntax is :\n\t'break add <adress>+'  or\n\t'break del <adress>+|all'   or\n\t'break list'");
+            return -1;
+        } else {
+            if(strcmp(word,"list")==0) {
+                printf("Liste des points d'arrêt :\n");
+                printList(breaklist);
+                return 0;
+            }else if(strcmp(word,"del")==0){
+                while(nextword(&word,input,&n)) {
+                    if(strcmp(word,"all")==0) {
+                        breaklist=NULL;
+                        return 0;
+                    } else {
+                        if (isHexa(word)){
+                        
+                            uint32_t adress=strtol(word,NULL,0);
+                            if(1){ //                             Test de seg .text a implementer
+                                breaklist=del(adress,breaklist);    //suppression du breakpoint
+                            }else{
+                                WARNING_MSG("Adress %d can't be breakpoint, segment not allowed",adress);
+                                return -1;
+                            }
+
+                        }else{
+                            WARNING_MSG("Adress %s not valid.",word); 
+                            return -1;
+                        }
+                    }
+                }
+                return 0;
+            }else if(strcmp(word,"add")==0){
+                while(nextword(&word,input,&n)) {
+
+                    if (isHexa(word)){
+                        
+                        uint32_t adress=strtol(word,NULL,0);
+                        if(1){ //                             Test de seg .text a implementer
+                            if(empty(present(adress,breaklist))) breaklist=insert(adress,breaklist); //Si le point n'existe pas, on le rajoute
+                        }else{
+                            WARNING_MSG("Adress %d can't be breakpoint, segment not allowed",adress);
+                            return -1;
+                        }
+
+                    }else{
+                        WARNING_MSG("Adress %s not valid",word);
+                        return -1; 
+                    }
+                }
+                return 0;
+            }else{
+                WARNING_MSG("Syntax is :\n\t'break add <adress>+'  or\n\t'break del <adress>+|all'   or\n\t'break list'");
+                return -1;
+            }
+        }
         break;
     case UNKNOWN:
         WARNING_MSG("Unknown command : %s",word);

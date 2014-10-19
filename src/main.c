@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
 
     FILE *script_file = NULL;
     scriptmode=0;						//Mode interactif par defaut
+
     if ( argc > 2 ) {
         ERROR_MSG("Too much argument");
         exit( -1 );
