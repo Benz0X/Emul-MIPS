@@ -35,13 +35,13 @@ OR $t1, $t3,$t2
 ORI $t1, $zero,123
 SB $t1, 20($zero)
 #SEB $t1, $t2
-#SLL $zero, $zero, $zero l'instr' a l'air d'être 0x00000004
+SLL $zero, $zero, $zero #l'instr' a l'air d'être 0x00000004
 SLT $t1, $t2, $t3
 SLTI $t1, $t2, 321
 SLTIU $t1, $t2, 321
 SLTU $t1, $t2, $t3
-#SRA  $t1, $t2, $t3 l'instr' a l'air d'etre 0x0000007
-#SRL  $t1, $t2, $t3 0x00000006
+SRA  $t1, $t2, $t3 #l'instr' a l'air d'etre 0x0000007
+SRL  $t1, $t2, $t3 #0x00000006
 SUB $t1, $t2, $t3
 SUBU $t1, $t2, $t3
 SW $t1, 20($zero)
