@@ -3,44 +3,58 @@
 #include <stdlib.h>
 
 
-liste creer_liste(void) {
+list create(void) {
     return NULL;
 }
 
-int est_vide(liste L) {
+int empty(list L) {
     return !L;
 }
 
-liste ajout_tete(element e, liste L) {
-    liste p=(liste) calloc(1,sizeof(*p));
+list push(element e, list L) {
+    list p=(list) calloc(1,sizeof(*p));
     if (p==NULL) return NULL;
     p->val=e;
     p->suiv=L; 
     return p;
 }
 
-liste ajout_tri(element e, liste L) {
-    liste res=L; // pointeur de debut de chaine
-    liste k=L; //parcours de L
-    liste p=(liste) calloc(1,sizeof(*p)); //nouveau maillon
+list pop(list L){
+  if (!empty(L)) {
+    list p;
+    p=L->suiv;
+    free(L);
+    return p;
+  }
+  else return NULL; 
+}
+
+list insert(element e, list L) {
+
+    list k=L; //parcours de L
+    list p=(list) calloc(1,sizeof(*p)); //nouveau maillon
     if (p==NULL) return NULL;
-    while(!est_vide(k)&&(k->val<e)) k=k->suiv;
+
+    if(empty(k)||e<k->val){
+      return push(e,L);
+    }
+    for(k=L; !empty(k->suiv)&&(e>k->suiv->val); k=k->suiv);
     p->val=e;
     p->suiv=k->suiv;
     k->suiv=p;
-    
-    return res;
+
+    return L;
 }
 
-liste rech(element e, liste L) {
-    liste p=L;
-    while(!est_vide(p)&&(p->val!=e)) p=p->suiv;
+list present(element e, list L) {
+    list p=L;
+    while(!empty(p)&&(p->val!=e)) p=p->suiv;
     return p;
 }
 
-void visualiser(liste L) {
-    liste p=L;
-    for(p=L; !est_vide(p); p=p->suiv) {
+void printList(list L) {
+    list p=L;
+    for(p=L; !empty(p); p=p->suiv) {
         printf("%d \t",p->val);
     }
     puts("");

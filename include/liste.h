@@ -7,13 +7,15 @@ struct cellule
     element val;
     struct cellule *suiv;
 };
-typedef struct cellule* liste;
+typedef struct cellule* list;
 
 
-liste creer_liste(void);
-int est_vide(liste L);
-liste rech(element e, liste L);
-liste ajout_tete(element e, liste L);
-void visualiser(liste L);
+list create(void);
+int empty(list L);
+list present(element e, list L);
+list push(element e, list L);
+list pop(list L);
+list insert(element e, list L);
+void printList(list L);
 
 #endif

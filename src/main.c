@@ -72,15 +72,15 @@ int main(int argc, char *argv[])
     */
 
 
-//Tests liste
-  liste L=NULL;
-  ajout_tete((element)4,L);
-  ajout_tete((element)5,L);
-  //ajout_tete(6,L);
-  //ajout_tete(10,L);
-  visualiser(L);
-  //ajout_tri(7,L);
-  //visualiser(L);
+//Tests listes
+/*
+  list L=NULL;
+  L=insert(4,L);printList(L);
+  L=insert(6,L);printList(L);
+  L=insert(5,L);printList(L);
+  L=insert(10,L);printList(L);
+  L=insert(7,L);printList(L);
+*/
 
 
 
