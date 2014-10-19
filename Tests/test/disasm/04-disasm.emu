@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=PASS        
+#TEST_COMMENT="disasm"
+#-------
+load Tests/test_all.o
+disasm 123456+10
+exit

@@ -1,0 +1,14 @@
+#-------
+#TEST_RETURN_CODE=PASS
+#TEST_COMMENT="SEB $t1, $t3 - handwritten and disasmed"
+#-------
+load Tests/test_all.o
+set mem word 0x3000 0x7C0B4C20
+		
+#correspond a l'instruction 011111 00000 01011 01001 10000 100000 
+#soit SEB $t1, $t3
+
+disp mem 0x3000+4
+disasm 0x3000+1
+
+exit

@@ -174,6 +174,8 @@ void string_standardise( char* in, char* out ) {
         else if (in[i]=='#') {
             out[j++]='\0';
         }
+
+
         /*remove nextline*/
         else if (in[i]=='\n') {
             out[j++]='\0';
@@ -181,6 +183,8 @@ void string_standardise( char* in, char* out ) {
 
         /* translate tabs into white spaces*/
         else if (isblank((int) in[i])) out[j++]=' ';
+
+        
         else out[j++]=in[i];
     }
     out[j++]='\0';

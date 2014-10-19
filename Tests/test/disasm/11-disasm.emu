@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=FAIL        
+#TEST_COMMENT="unknown instr"
+#-------
+load Tests/bugs2.o
+disasm 0x3000+30
+exit

@@ -10,23 +10,23 @@
 
 
 
-int main(int argc, char *argv[])
+int mainTest(int argc, char *argv[])
 {
 
     int i;
 
     for (i=0; i < 32; ++i)
     {
-        reg_mips[i]=-i;				//Initialisation des registres pour debug avant load
+        reg_mips[i]=-i;             //Initialisation des registres pour debug avant load
     }
 
     readDico("dico.dico");
-    loadELF("Tests/calc_puiss.o",1);
+    loadELF("Tests/programmes/test.o",1);
 /*
     WARNING_MSG("print mem");
     print_mem(memory);
     WARNING_MSG("stab32_print");*/
-    //stab32_print(symtab);
+    stab32_print(symtab);
     //WARNING_MSG("sym32_print");
     //sym32_print(symtab);*/
     /*for (i = 0; i < nbinstr; ++i)
@@ -71,22 +71,21 @@ int main(int argc, char *argv[])
         }
     */
 
-
-//Tests listes
 /*
-  list L=NULL;
-  L=insert(4,L);printList(L);
-  L=insert(6,L);printList(L);
-  L=insert(5,L);printList(L);
-  L=insert(10,L);printList(L);
-  L=insert(7,L);printList(L);
+//Tests liste
+  liste L=NULL;
+  ajout_tete((element)4,L);
+  ajout_tete((element)5,L);
+  //ajout_tete(6,L);
+  //ajout_tete(10,L);
+  visualiser(L);
+  //ajout_tri(7,L);
+  //visualiser(L);
+
 */
 
-
-
     FILE *script_file = NULL;
-    scriptmode=0;						//Mode interactif par defaut
-
+    scriptmode=0;                       //Mode interactif par defaut
     if ( argc > 2 ) {
         ERROR_MSG("Too much argument");
         exit( -1 );
@@ -96,7 +95,7 @@ int main(int argc, char *argv[])
         script_file = fopen (argv[1], "r");
         if (script_file != NULL)
         {
-            scriptmode=1;				//Si on a un argument, et que l'ouverture du script est possible, on passe en mode script
+            scriptmode=1;               //Si on a un argument, et que l'ouverture du script est possible, on passe en mode script
         }
         else
         {
@@ -107,10 +106,10 @@ int main(int argc, char *argv[])
     }
 
 
-    while(1)							//Boucle infinie de l'interpreteur
+    while(1)                            //Boucle infinie de l'interpreteur
     {
-        char input[INPUT_SIZE];				//Buffer
-        int res=-1;						//Resultat d'execution
+        char input[INPUT_SIZE];             //Buffer
+        int res=-1;                     //Resultat d'execution
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
         normalized_input[0]='\0';
@@ -118,7 +117,7 @@ int main(int argc, char *argv[])
             if (scriptmode==1)
             {
                 if (!(script_file==NULL)) {
-                    getFromScript(script_file,input);	//En mode script, on lit le fichier : cf fonctions.c
+                    getFromScript(script_file,input);   //En mode script, on lit le fichier : cf fonctions.c
                 }
                 else {
                     WARNING_MSG("No open script, use ./EXENAME SCRIPTNAME to run with a script");
@@ -129,18 +128,17 @@ int main(int argc, char *argv[])
             else
             {
                 //printf("execution en mode interactif, entrez une commande \n");
-                getFromUser(input);					//En mode interactif, on lit stdin
+                getFromUser(input);                 //En mode interactif, on lit stdin
             }
-            string_standardise(input,normalized_input);		//On normalise l'entree - echappement, commentaires, etc
-        } while (normalized_input[0]=='\0'); //Jusqu'à une fin de chaine.
+            string_standardise(input,normalized_input);     //On normalise l'entree - echappement, commentaires, etc
+            string_standardise(normalized_input,input);
+        } while (input[0]=='\0'); //Jusqu'à une fin de chaine.
+
+        //printf("'%s'\n",normalized_input );
+        res=decrypt(input);               //On execute la commande : cf user_int.c
 
 
-        res=decrypt(normalized_input);				 //On execute la commande : cf user_int.c
-
-
-
-
-        switch(res) { 	//
+        switch(res) {   //
         case 0:
             break;
         case 2:
@@ -176,7 +174,7 @@ int main(int argc, char *argv[])
 
 
 
-int mainProjet(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 
     int i;
@@ -236,10 +234,12 @@ int mainProjet(int argc, char *argv[])
                 getFromUser(input);                 //En mode interactif, on lit stdin
             }
             string_standardise(input,normalized_input);     //On normalise l'entree - echappement, commentaires, etc
-        } while (normalized_input[0]=='\0'); //Jusqu'à une fin de chaine.
+            string_standardise(normalized_input,input);     //Deux fois pour virer les lignes avec que des ' ' a cause des tabs.
+                                                            //y doit y avoir moyen de faire plus malin.
+        } while (input[0]=='\0'); //Jusqu'à une fin de chaine.
 
-
-        res=decrypt(normalized_input);               //On execute la commande : cf user_int.c
+        //printf("'%s'\n",normalized_input );
+        res=decrypt(input);               //On execute la commande : cf user_int.c
 
 
 

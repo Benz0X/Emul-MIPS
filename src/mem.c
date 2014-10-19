@@ -78,7 +78,7 @@ mem  init_mem( uint32_t nseg ) {
 		vm->seg[i+2].start._64 = 0xFFFFF000;
 		vm->seg[i+2].size._64  = 0x00000FFF;
 		vm->seg[i+2].content   = calloc(1, vm->seg[i+2].size._64);
-		vm->seg[i+2].attr      = 0x00002003;
+		vm->seg[i+2].attr      = 0x00002003;  //32 bits r-x
 
 
 

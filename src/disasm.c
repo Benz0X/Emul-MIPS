@@ -55,7 +55,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
             {
                 WARNING_MSG("invalid instruction at adress %X",current_addr);
                 printf("\n");
-                //return -1;
+                return -1;
             }
             else {
             	for (k = 1; k < symtab.size; ++k)

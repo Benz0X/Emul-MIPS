@@ -198,8 +198,8 @@ int decrypt(char input [])
                                     return -1;
                                 }
                                 INFO_MSG("Désassemblage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress2);
-                                disasm(adress1,size);
-                                return 0;
+                                
+                                return disasm(adress1,size);;
                             }
                             WARNING_MSG("Adresses must be hexadecimal");//en fait non faut que ce soit un uint c'est tout->a changer
                             return -1;
@@ -210,8 +210,8 @@ int decrypt(char input [])
                             if(isDecimal(word)&& isdigit(word[0])) {
                                 uint32_t size=strtol(word,NULL,10);
                                 INFO_MSG("Désassemblage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress1+size);
-                                disasm(adress1,size);
-                                return 0;
+                                
+                                return disasm(adress1,size);;
                             }
                             WARNING_MSG("Range must be decimal");
                             return -1;

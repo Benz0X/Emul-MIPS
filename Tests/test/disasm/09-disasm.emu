@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=FAIL        
+#TEST_COMMENT="disasm fail unaligned"
+#-------
+load Tests/test_all.o
+disasm 0x3001+3000
+exit

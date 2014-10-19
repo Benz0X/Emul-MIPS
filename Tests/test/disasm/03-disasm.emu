@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=FAIL        
+#TEST_COMMENT="disasm"
+#-------
+load Tests/test_all.o
+disasm 0x3000+-10
+exit
