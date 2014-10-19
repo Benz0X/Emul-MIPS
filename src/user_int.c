@@ -524,6 +524,22 @@ int decrypt(char input [])
             WARNING_MSG("Too few arguments. Syntax is :\n\t'break add <adress>+'  or\n\t'break del <adress>+|all'   or\n\t'break list'");
             return -1;
         } else {
+            if (memory==NULL){
+                WARNING_MSG("No program loaded");
+                return -1;
+            }
+            //Recuperation de la plage .text
+            int k; 
+            int start,end;
+
+            for (k = 0; k < memory->nseg; k++){
+                if(strcmp(memory->seg[k].name,".text")==0){
+                    start=memory->seg[k].start._32;
+                    end=memory->seg[k].start._32+memory->seg[k].size._32;
+                }
+            }
+
+
             if(strcmp(word,"list")==0) {
                 printf("Liste des points d'arrêt :\n");
                 printList(breaklist);
@@ -537,10 +553,12 @@ int decrypt(char input [])
                         if (isHexa(word)){
                         
                             uint32_t adress=strtol(word,NULL,0);
-                            if(1){ //                             Test de seg .text a implementer
+
+
+                            if(adress>=start && adress<end){ //                             Test de seg 
                                 breaklist=del(adress,breaklist);    //suppression du breakpoint
                             }else{
-                                WARNING_MSG("Adress %d can't be breakpoint, segment not allowed",adress);
+                                WARNING_MSG("Adress %8.8X can't be breakpoint, segment not allowed",adress);
                                 return -1;
                             }
 
@@ -557,10 +575,10 @@ int decrypt(char input [])
                     if (isHexa(word)){
                         
                         uint32_t adress=strtol(word,NULL,0);
-                        if(1){ //                             Test de seg .text a implementer
+                        if(adress>=start && adress<end){ //                             Test de seg .text
                             if(empty(present(adress,breaklist))) breaklist=insert(adress,breaklist); //Si le point n'existe pas, on le rajoute
                         }else{
-                            WARNING_MSG("Adress %d can't be breakpoint, segment not allowed",adress);
+                            WARNING_MSG("Adress 0x%8.8X can't be breakpoint, segment not allowed",adress);
                             return -1;
                         }
 

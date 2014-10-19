@@ -490,12 +490,12 @@ int readDico(char* dico_name){
     	}
     	else{ERROR_MSG("Error reading name in dictionnary for entry %d",i);}
     	if((nextword(&word, normalized_line,&k))&& (isHexa(word))){
-    		dico_data[i].mask=strtol(word,NULL,16);}
+    		dico_data[i].mask=strtol(word,NULL,16);}                                      //Recuperation du masque
     	else{ERROR_MSG("Error reading mask in dictionnary for entry %d",i);}	
 		if((nextword(&word, normalized_line,&k))&& (isHexa(word))){
-		 		dico_data[i].instr=strtol(word,NULL,16);}
+		 		dico_data[i].instr=strtol(word,NULL,16);}                                 //Recuperation de la signature
 		else{ERROR_MSG("Error reading instr in dictionnary for entry %d",i);}
-    	if((nextword(&word, normalized_line,&k))){
+    	if((nextword(&word, normalized_line,&k))){                                        //Recuperation du type
     		if(!strcmp(word,"r")||!strcmp(word,"R")){
 		 		dico_data[i].type=0;
     		}
@@ -511,14 +511,14 @@ int readDico(char* dico_name){
 		 }
 		else{ERROR_MSG("Error reading type in dictionnary for entry %d",i);}
 		if((nextword(&word, normalized_line,&k))&& (isDecimal(word))){
-		 		dico_data[i].nb_arg=strtol(word,NULL,10);}
+		 		dico_data[i].nb_arg=strtol(word,NULL,10);}                                //Recuperation du nombre d'arguments
 		else{ERROR_MSG("Error reading number of arg in dictionnary for entry %d",i);}
-		for (j = 0; j < dico_data[i].nb_arg; ++j)
+		for (j = 0; j < dico_data[i].nb_arg; ++j)                                         //Boucle
 		{
 			if((nextword(&word, normalized_line,&k))){
 				//printf("%s,%d,%d\n",word,i,j);
 				
-				strcpy(dico_data[i].argname[j],word);
+				strcpy(dico_data[i].argname[j],word);                                      //Recuperation de leurs noms
 			}
 			else{ERROR_MSG("Error reading argument dictionnary for entry %d, argument %d",i,j);}
 		}
