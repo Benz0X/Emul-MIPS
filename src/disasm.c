@@ -13,8 +13,20 @@ int disasm(uint32_t start_addr,uint32_t size) {
     uint32_t current_addr=start_addr;
     instruction current_instr;
     uint32_t instr_value;
-
+    int text_ident;
     int j,k;
+
+
+    //get .text scnidx in order to show only .text label
+    for (k = 1; k < symtab.size; ++k){
+		if(!strcmp(symtab.sym[k].name,".text")){
+			text_ident=symtab.sym[k].scnidx;
+			break;
+		}
+	}
+
+
+    
 
     while (i<size) {
         j=0;
@@ -43,12 +55,12 @@ int disasm(uint32_t start_addr,uint32_t size) {
             {
                 WARNING_MSG("invalid instruction at adress %X",current_addr);
                 printf("\n");
-                return -1;
+                //return -1;
             }
             else {
             	for (k = 1; k < symtab.size; ++k)
             	{
-            		if(((current_addr-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)){
+            		if(((current_addr-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident)){
             			//printf("curr-start= %d size : %d %s\n", current_addr-memory->seg[j-1].start._32,symtab.sym[k].size,symtab.sym[k].name);
             			printf("%s: ",symtab.sym[k].name);
             			break;
@@ -186,10 +198,10 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         char regname2[MAX_NAME_SIZE];
                         parseReg(current_instr.i.rt,regname2);
 
-                        printf(" %s, %s, %d",regname1,regname2,current_instr.i.immediate);
-			            
+                        printf(" %s, %s, %d",regname1,regname2,4*current_instr.i.immediate);
+			     
 			          	for (k = 1; k < symtab.size; ++k){
-			            		if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)){
+			            		if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)){
 			            			printf(" <%s>",symtab.sym[k].name);
 			            			break;
 			            	}
@@ -201,7 +213,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         char regname2[MAX_NAME_SIZE];
                         parseReg(current_instr.i.rs,regname2);
                         //BASE est a l'addresse de rs
-                        printf(" %s, %d(%s)",regname1,current_instr.i.immediate,regname2);
+                        printf(" %s, %d(%s)",regname1,4*current_instr.i.immediate,regname2);
 
                     }
                     else {
@@ -216,10 +228,10 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         char regname1[MAX_NAME_SIZE];
                         parseReg(current_instr.i.rs,regname1);
 
-                       	printf(" %s, %d",regname1,current_instr.i.immediate);
+                       	printf(" %s, %d",regname1,4*current_instr.i.immediate);
 			       
 			            for (k = 1; k < symtab.size; ++k){
-			            		if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)){
+			            		if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)){
 			            			printf(" <%s>",symtab.sym[k].name);
 			            			break;
 			            	}
@@ -256,9 +268,9 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
 
 
-                	printf(" %d",current_instr.j.target);
+                	printf(" %d",4*current_instr.j.target);
 			        for (k = 1; k < symtab.size; ++k){
-			            		if(((4*current_instr.j.target)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)){
+			            		if(((4*current_instr.j.target)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)){
 			            			printf(" <%s>",symtab.sym[k].name);
 			            			break;
 			            	}
