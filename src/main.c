@@ -22,10 +22,10 @@ int mainTest(int argc, char *argv[])
 
     readDico("dico.dico");
     loadELF("Tests/programmes/test.o",1);
-/*
-    WARNING_MSG("print mem");
-    print_mem(memory);
-    WARNING_MSG("stab32_print");*/
+    /*
+        WARNING_MSG("print mem");
+        print_mem(memory);
+        WARNING_MSG("stab32_print");*/
     stab32_print(symtab);
     //WARNING_MSG("sym32_print");
     //sym32_print(symtab);*/
@@ -47,7 +47,7 @@ int mainTest(int argc, char *argv[])
     */
 
 
-    
+
     /*
     //test stuff
         int i;
@@ -71,18 +71,18 @@ int mainTest(int argc, char *argv[])
         }
     */
 
-/*
-//Tests liste
-  liste L=NULL;
-  ajout_tete((element)4,L);
-  ajout_tete((element)5,L);
-  //ajout_tete(6,L);
-  //ajout_tete(10,L);
-  visualiser(L);
-  //ajout_tri(7,L);
-  //visualiser(L);
+    /*
+    //Tests liste
+      liste L=NULL;
+      ajout_tete((element)4,L);
+      ajout_tete((element)5,L);
+      //ajout_tete(6,L);
+      //ajout_tete(10,L);
+      visualiser(L);
+      //ajout_tri(7,L);
+      //visualiser(L);
 
-*/
+    */
 
     FILE *script_file = NULL;
     scriptmode=0;                       //Mode interactif par defaut
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
     }
 
     readDico("dico.dico");
-    
+
 
     FILE *script_file = NULL;
     scriptmode=0;                       //Mode interactif par defaut
@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
             }
             string_standardise(input,normalized_input);     //On normalise l'entree - echappement, commentaires, etc
             string_standardise(normalized_input,input);     //Deux fois pour virer les lignes avec que des ' ' a cause des tabs.
-                                                            //y doit y avoir moyen de faire plus malin.
+            //y doit y avoir moyen de faire plus malin.
         } while (input[0]=='\0'); //Jusqu'à une fin de chaine.
 
         //printf("'%s'\n",normalized_input );
@@ -276,5 +276,3 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
-
-

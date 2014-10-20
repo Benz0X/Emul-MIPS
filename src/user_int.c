@@ -198,7 +198,7 @@ int decrypt(char input [])
                                     return -1;
                                 }
                                 INFO_MSG("Désassemblage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress2);
-                                
+
                                 return disasm(adress1,size);;
                             }
                             WARNING_MSG("Adresses must be hexadecimal");//en fait non faut que ce soit un uint c'est tout->a changer
@@ -210,7 +210,7 @@ int decrypt(char input [])
                             if(isDecimal(word)&& isdigit(word[0])) {
                                 uint32_t size=strtol(word,NULL,10);
                                 INFO_MSG("Désassemblage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress1+size);
-                                
+
                                 return disasm(adress1,size);;
                             }
                             WARNING_MSG("Range must be decimal");
@@ -513,7 +513,7 @@ int decrypt(char input [])
         return 0;
         break;
     case RUN:
-        
+
         break;
     case STEP:
         printf("%d \n",current_cmd);
@@ -524,16 +524,16 @@ int decrypt(char input [])
             WARNING_MSG("Too few arguments. Syntax is :\n\t'break add <adress>+'  or\n\t'break del <adress>+|all'   or\n\t'break list'");
             return -1;
         } else {
-            if (memory==NULL){
+            if (memory==NULL) {
                 WARNING_MSG("No program loaded");
                 return -1;
             }
             //Recuperation de la plage .text
-            int k; 
+            int k;
             int start,end;
 
-            for (k = 0; k < memory->nseg; k++){
-                if(strcmp(memory->seg[k].name,".text")==0){
+            for (k = 0; k < memory->nseg; k++) {
+                if(strcmp(memory->seg[k].name,".text")==0) {
                     start=memory->seg[k].start._32;
                     end=memory->seg[k].start._32+memory->seg[k].size._32;
                 }
@@ -544,51 +544,51 @@ int decrypt(char input [])
                 printf("Liste des points d'arrêt :\n");
                 printList(breaklist);
                 return 0;
-            }else if(strcmp(word,"del")==0){
+            } else if(strcmp(word,"del")==0) {
                 while(nextword(&word,input,&n)) {
                     if(strcmp(word,"all")==0) {
                         breaklist=NULL;
                         return 0;
                     } else {
-                        if (isHexa(word)){
-                        
+                        if (isHexa(word)) {
+
                             uint32_t adress=strtol(word,NULL,0);
 
 
-                            if(adress>=start && adress<end){ //                             Test de seg 
+                            if(adress>=start && adress<end) { //                             Test de seg
                                 breaklist=del(adress,breaklist);    //suppression du breakpoint
-                            }else{
+                            } else {
                                 WARNING_MSG("Adress %8.8X can't be breakpoint, segment not allowed",adress);
                                 return -1;
                             }
 
-                        }else{
-                            WARNING_MSG("Adress %s not valid.",word); 
+                        } else {
+                            WARNING_MSG("Adress %s not valid.",word);
                             return -1;
                         }
                     }
                 }
                 return 0;
-            }else if(strcmp(word,"add")==0){
+            } else if(strcmp(word,"add")==0) {
                 while(nextword(&word,input,&n)) {
 
-                    if (isHexa(word)){
-                        
+                    if (isHexa(word)) {
+
                         uint32_t adress=strtol(word,NULL,0);
-                        if(adress>=start && adress<end){ //                             Test de seg .text
+                        if(adress>=start && adress<end) { //                             Test de seg .text
                             if(empty(present(adress,breaklist))) breaklist=insert(adress,breaklist); //Si le point n'existe pas, on le rajoute
-                        }else{
+                        } else {
                             WARNING_MSG("Adress 0x%8.8X can't be breakpoint, segment not allowed",adress);
                             return -1;
                         }
 
-                    }else{
+                    } else {
                         WARNING_MSG("Adress %s not valid",word);
-                        return -1; 
+                        return -1;
                     }
                 }
                 return 0;
-            }else{
+            } else {
                 WARNING_MSG("Syntax is :\n\t'break add <adress>+'  or\n\t'break del <adress>+|all'   or\n\t'break list'");
                 return -1;
             }

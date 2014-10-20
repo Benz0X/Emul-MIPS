@@ -64,6 +64,7 @@ extern int scriptmode;
 extern dico_info* dico_data;
 extern int nbinstr;
 extern list breaklist; //Liste des points d'arrets
+extern int scriptmode;
 
 
 #endif

@@ -101,7 +101,7 @@ int what_type(char * word) {				// Test si une chaine de caractere est numerique
     }
     if (S==DECIMAL_ZERO)
     {
-    	S=DECIMAL;
+        S=DECIMAL;
     }
     return S;
 }
@@ -184,7 +184,7 @@ void string_standardise( char* in, char* out ) {
         /* translate tabs into white spaces*/
         else if (isblank((int) in[i])) out[j++]=' ';
 
-        
+
         else out[j++]=in[i];
     }
     out[j++]='\0';
@@ -454,83 +454,102 @@ int parseReg(int index, char* reg_name) {			//Parse les registres a l'envers
     }
 }
 
-int readDico(char* dico_name){
-	FILE* dico_file=NULL;
-	dico_file = fopen (dico_name, "r");
-        if (dico_file == NULL)
-        {
-            WARNING_MSG("Impossible d'ouvrir le dictionnaire '%s'",dico_name);
-            return 1;
-        }
+int readDico(char* dico_name) {
+    FILE* dico_file=NULL;
+    dico_file = fopen (dico_name, "r");
+    if (dico_file == NULL)
+    {
+        WARNING_MSG("Impossible d'ouvrir le dictionnaire '%s'",dico_name);
+        return 1;
+    }
     char line[INPUT_SIZE];
     char normalized_line[INPUT_SIZE];
     int i,j,k;
-    do{
+    do {
         getFromScript(dico_file,line);
         string_standardise(line, normalized_line);
-    }while (normalized_line[0]=='\0');
+    } while (normalized_line[0]=='\0');
 //on obtient le nombre d'entrée du dico
     sscanf(line, "%d",&nbinstr); //retour d'erreur ?
     dico_data=calloc(nbinstr,sizeof(dico_info));
     for ( i = 0; i < nbinstr; ++i)
     {
 
-    	k=0;
-    	do{
-    		if(feof(dico_file)){WARNING_MSG("End of dictionnary file reached, incorrect number of entry");
-	return -1;}
-        	getFromScript(dico_file,line);
-        	string_standardise(line, normalized_line);
-    	}while (normalized_line[0]=='\0');
-    	char* word;
-    	//printf("%s\n",normalized_line );
-    	if(nextword(&word, normalized_line,&k)){
-    		strcpy(dico_data[i].name,word);
-    	//	printf("%s\n",dico_data[i].name );
-    	}
-    	else{ERROR_MSG("Error reading name in dictionnary for entry %d",i);}
-    	if((nextword(&word, normalized_line,&k))&& (isHexa(word))){
-    		dico_data[i].mask=strtol(word,NULL,16);}                                      //Recuperation du masque
-    	else{ERROR_MSG("Error reading mask in dictionnary for entry %d",i);}	
-		if((nextword(&word, normalized_line,&k))&& (isHexa(word))){
-		 		dico_data[i].instr=strtol(word,NULL,16);}                                 //Recuperation de la signature
-		else{ERROR_MSG("Error reading instr in dictionnary for entry %d",i);}
-    	if((nextword(&word, normalized_line,&k))){                                        //Recuperation du type
-    		if(!strcmp(word,"r")||!strcmp(word,"R")){
-		 		dico_data[i].type=0;
-    		}
-    		else if (!strcmp(word,"i")||!strcmp(word,"I"))
-    		{
-    			dico_data[i].type=1;
-    		}
-    		else if (!strcmp(word,"j")||!strcmp(word,"J"))
-    		{
-    			dico_data[i].type=2;
-    		}
-    		else{ERROR_MSG("Error reading type in dictionnary for entry %d",i);}
-		 }
-		else{ERROR_MSG("Error reading type in dictionnary for entry %d",i);}
-		if((nextword(&word, normalized_line,&k))&& (isDecimal(word))){
-		 		dico_data[i].nb_arg=strtol(word,NULL,10);}                                //Recuperation du nombre d'arguments
-		else{ERROR_MSG("Error reading number of arg in dictionnary for entry %d",i);}
-		for (j = 0; j < dico_data[i].nb_arg; ++j)                                         //Boucle
-		{
-			if((nextword(&word, normalized_line,&k))){
-				//printf("%s,%d,%d\n",word,i,j);
-				
-				strcpy(dico_data[i].argname[j],word);                                      //Recuperation de leurs noms
-			}
-			else{ERROR_MSG("Error reading argument dictionnary for entry %d, argument %d",i,j);}
-		}
-    	if((nextword(&word, normalized_line,&k))){
-    		WARNING_MSG("Too much argument in dictionnary data for instruction %d",i);
-    	}
+        k=0;
+        do {
+            if(feof(dico_file)) {
+                WARNING_MSG("End of dictionnary file reached, incorrect number of entry");
+                return -1;
+            }
+            getFromScript(dico_file,line);
+            string_standardise(line, normalized_line);
+        } while (normalized_line[0]=='\0');
+        char* word;
+        //printf("%s\n",normalized_line );
+        if(nextword(&word, normalized_line,&k)) {
+            strcpy(dico_data[i].name,word);
+            //	printf("%s\n",dico_data[i].name );
+        }
+        else {
+            ERROR_MSG("Error reading name in dictionnary for entry %d",i);
+        }
+        if((nextword(&word, normalized_line,&k))&& (isHexa(word))) {
+            dico_data[i].mask=strtol(word,NULL,16);
+        }                                      //Recuperation du masque
+        else {
+            ERROR_MSG("Error reading mask in dictionnary for entry %d",i);
+        }
+        if((nextword(&word, normalized_line,&k))&& (isHexa(word))) {
+            dico_data[i].instr=strtol(word,NULL,16);
+        }                                 //Recuperation de la signature
+        else {
+            ERROR_MSG("Error reading instr in dictionnary for entry %d",i);
+        }
+        if((nextword(&word, normalized_line,&k))) {                                       //Recuperation du type
+            if(!strcmp(word,"r")||!strcmp(word,"R")) {
+                dico_data[i].type=0;
+            }
+            else if (!strcmp(word,"i")||!strcmp(word,"I"))
+            {
+                dico_data[i].type=1;
+            }
+            else if (!strcmp(word,"j")||!strcmp(word,"J"))
+            {
+                dico_data[i].type=2;
+            }
+            else {
+                ERROR_MSG("Error reading type in dictionnary for entry %d",i);
+            }
+        }
+        else {
+            ERROR_MSG("Error reading type in dictionnary for entry %d",i);
+        }
+        if((nextword(&word, normalized_line,&k))&& (isDecimal(word))) {
+            dico_data[i].nb_arg=strtol(word,NULL,10);
+        }                                //Recuperation du nombre d'arguments
+        else {
+            ERROR_MSG("Error reading number of arg in dictionnary for entry %d",i);
+        }
+        for (j = 0; j < dico_data[i].nb_arg; ++j)                                         //Boucle
+        {
+            if((nextword(&word, normalized_line,&k))) {
+                //printf("%s,%d,%d\n",word,i,j);
+
+                strcpy(dico_data[i].argname[j],word);                                      //Recuperation de leurs noms
+            }
+            else {
+                ERROR_MSG("Error reading argument dictionnary for entry %d, argument %d",i,j);
+            }
+        }
+        if((nextword(&word, normalized_line,&k))) {
+            WARNING_MSG("Too much argument in dictionnary data for instruction %d",i);
+        }
     }
     //tri dico pour éviter les mauvaises combi mask/instr,
     // la flemme d'implémenter un tri fusion
     i=0;
     dico_info temp;
-    while(i<nbinstr){
+    while(i<nbinstr) {
         if (dico_data[i].mask<dico_data[i+1].mask)
         {
             memcpy(&temp,&dico_data[i+1],sizeof(dico_info));
@@ -544,14 +563,14 @@ int readDico(char* dico_name){
 
 
 
-return 0;
+    return 0;
 }
 
-int getInstr(uint32_t adress, instruction* instr_ptr){
-	int32_t temp;
-	memRead(adress,1,&temp);
-	//FLIP_ENDIANNESS(temp);
-	memcpy(instr_ptr,&temp,4);
-	//printf("content : %X\n",temp);
-	return 1;
+int getInstr(uint32_t adress, instruction* instr_ptr) {
+    int32_t temp;
+    memRead(adress,1,&temp);
+    //FLIP_ENDIANNESS(temp);
+    memcpy(instr_ptr,&temp,4);
+    //printf("content : %X\n",temp);
+    return 1;
 }
