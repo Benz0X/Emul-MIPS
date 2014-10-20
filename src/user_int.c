@@ -143,7 +143,7 @@ int decrypt(char input [])
                 char name[INPUT_SIZE];
                 while(nextword(&word,input,&n)) {
                     if(strcmp(word,"all")==0) {
-                        for(i=0; i<35; i++) {					//Si all, on boucle
+                        for(i=0; i<NBREG+3; i++) {					//Si all, on boucle
                             parseReg(i,name);				//Recuperation du nom complet
                             if(i%4==0) {
                                 printf("\n");   //Affichage 4 par ligne

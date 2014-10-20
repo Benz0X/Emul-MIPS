@@ -9,6 +9,8 @@
 #define PROMPT_STRING "EmulMips : > "
 #define MAX_INSTR_ARG 3
 #define MAX_NAME_SIZE 10
+#define DICONAME "dico.dico"
+#define NBREG 32
 
 typedef struct {
 	uint b4:8,
@@ -57,7 +59,7 @@ typedef enum {
     UNKNOWN
 } command ;
 
-extern int32_t reg_mips[35];
+extern int32_t reg_mips[NBREG+3];
 extern mem memory;
 extern stab symtab;
 extern int scriptmode;

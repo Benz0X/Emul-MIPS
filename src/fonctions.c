@@ -224,7 +224,7 @@ int isReg(char* reg_name) {					//Test si une chaine de caractere est un registr
     index = strtol(reg_name,&string,10);
     //printf("reg_name= %s string =%s, index=%d\n",reg_name,string,index );
 
-    if (isdigit(reg_name[0]) && index<32 && index > -1) {
+    if (isdigit(reg_name[0]) && index<NBREG && index > -1) {
         return index;
     }
     else if (!isdigit(reg_name[0])) {

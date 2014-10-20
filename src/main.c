@@ -15,12 +15,12 @@ int mainTest(int argc, char *argv[])
 
     int i;
 
-    for (i=0; i < 32; ++i)
+    for (i=0; i < NBREG+3; ++i)
     {
         reg_mips[i]=-i;             //Initialisation des registres pour debug avant load
     }
 
-    readDico("dico.dico");
+    readDico(DICONAME); //diconame dans define.h
     loadELF("Tests/programmes/test.o",1);
     /*
         WARNING_MSG("print mem");
@@ -179,12 +179,12 @@ int main(int argc, char *argv[])
 
     int i;
 
-    for (i=0; i < 32; ++i)
+    for (i=0; i < NBREG+3; ++i)
     {
         reg_mips[i]=-i;             //Initialisation des registres pour debug avant load
     }
 
-    readDico("dico.dico");
+    readDico(DICONAME); //diconame dans define.h
 
 
     FILE *script_file = NULL;
