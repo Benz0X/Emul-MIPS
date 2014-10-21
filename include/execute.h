@@ -20,7 +20,7 @@ int BLTZ(instruction ins);
 int BNE(instruction ins);
 
 //BREAK
-int BREAK(instruction ins);
+int BREAKprog(instruction ins);
 
 //DIV
 int DIV(instruction ins);

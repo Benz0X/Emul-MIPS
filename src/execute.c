@@ -60,7 +60,7 @@ int BNE(instruction ins) {
 
 
 //BREAK
-int BREAK(instruction ins) {
+int BREAKprog(instruction ins) {
     return 0;
 }
 
