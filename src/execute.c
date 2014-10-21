@@ -6,202 +6,202 @@
 
 
 //ADDITION
-int ADD(instruction ins){
-
+int ADD(instruction ins) {
+    return 0;
 }
 
-int ADDI(instruction ins){
-
+int ADDI(instruction ins) {
+    return 0;
 }
 
-int ADDIU(instruction ins){
-
+int ADDIU(instruction ins) {
+    return 0;
 }
 
-int ADDU(instruction ins){
-
+int ADDU(instruction ins) {
+    return 0;
 }
 
 
 //AND
-int AND(instruction ins){
-
+int AND(instruction ins) {
+    return 0;
 }
 
-int ANDI(instruction ins){
-
+int ANDI(instruction ins) {
+    return 0;
 }
 
 
 //BRANCH
-int BEQ(instruction ins){
-
+int BEQ(instruction ins) {
+    return 0;
 }
 
-int BGEZ(instruction ins){
-
+int BGEZ(instruction ins) {
+    return 0;
 }
 
-int BGTZ(instruction ins){
-
+int BGTZ(instruction ins) {
+    return 0;
 }
 
-int BLEZ(instruction ins){
-
+int BLEZ(instruction ins) {
+    return 0;
 }
 
-int BLTZ(instruction ins){
-
+int BLTZ(instruction ins) {
+    return 0;
 }
 
-int BNE(instruction ins){
-
+int BNE(instruction ins) {
+    return 0;
 }
 
 
 //BREAK
-int BREAK(instruction ins){
-
+int BREAK(instruction ins) {
+    return 0;
 }
 
 
 //DIV
-int DIV(instruction ins){
-
+int DIV(instruction ins) {
+    return 0;
 }
 
 
 //JUMP
-int J(instruction ins){
-
+int J(instruction ins) {
+    return 0;
 }
 
-int JAL(instruction ins){
-
+int JAL(instruction ins) {
+    return 0;
 }
 
-int JALR(instruction ins){
-
+int JALR(instruction ins) {
+    return 0;
 }
 
-int JR(instruction ins){
-
+int JR(instruction ins) {
+    return 0;
 }
 
 
 //LOAD
-int LB(instruction ins){
-
+int LB(instruction ins) {
+    return 0;
 }
 
-int LBU(instruction ins){
-
+int LBU(instruction ins) {
+    return 0;
 }
 
-int LUI(instruction ins){
-
+int LUI(instruction ins) {
+    return 0;
 }
 
-int LW(instruction ins){
-
+int LW(instruction ins) {
+    return 0;
 }
 
 
 //MF
-int MFHI(instruction ins){
-
+int MFHI(instruction ins) {
+    return 0;
 }
 
-int MFLO(instruction ins){
-
+int MFLO(instruction ins) {
+    return 0;
 }
 
 
 //MULT
-int MULT(instruction ins){
-
+int MULT(instruction ins) {
+    return 0;
 }
 
 
 //NOP
-int NOP(instruction ins){
-
+int NOP(instruction ins) {
+    return 0;
 }
 
 
 //OR
-int OR(instruction ins){
-
+int OR(instruction ins) {
+    return 0;
 }
 
-int ORI(instruction ins){
-
+int ORI(instruction ins) {
+    return 0;
 }
 
-int XOR(instruction ins){
-
+int XOR(instruction ins) {
+    return 0;
 }
 
 
 //STORE
-int SB(instruction ins){
-
+int SB(instruction ins) {
+    return 0;
 }
 
-int SW(instruction ins){
-
+int SW(instruction ins) {
+    return 0;
 }
 
 
 //SIGN EXTEND
-int SEB(instruction ins){
-
+int SEB(instruction ins) {
+    return 0;
 }
 
 
 //SHIFT
-int SLL(instruction ins){
-
+int SLL(instruction ins) {
+    return 0;
 }
 
-int SRA(instruction ins){
-
+int SRA(instruction ins) {
+    return 0;
 }
 
-int SRL(instruction ins){
-
+int SRL(instruction ins) {
+    return 0;
 }
 
 
 //SET
-int SLT(instruction ins){
-
+int SLT(instruction ins) {
+    return 0;
 }
 
-int SLTI(instruction ins){
-
+int SLTI(instruction ins) {
+    return 0;
 }
 
-int SLTIU(instruction ins){
-
+int SLTIU(instruction ins) {
+    return 0;
 }
 
-int SLTU(instruction ins){
-
+int SLTU(instruction ins) {
+    return 0;
 }
 
 
 //SUB
-int SUB(instruction ins){
-
+int SUB(instruction ins) {
+    return 0;
 }
 
-int SUBU(instruction ins){
-
+int SUBU(instruction ins) {
+    return 0;
 }
 
 
 //SYSCALL
-int SYSCALL(instruction ins){
-
+int SYSCALL(instruction ins) {
+    return 0;
 }
