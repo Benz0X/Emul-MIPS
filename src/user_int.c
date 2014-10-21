@@ -575,11 +575,12 @@ int decrypt(char input [])
                     if (isHexa(word)) {
 
                         uint32_t adress=strtol(word,NULL,0);
+                        adress-=adress % 4;
                         if(adress>=start && adress<end) { //                             Test de seg .text
                             if(empty(present(adress,breaklist))) breaklist=insert(adress,breaklist); //Si le point n'existe pas, on le rajoute
                         } else {
                             WARNING_MSG("Adress 0x%8.8X can't be breakpoint, segment not allowed",adress);
-                            return -1;
+                            //return -1;
                         }
 
                     } else {
