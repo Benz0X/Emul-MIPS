@@ -177,14 +177,17 @@ int mainTest(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 
-    int i;
+    readDico(DICONAME);
 
-    for (i=0; i < NBREG+3; ++i)
-    {
-        reg_mips[i]=-i;             //Initialisation des registres pour debug avant load
-    }
-
-    readDico(DICONAME); //diconame dans define.h
+    //delete
+    typedef struct {
+        int (*pf)(int,int);
+    } pfstruct;
+    pfstruct pfstab[10];
+    int (*pf)(int,int);
+    int addi(int a, int b){printf("%d\n", a+b);return 0;}
+    pfstab[1].pf=addi;
+    pfstab[1].pf(2,3);
 
 
     FILE *script_file = NULL;

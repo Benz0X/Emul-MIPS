@@ -26,6 +26,7 @@ uint32_t instr;
 short type;
 short nb_arg;
 char argname[MAX_INSTR_ARG][MAX_NAME_SIZE];
+int (*exec)(instruction);
 }dico_info;
 
 typedef struct{

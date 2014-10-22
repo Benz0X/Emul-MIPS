@@ -10,6 +10,7 @@
 #include "common/notify.h"
 #include "emul.h"
 #include "common/bits.h"
+#include "execute.h"
 
 int nbinstr=0;
 
@@ -544,6 +545,55 @@ int readDico(char* dico_name) {
         if((nextword(&word, normalized_line,&k))) {
             WARNING_MSG("Too much argument in dictionnary data for instruction %d",i);
         }
+
+
+        if(!strcmp(dico_data[i].name,"ADD")){dico_data[i].exec=ADD;}
+        if(!strcmp(dico_data[i].name,"ADDI")){dico_data[i].exec=ADDI;}
+        if(!strcmp(dico_data[i].name,"ADDIU")){dico_data[i].exec=ADDIU;}
+        if(!strcmp(dico_data[i].name,"ADDU")){dico_data[i].exec=ADDU;}
+        if(!strcmp(dico_data[i].name,"AND")){dico_data[i].exec=AND;}
+        if(!strcmp(dico_data[i].name,"ANDI")){dico_data[i].exec=ANDI;}
+        if(!strcmp(dico_data[i].name,"BEQ")){dico_data[i].exec=BEQ;}
+        if(!strcmp(dico_data[i].name,"BGEZ")){dico_data[i].exec=BGEZ;}
+        if(!strcmp(dico_data[i].name,"BGTZ")){dico_data[i].exec=BGTZ;}
+        if(!strcmp(dico_data[i].name,"BLEZ")){dico_data[i].exec=BLEZ;}
+        if(!strcmp(dico_data[i].name,"BLTZ")){dico_data[i].exec=BLTZ;}
+        if(!strcmp(dico_data[i].name,"BNE")){dico_data[i].exec=BNE;}
+        if(!strcmp(dico_data[i].name,"BREAK")){dico_data[i].exec=BREAKprog;}
+        if(!strcmp(dico_data[i].name,"DIV")){dico_data[i].exec=DIV;}
+        if(!strcmp(dico_data[i].name,"J")){dico_data[i].exec=J;}
+        if(!strcmp(dico_data[i].name,"JAL")){dico_data[i].exec=JAL;}
+        if(!strcmp(dico_data[i].name,"JALR")){dico_data[i].exec=JALR;}
+        if(!strcmp(dico_data[i].name,"JR")){dico_data[i].exec=JR;}
+        if(!strcmp(dico_data[i].name,"LB")){dico_data[i].exec=LB;}
+        if(!strcmp(dico_data[i].name,"LBU")){dico_data[i].exec=LBU;}
+        if(!strcmp(dico_data[i].name,"LUI")){dico_data[i].exec=LUI;}
+        if(!strcmp(dico_data[i].name,"LW")){dico_data[i].exec=LW;}
+        if(!strcmp(dico_data[i].name,"MFHI")){dico_data[i].exec=MFHI;}
+        if(!strcmp(dico_data[i].name,"MFLO")){dico_data[i].exec=MFLO;}
+        if(!strcmp(dico_data[i].name,"MULT")){dico_data[i].exec=MULT;}
+        if(!strcmp(dico_data[i].name,"NOP")){dico_data[i].exec=NOP;}
+        if(!strcmp(dico_data[i].name,"OR")){dico_data[i].exec=OR;}
+        if(!strcmp(dico_data[i].name,"ORI")){dico_data[i].exec=ORI;}
+        if(!strcmp(dico_data[i].name,"XOR")){dico_data[i].exec=XOR;}
+        if(!strcmp(dico_data[i].name,"SB")){dico_data[i].exec=SB;}
+        if(!strcmp(dico_data[i].name,"SW")){dico_data[i].exec=SW;}
+        if(!strcmp(dico_data[i].name,"SEB")){dico_data[i].exec=SEB;}
+        if(!strcmp(dico_data[i].name,"SLL")){dico_data[i].exec=SLL;}
+        if(!strcmp(dico_data[i].name,"SRA")){dico_data[i].exec=SRA;}
+        if(!strcmp(dico_data[i].name,"SRL")){dico_data[i].exec=SRL;}
+        if(!strcmp(dico_data[i].name,"SLT")){dico_data[i].exec=SLT;}
+        if(!strcmp(dico_data[i].name,"SLTI")){dico_data[i].exec=SLTI;}
+        if(!strcmp(dico_data[i].name,"SLTIU")){dico_data[i].exec=SLTIU;}
+        if(!strcmp(dico_data[i].name,"SLTU")){dico_data[i].exec=SLTU;}
+        if(!strcmp(dico_data[i].name,"SUB")){dico_data[i].exec=SUB;}
+        if(!strcmp(dico_data[i].name,"SUBU")){dico_data[i].exec=SUBU;}
+        if(!strcmp(dico_data[i].name,"SYSCALL")){dico_data[i].exec=SYSCALL;}
+
+
+
+
+
     }
     //tri dico pour éviter les mauvaises combi mask/instr,
     // la flemme d'implémenter un tri fusion

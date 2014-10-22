@@ -23,7 +23,7 @@ JR $t1
 LB $t1, 20($zero)
 LBU $t1, 20($zero)
 LI $t1,0xAAAAAAAA
-LUI $t1, 32
+LUI $t1, 32770
 LW $t1, 20($zero)
 MFHI $t1
 MFLO $t1

@@ -90,6 +90,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         parseReg(current_instr.r.rt,regname3);
 
                         printf(" %s, %s, %s",regname1,regname2,regname3);
+                        dico_data[dico_entry].exec(current_instr);
 
                     }
                     //RT RD SA
@@ -214,7 +215,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         char regname2[MAX_NAME_SIZE];
                         parseReg(current_instr.i.rs,regname2);
                         //BASE est a l'addresse de rs
-                        printf(" %s, %d(%s)",regname1,4*current_instr.i.immediate,regname2);
+                        printf(" %s, %d(%s)",regname1,current_instr.i.immediate,regname2);
 
                     }
                     else {

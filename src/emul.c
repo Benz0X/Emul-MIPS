@@ -288,6 +288,16 @@ int loadELF (char* name,int nbparam,...) {
     // on fait le ménage avant de partir
     //del_mem(memory);
     //del_stab(symtab);
+    j=0;
+
+    for (j=0; j < NBREG+3; ++j)
+    {
+        reg_mips[j]=0;             //Initialisation des registres pour debug avant load
+    }
+
+    reg_mips[29]=0xFF7FF000;
+    
+
     INFO_MSG("Chargement du fichier '%s'",name);
     fclose(pf_elf);
     //puts("");
