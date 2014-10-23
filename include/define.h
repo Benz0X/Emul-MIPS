@@ -11,6 +11,9 @@
 #define MAX_NAME_SIZE 10
 #define DICONAME "dico.dico"
 #define NBREG 32
+#define HI 32
+#define LO 33
+#define PC 34
 
 typedef struct {
 	uint b4:8,

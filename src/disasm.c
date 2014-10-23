@@ -59,6 +59,13 @@ int disasm(uint32_t start_addr,uint32_t size) {
                 return -1;
             }
             else {
+
+
+            	//décommenter si on veut exécuter en disasemblant 
+            	//dico_data[dico_entry].exec(current_instr);
+                
+
+
                 for (k = 1; k < symtab.size; ++k)
                 {
                     if(((current_addr-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident)) {

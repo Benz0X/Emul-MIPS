@@ -213,6 +213,16 @@ int writeReg(char * reg_name, int32_t value) {		// Ecrit value dans un registre
     }
 }
 
+int writeRegindex(int i, int32_t value) {      // Ecrit value dans un registre
+    if(i<0 || i>NBREG+3) {                               //test -1 et 0 non modifiable
+        WARNING_MSG("%d isn't a valid register",i);
+        return -1;
+    } else if(i>0) {
+        reg_mips[i]=value;
+    }
+    return 0;
+}
+
 
 
 int isReg(char* reg_name) {					//Test si une chaine de caractere est un registre valide

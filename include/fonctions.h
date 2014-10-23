@@ -16,6 +16,7 @@ int nextword(char** token, char* input, int* n);
 void string_standardise( char* in, char* out );
 int readReg(char * reg_name, int32_t* value); //lit la valeur d'un registre et la stocke dans value, renvoi -1 si erreur, sinon le num du registre
 int writeReg(char * reg_name,int32_t value); //écrit sur un registre, renvoi -1 si erreur, sinon le num du registre
+int writeRegindex(int index, int32_t value);      // Ecrit value dans un registre
 
 int isReg(char* reg_name); //test si le nom ou numero de registre est correct et renvoie l'entier associe.
 int parseReg(int index, char* regname); //Prends un numéro de registre et associe regname au nom de registre adequat. renvoie -1 si index est innaproprié

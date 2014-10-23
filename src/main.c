@@ -179,16 +179,6 @@ int main(int argc, char *argv[])
 
     readDico(DICONAME);
 
-    //delete
-    typedef struct {
-        int (*pf)(int,int);
-    } pfstruct;
-    pfstruct pfstab[10];
-    int (*pf)(int,int);
-    int addi(int a, int b){printf("%d\n", a+b);return 0;}
-    pfstab[1].pf=addi;
-    pfstab[1].pf(2,3);
-
 
     FILE *script_file = NULL;
     scriptmode=0;                       //Mode interactif par defaut

@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "define.h"
+#include "fonctions.h"
+#include "common/notify.h"
 
 
 
@@ -15,21 +17,21 @@ int ADDI(instruction ins) {
 }
 
 int ADDIU(instruction ins) {
-    return 0;
+    return writeRegindex(ins.i.rt,reg_mips[ins.i.rs]+(int16_t)ins.i.immediate);
 }
 
 int ADDU(instruction ins) {
-    return 0;
+    return writeRegindex(ins.r.rd,reg_mips[ins.r.rs]+ins.r.rt);
 }
 
 
 //AND
 int AND(instruction ins) {
-    return 0;
+    return writeRegindex(ins.r.rd,reg_mips[ins.r.rs] & ins.r.rt);
 }
 
 int ANDI(instruction ins) {
-    return 0;
+    return writeRegindex(ins.i.rt,reg_mips[ins.i.rs] & (int16_t)ins.i.immediate);
 }
 
 
@@ -67,6 +69,11 @@ int BREAKprog(instruction ins) {
 
 //DIV
 int DIV(instruction ins) {
+    if(reg_mips[ins.r.rt]!=0){
+    writeRegindex(HI,reg_mips[ins.r.rs] % reg_mips[ins.r.rt]);
+    writeRegindex(LO,reg_mips[ins.r.rs] / (reg_mips[ins.r.rt]-reg_mips[HI]));}
+    
+    else INFO_MSG("Division by 0");
     return 0;
 }
 
@@ -109,16 +116,20 @@ int LW(instruction ins) {
 
 //MF
 int MFHI(instruction ins) {
-    return 0;
+
+    return writeRegindex(ins.r.rd,reg_mips[HI]);
 }
 
 int MFLO(instruction ins) {
-    return 0;
+    return writeRegindex(ins.r.rd,reg_mips[LO]);
 }
 
 
 //MULT
 int MULT(instruction ins) {
+    int64_t prod=reg_mips[ins.r.rd]*reg_mips[ins.r.rs];
+    writeRegindex(LO,(int32_t)prod);
+    writeRegindex(HI,(int32_t)(prod >> 32));
     return 0;
 }
 
@@ -131,15 +142,15 @@ int NOP(instruction ins) {
 
 //OR
 int OR(instruction ins) {
-    return 0;
+    return writeRegindex(ins.r.rd,reg_mips[ins.r.rs] | ins.r.rt);
 }
 
 int ORI(instruction ins) {
-    return 0;
+    return writeRegindex(ins.i.rt,reg_mips[ins.i.rs] | (int16_t)ins.i.immediate);
 }
 
 int XOR(instruction ins) {
-    return 0;
+    return writeRegindex(ins.r.rd,reg_mips[ins.r.rs] ^ ins.r.rt);
 }
 
 
@@ -161,16 +172,17 @@ int SEB(instruction ins) {
 
 //SHIFT
 int SLL(instruction ins) {
-    return 0;
+    return writeRegindex(ins.r.rd,reg_mips[ins.r.rt] << ins.r.sa);
 }
 
 int SRA(instruction ins) {
-    return 0;
+    //return writeRegindex(ins.r.rd,reg_mips[ins.r.rt] >> ins.r.sa);
 }
 
 int SRL(instruction ins) {
-    return 0;
+    return writeRegindex(ins.r.rd,reg_mips[ins.r.rt] >> ins.r.sa);
 }
+
 
 
 //SET
@@ -197,7 +209,7 @@ int SUB(instruction ins) {
 }
 
 int SUBU(instruction ins) {
-    return 0;
+    return writeRegindex(ins.r.rd,reg_mips[ins.r.rs]-ins.r.rt);
 }
 
 

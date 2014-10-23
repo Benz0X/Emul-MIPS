@@ -37,8 +37,8 @@ SB $t1, 20($zero)
 SEB $t1, $t2
 SLL $1, $1, 0 #l'instr' a l'air d'être 0x00000004
 SLT $t1, $t2, $t3
-SLTI $t1, $t2, 321
-SLTIU $t1, $t2, 321
+SLTI $t1, $t2, -10
+SLTIU $t1, $t2, 32770
 SLTU $t1, $t2, $t3
 SRA  $t1, $t2, 2 #l'instr' a l'air d'etre 0x0000007
 SRL  $t1, $t2, 2 #0x00000006
