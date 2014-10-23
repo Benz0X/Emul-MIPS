@@ -3,6 +3,7 @@
 #include "define.h"
 #include "fonctions.h"
 #include "common/notify.h"
+#include "liste.h"
 
 int disasm(uint32_t start_addr,uint32_t size) {
     if(memory==NULL) {
@@ -40,7 +41,15 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
             getInstr(current_addr,&current_instr);
             memcpy(&instr_value,&current_instr,4);
-            printf("\n%X :: %8.8X	",current_addr,instr_value);
+            //Affichage des breakpoints
+            if(present(current_addr,breaklist)!=NULL){
+                printf("\n   X\t");
+            }else{
+                printf("\n\t");
+            }
+
+            //Afficahge de l'adresse
+            printf("%X :: %8.8X	",current_addr,instr_value);
 
 
             int dico_entry=0;
