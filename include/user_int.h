@@ -1,6 +1,6 @@
 #ifndef _user_int_h
 #define _user_int_h
 
-int decrypt(char input []);//doit decrypter mot par mot, faudrait une fonction get-word qui ne renvoi rien si c'est des comment
+int decrypt(char input []);		//Décrypte la chaine d'input mot par mot et agit en conséquence
 
 #endif

@@ -10,7 +10,7 @@
 
 
 
-int mainTest(int argc, char *argv[])
+int mainTest(int argc, char *argv[])    //This main is only for tests purpose when we need it
 {
 
     int i;
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
 
     while(1)                            //Boucle infinie de l'interpreteur
     {
-        char input[INPUT_SIZE];             //Buffer
+        char input[INPUT_SIZE];         //Input buffer
         int res=-1;                     //Resultat d'execution
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
@@ -223,21 +223,20 @@ int main(int argc, char *argv[])
             }
             else
             {
-                //printf("execution en mode interactif, entrez une commande \n");
-                getFromUser(input);                 //En mode interactif, on lit stdin
+                getFromUser(input);                 //Read stdin
             }
             string_standardise(input,normalized_input);     //On normalise l'entree - echappement, commentaires, etc
-            string_standardise(normalized_input,input);     //Deux fois pour virer les lignes avec que des ' ' a cause des tabs.
-            //y doit y avoir moyen de faire plus malin.
+            string_standardise(normalized_input,input);     //Deux fois pour enlever les lignes avec uniquement des ' ' a cause des '\t' qui deviennent ' '.
+                                                            //TODO : il est probablement possible de faire plus malin
         } while (input[0]=='\0'); //Jusqu'à une fin de chaine.
 
         //printf("'%s'\n",normalized_input );
-        res=decrypt(input);               //On execute la commande : cf user_int.c
+        res=decrypt(input);                                 //On execute la commande : cf user_int.c
 
 
 
 
-        switch(res) {   //
+        switch(res) { 
         case 0:
             break;
         case 2:

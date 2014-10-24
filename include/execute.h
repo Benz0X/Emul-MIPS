@@ -1,6 +1,9 @@
 #ifndef _execute_h
 #define _execute_h
 
+//Fonction simulant les instructions du MIPS
+//Prennent l'instruction en paramètre
+
 //ADDITION
 int ADD(instruction ins);
 int ADDI(instruction ins);

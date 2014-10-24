@@ -37,26 +37,32 @@ int ANDI(instruction ins) {
 
 //BRANCH
 int BEQ(instruction ins) {
+    if(reg_mips[ins.i.rs]==reg_mips[ins.i.rt]){writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);}
     return 0;
 }
 
 int BGEZ(instruction ins) {
+    if(reg_mips[ins.i.rs]>=0){writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);}
     return 0;
 }
 
 int BGTZ(instruction ins) {
+    if(reg_mips[ins.i.rs]>0){writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);}
     return 0;
 }
 
 int BLEZ(instruction ins) {
+    if(reg_mips[ins.i.rs]<=0){writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);}
     return 0;
 }
 
 int BLTZ(instruction ins) {
+    if(reg_mips[ins.i.rs]<0){writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);}
     return 0;
 }
 
 int BNE(instruction ins) {
+    if(reg_mips[ins.i.rs]!=reg_mips[ins.i.rt]){writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);}
     return 0;
 }
 
@@ -187,11 +193,15 @@ int SRL(instruction ins) {
 
 //SET
 int SLT(instruction ins) {
+  if(reg_mips[ins.r.rs]>reg_mips[ins.r.rt]){writeRegindex(ins.r.rd,1);}
+  else{writeRegindex(ins.r.rd,0);}
     return 0;
 }
 
 int SLTI(instruction ins) {
-    return 0;
+  if(reg_mips[ins.i.rs]>ins.i.immediate){writeRegindex(ins.i.rt,1);}
+  else{writeRegindex(ins.i.rt,0);}
+  return 0;
 }
 
 int SLTIU(instruction ins) {

@@ -32,9 +32,10 @@ unsigned int get_nsegments(stab symtab,char* section_names[],int nb_sections);
 void print_segment_raw_content(segment* seg);
 
 
-//charge un ELF en mémoire
-int loadELF (char* name,int nbparam,...);
-int dispmemPlage(uint32_t start_adrr,uint32_t size);
-int memRead(uint32_t start_addr,int type, int* value);
-int memWrite(uint32_t start_addr,int type, int value);
+int loadELF (char* name,int nbparam,...);					//charge un ELF en mémoire
+int dispmemPlage(uint32_t start_adrr,uint32_t size);		//affiche une plage mémoire
+//Ces fonctions retournent -1 en cas d'accès hors zone mémoire :
+int memRead(uint32_t start_addr,int type, int* value);		//lit en mémoire à start_addr et stocke dans value
+int memWrite(uint32_t start_addr,int type, int value);		//écrit value en mémoire à start_addr
+
 #endif
