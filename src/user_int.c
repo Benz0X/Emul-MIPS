@@ -10,6 +10,7 @@
 #include "emul.h"
 #include "disasm.h"
 #include "common/bits.h"
+#include "pipeline.h"    
 #include <ctype.h>
 
 //Declaration des variables globales
@@ -512,12 +513,46 @@ int decrypt(char input [])
         scriptmode=1;
         return 0;
         break;
+
+
     case RUN:
 
+        if(memory==NULL) {
+            WARNING_MSG("No memory loaded");
+            return -1;
+        }
+        //Recuperation de l'adress facultative
+        if(nextword(&word,input,&n) && isHexa(word)) reg_mips[PC]=strtol(word,NULL,0);
+        //Recuperation de la plage .text
+        int k;
+        int start,end;
+
+        for (k = 0; k < memory->nseg; k++) {
+            if(strcmp(memory->seg[k].name,".text")==0) {
+                start=memory->seg[k].start._32;
+                end=memory->seg[k].start._32+memory->seg[k].size._32;
+            }
+        }
+
+        //Verification des depassements .text
+        if(reg_mips[PC]>=end || reg_mips[PC]<start){
+            reg_mips[PC]=start;
+        }
+        
+        instruction insID, insEX, insMEM, insWB;
+        return pipeline(insID,insEX,insMEM,insWB,end,running,1);
         break;
+
+
+
+
+
     case STEP:
         printf("%d \n",current_cmd);
         break;
+
+
+
 
     case BREAK:
         if(!nextword(&word,input,&n)) {

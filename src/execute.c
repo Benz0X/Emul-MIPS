@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "define.h"
+#include "pipeline.h"
 #include "fonctions.h"
 #include "common/notify.h"
 

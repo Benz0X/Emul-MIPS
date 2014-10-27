@@ -296,7 +296,18 @@ int loadELF (char* name,int nbparam,...) {
     }
 
     reg_mips[29]=0xFF7FF000;
-    
+
+    //Initialisation de PC
+    //Recuperation de la plage .text
+    int k;
+    int start;
+
+    for (k = 0; k < memory->nseg; k++) {
+        if(strcmp(memory->seg[k].name,".text")==0) {
+            start=memory->seg[k].start._32;
+        }
+    }
+    reg_mips[PC]=start;
 
     INFO_MSG("Chargement du fichier '%s'",name);
     fclose(pf_elf);
