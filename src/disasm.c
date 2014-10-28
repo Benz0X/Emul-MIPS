@@ -42,9 +42,9 @@ int disasm(uint32_t start_addr,uint32_t size) {
             getInstr(current_addr,&current_instr);
             memcpy(&instr_value,&current_instr,4);
             //Affichage des breakpoints
-            if(present(current_addr,breaklist)!=NULL){
+            if(present(current_addr,breaklist)!=NULL) {
                 printf("\n   X\t");
-            }else{
+            } else {
                 printf("\n\t");
             }
 
@@ -70,9 +70,9 @@ int disasm(uint32_t start_addr,uint32_t size) {
             else {
 
 
-            	//décommenter si on veut exécuter en disasemblant 
-            	//dico_data[dico_entry].exec(current_instr);
-                
+                //décommenter si on veut exécuter en disasemblant
+                //dico_data[dico_entry].exec(current_instr);
+
 
 
                 for (k = 1; k < symtab.size; ++k)
@@ -314,6 +314,6 @@ int disasm(uint32_t start_addr,uint32_t size) {
         current_addr+=4;
         i+=4;
     }
-    printf("\n");
+    //printf("\n");
     return 0;
 }

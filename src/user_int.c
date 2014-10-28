@@ -10,12 +10,13 @@
 #include "emul.h"
 #include "disasm.h"
 #include "common/bits.h"
-#include "pipeline.h"    
+#include "pipeline.h"
 #include <ctype.h>
 
 //Declaration des variables globales
 int scriptmode;
 list breaklist;                     //Initialisation de la liste de points d'arret
+int clocktime=0;
 
 /* syntaxe strtok
 
@@ -535,11 +536,16 @@ int decrypt(char input [])
         }
 
         //Verification des depassements .text
-        if(reg_mips[PC]>=end || reg_mips[PC]<start){
+        if(reg_mips[PC]>=end || reg_mips[PC]<start) {
             reg_mips[PC]=start;
         }
-        
+
+        //Initialisation des differentes instructions a traiter 
         instruction insID, insEX, insMEM, insWB;
+        insID.value=-1;     //Init à -1 : aucune instruction
+        insEX.value=-1;
+        insMEM.value=-1;
+        insWB.value=-1;
         return pipeline(insID,insEX,insMEM,insWB,end,running,1);
         break;
 
@@ -630,6 +636,24 @@ int decrypt(char input [])
             }
         }
         break;
+
+
+
+
+    case CLOCK:;
+        int tmp;
+        if(nextword(&word,input,&n) && isDecimal(word)){
+            tmp=strtol(word,NULL,0);
+            if(tmp>=0 && !nextword(&word,input,&n)){
+                clocktime=tmp;
+                return 0;
+            }
+        }
+        
+        WARNING_MSG("Syntax is :\n\t'clock <time in ms, 0 for max speed>'");
+        return -1;
+        break;
+
     case UNKNOWN:
         WARNING_MSG("Unknown command : %s",word);
         return -1;

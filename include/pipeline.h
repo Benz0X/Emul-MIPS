@@ -1,11 +1,24 @@
 #ifndef _pipeline_h
 #define _pipeline_h
 
-enum{IF,ID,EX,MEM,WB};
-enum{stop,running,step,stepinto};
+#if defined (WIN32) || defined (WIN64)
+#include <windows.h>
+#define DELAY(temps) Sleep(temps)
+#else
+#include <unistd.h>
+#define DELAY(temps) usleep(temps)
+#endif
 
-int pipeline(instruction instrID, instruction instrEX, instruction instrMEM, instruction instrWB, uint32_t end, int running, int affichage);
-int fetch(instruction insIF);
+typedef enum{stop,running,step,stepinto} state;
+typedef enum{IF,ID,EX,MEM,WB} pipestep;
+typedef enum {OK,EmptyPipe,InvalidInstruction} exception;
+
+int pipeline(instruction insID, instruction insEX, instruction insMEM, instruction insWB, uint32_t end, state running, int affichage);
+
+void exceptionHandler(exception number);
+
+int fetch(instruction* pinsIF);
+int decode(instruction insID, int* res);
 
 
 #endif

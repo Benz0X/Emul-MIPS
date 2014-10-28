@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
             }
             string_standardise(input,normalized_input);     //On normalise l'entree - echappement, commentaires, etc
             string_standardise(normalized_input,input);     //Deux fois pour enlever les lignes avec uniquement des ' ' a cause des '\t' qui deviennent ' '.
-                                                            //TODO : il est probablement possible de faire plus malin
+            //TODO : il est probablement possible de faire plus malin
         } while (input[0]=='\0'); //Jusqu'à une fin de chaine.
 
         //printf("'%s'\n",normalized_input );
@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
 
 
 
-        switch(res) { 
+        switch(res) {
         case 0:
             break;
         case 2:

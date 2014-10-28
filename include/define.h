@@ -49,7 +49,8 @@ typedef union{
 r_type r;
 i_type i;
 j_type j;
-}instruction;                           //union allowing easy access of each member of R, I or J instr
+uint32_t value;
+}instruction;                           //union allowing easy access of each member of R, I or J instr, and also the int value
 
 typedef enum {
     LOAD,
@@ -63,6 +64,7 @@ typedef enum {
     RUN,
     STEP,
     BREAK,
+    CLOCK,
     UNKNOWN
 } command ;
 
@@ -74,6 +76,7 @@ extern int scriptmode;                  //allow easy switch between interactive 
 extern dico_info* dico_data;            //contain all info from the dictionnary
 extern int nbinstr;                     //contain the number of instruction in the dictionnary
 extern list breaklist;                  //Liste des points d'arrets
+extern int clocktime;                       //Vitesse d'execution : 0 pour max
 
 
 #endif

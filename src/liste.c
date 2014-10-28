@@ -15,18 +15,18 @@ list push(element e, list L) {
     list p=(list) calloc(1,sizeof(*p));
     if (p==NULL) return NULL;
     p->val=e;
-    p->suiv=L; 
+    p->suiv=L;
     return p;
 }
 
-list pop(list L){
-  if (!empty(L)) {
-    list p;
-    p=L->suiv;
-    free(L);
-    return p;
-  }
-  else return NULL; 
+list pop(list L) {
+    if (!empty(L)) {
+        list p;
+        p=L->suiv;
+        free(L);
+        return p;
+    }
+    else return NULL;
 }
 
 list insert(element e, list L) {
@@ -35,8 +35,8 @@ list insert(element e, list L) {
     list p=(list) calloc(1,sizeof(*p)); //nouveau maillon
     if (p==NULL) return NULL;
 
-    if(empty(k)||e<k->val){
-      return push(e,L);
+    if(empty(k)||e<k->val) {
+        return push(e,L);
     }
     for(k=L; !empty(k->suiv)&&(e>k->suiv->val); k=k->suiv);
     p->val=e;
@@ -51,14 +51,14 @@ list del(element e, list L) {
 
     if(!L)return L;
 
-    if(L->val==e){
-      p =L->suiv;
-      free(L);
-      p=del(e,p);
-      return p;
-    }else{
-      L->suiv=del(e,L->suiv);
-      return L;
+    if(L->val==e) {
+        p =L->suiv;
+        free(L);
+        p=del(e,p);
+        return p;
+    } else {
+        L->suiv=del(e,L->suiv);
+        return L;
     }
 }
 
