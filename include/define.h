@@ -18,22 +18,7 @@
 #define PC 34
 
 //Typedef :
-typedef struct {
-	uint b4:8,
-	b3:8,
-	b2:8,
-	b1:8;
-} struct_word;                          //word of 4 bytes
 
-typedef struct {
-char name[MAX_NAME_SIZE];
-uint32_t mask;
-uint32_t instr;
-short type;                             //0=R, 1=I,2=J
-short nb_arg;
-char argname[MAX_INSTR_ARG][MAX_NAME_SIZE];
-int (*exec)(instruction);
-}dico_info;                             //Structure containing everything about an instruction
 
 typedef struct{
 uint function:6,sa:5,rd:5,rt:5,rs:5,opcode:6;
@@ -51,6 +36,24 @@ i_type i;
 j_type j;
 uint32_t value;
 }instruction;                           //union allowing easy access of each member of R, I or J instr, and also the int value
+
+typedef struct {
+	uint b4:8,
+	b3:8,
+	b2:8,
+	b1:8;
+} struct_word;                          //word of 4 bytes
+
+typedef struct {
+char name[MAX_NAME_SIZE];
+uint32_t mask;
+uint32_t instr;
+short type;                             //0=R, 1=I,2=J
+short nb_arg;
+char argname[MAX_INSTR_ARG][MAX_NAME_SIZE];
+int (*exec)(instruction);
+}dico_info;                             //Structure containing everything about an instruction
+
 
 typedef enum {
     LOAD,
