@@ -570,7 +570,7 @@ int decrypt(char input [])
             return -1;
         }
 
-        int textstart,textend,l,rem;
+        int textstart,textend,l,rem=0;
         for (l = 0; l < memory->nseg; l++) {
             if(strcmp(memory->seg[l].name,".text")==0) {
                 textstart=memory->seg[l].start._32;
@@ -592,9 +592,9 @@ int decrypt(char input [])
                 }
                 int adress=reg_mips[PC]+4;
                 if(empty(present(adress,breaklist))) {
+                    breaklist=insert(adress,breaklist);
                     rem=1;
                 };
-                breaklist=insert(adress,breaklist);
                 instruction insID, insEX, insMEM, insWB;
                 insID.value=-1;     //Init à -1 : aucune instruction
                 insEX.value=-1;
@@ -604,6 +604,7 @@ int decrypt(char input [])
                 if (rem==1) {
                     breaklist=del(adress,breaklist);
                 }
+                rem=0;
                 return 0;
 
             }
