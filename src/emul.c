@@ -295,7 +295,7 @@ int loadELF (char* name,int nbparam,...) {
         reg_mips[j]=0;             //Initialisation des registres pour debug avant load
     }
 
-    reg_mips[29]=0xFF7FF000;
+    reg_mips[29]=0xFFFFF000;
 
     //Initialisation de PC
     //Recuperation de la plage .text

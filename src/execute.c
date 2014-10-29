@@ -196,7 +196,10 @@ int SLL(instruction ins) {
 }
 
 int SRA(instruction ins) {
-    //return writeRegindex(ins.r.rd,reg_mips[ins.r.rt] >> ins.r.sa);
+    if ((int)reg_mips[ins.r.rt]>0){
+    return writeRegindex(ins.r.rd,(reg_mips[ins.r.rt] >> ins.r.sa)|0x80000000);
+    }
+    return writeRegindex(ins.r.rd,reg_mips[ins.r.rt] >> ins.r.sa);
 }
 
 int SRL(instruction ins) {
