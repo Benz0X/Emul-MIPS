@@ -523,7 +523,17 @@ int decrypt(char input [])
             return -1;
         }
         //Recuperation de l'adress facultative
-        if(nextword(&word,input,&n) && isHexa(word)) reg_mips[PC]=strtol(word,NULL,0);
+        if(nextword(&word,input,&n)) {
+            if(isHexa(word)) reg_mips[PC]=strtol(word,NULL,0);
+            else {
+                WARNING_MSG("Syntax error, syntax is run [adress], with adress hexadecimal");
+                return -1;
+            }
+        }
+        if(nextword(&word,input,&n)) {
+            WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
+            return -1;
+        }
         //Recuperation de la plage .text
         int k;
         int start,end;
@@ -538,12 +548,13 @@ int decrypt(char input [])
         //Verification des depassements .text
         if(reg_mips[PC]>=end || reg_mips[PC]<start) {
             reg_mips[PC]=start;
+            WARNING_MSG("Out of memory map, start adress set to default");
         }
 
-        //Initialisation des differentes instructions a traiter 
+        //Initialisation des differentes instructions a traiter
         instruction insID, insEX, insMEM, insWB;
         insID.value=-1;     //Init à -1 : aucune instruction
-        insEX.value=-1;
+        insEX.value=-1;     //Faut initialiser à -1 que SI c'est en début de prog
         insMEM.value=-1;
         insWB.value=-1;
         return pipeline(insID,insEX,insMEM,insWB,end,running,1);
@@ -554,7 +565,7 @@ int decrypt(char input [])
 
 
     case STEP:
-     if(memory==NULL) {
+        if(memory==NULL) {
             WARNING_MSG("No memory loaded");
             return -1;
         }
@@ -571,16 +582,18 @@ int decrypt(char input [])
         if(reg_mips[PC]>=textend || reg_mips[PC]<textstart) {
             reg_mips[PC]=textstart;
         }
-        
+
         //cas "into"
-        if(nextword(&word,input,&n)){
-            if(strcmp(word,"into")==0){
-                if(nextword(&word,input,&n)){
+        if(nextword(&word,input,&n)) {
+            if(strcmp(word,"into")==0) {
+                if(nextword(&word,input,&n)) {
                     WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
                     return -1;
                 }
                 int adress=reg_mips[PC]+4;
-                if(empty(present(adress,breaklist))){rem=1;};
+                if(empty(present(adress,breaklist))) {
+                    rem=1;
+                };
                 breaklist=insert(adress,breaklist);
                 instruction insID, insEX, insMEM, insWB;
                 insID.value=-1;     //Init à -1 : aucune instruction
@@ -588,21 +601,26 @@ int decrypt(char input [])
                 insMEM.value=-1;
                 insWB.value=-1;
                 pipeline(insID,insEX,insMEM,insWB,textend,running,1);
-                if (rem==1){breaklist=del(adress,breaklist);}
+                if (rem==1) {
+                    breaklist=del(adress,breaklist);
+                }
                 return 0;
 
             }
-            else{WARNING_MSG("Syntax error, syntax is 'step' or 'step into'");}
+            else {
+                WARNING_MSG("Syntax error, syntax is 'step' or 'step into'");
+                return -1;
+            }
         }
-        if(nextword(&word,input,&n)){
-                    WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
-                    return -1;
+        if(nextword(&word,input,&n)) {
+            WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
+            return -1;
         }
         INFO_MSG("step");
         return 0;
 
 
-break;
+        break;
 
 
 
@@ -687,16 +705,17 @@ break;
 
 
 
-    case CLOCK:;
+    case CLOCK:
+        ;
         int tmp;
-        if(nextword(&word,input,&n) && isDecimal(word)){
+        if(nextword(&word,input,&n) && isDecimal(word)) {
             tmp=strtol(word,NULL,0);
-            if(tmp>=0 && !nextword(&word,input,&n)){
+            if(tmp>=0 && !nextword(&word,input,&n)) {
                 clocktime=tmp;
                 return 0;
             }
         }
-        
+
         WARNING_MSG("Syntax is :\n\t'clock <time in ms, 0 for max speed>'");
         return -1;
         break;

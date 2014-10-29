@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=PASS        
+#TEST_COMMENT="disasm"
+#-------
+load Tests/test_all.o
+run 0x3000
+exit
