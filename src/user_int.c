@@ -554,8 +554,55 @@ int decrypt(char input [])
 
 
     case STEP:
-        printf("%d \n",current_cmd);
-        break;
+     if(memory==NULL) {
+            WARNING_MSG("No memory loaded");
+            return -1;
+        }
+
+        int textstart,textend,l,rem;
+        for (l = 0; l < memory->nseg; l++) {
+            if(strcmp(memory->seg[l].name,".text")==0) {
+                textstart=memory->seg[l].start._32;
+                textend=memory->seg[l].start._32+memory->seg[l].size._32;
+            }
+        }
+
+        //Verification des depassements .text
+        if(reg_mips[PC]>=textend || reg_mips[PC]<textstart) {
+            reg_mips[PC]=textstart;
+        }
+        
+        //cas "into"
+        if(nextword(&word,input,&n)){
+            if(strcmp(word,"into")==0){
+                if(nextword(&word,input,&n)){
+                    WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
+                    return -1;
+                }
+                int adress=reg_mips[PC]+4;
+                if(empty(present(adress,breaklist))){rem=1;};
+                breaklist=insert(adress,breaklist);
+                instruction insID, insEX, insMEM, insWB;
+                insID.value=-1;     //Init à -1 : aucune instruction
+                insEX.value=-1;
+                insMEM.value=-1;
+                insWB.value=-1;
+                pipeline(insID,insEX,insMEM,insWB,textend,running,1);
+                if (rem==1){breaklist=del(adress,breaklist);}
+                return 0;
+
+            }
+            else{WARNING_MSG("Syntax error, syntax is 'step' or 'step into'");}
+        }
+        if(nextword(&word,input,&n)){
+                    WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
+                    return -1;
+        }
+        INFO_MSG("step");
+        return 0;
+
+
+break;
 
 
 
