@@ -42,6 +42,27 @@ int exceptionHandler(exception number) {
 
     case SysCall:
         WARNING_MSG("Syscall : %8.8X",insEX.value);
+        switch (reg_mips[2]) { //v0
+        case 1:
+            printf("%d\n",reg_mips[4]); //a0
+            break;
+        case 4:
+            //printf("%s\n",reg_mips[4]);
+            break;
+        case 5:
+            scanf("%d",&reg_mips[2]);
+            break;
+        case 8:
+            //scanf("%s",&reg_mips[2]);
+            //reg_mips[3]=sizeof
+            break;
+        case 10:
+            return quit;
+            break;
+        default:
+            WARNING_MSG("Unknown SysCall, %d",reg_mips[2]);
+            break;
+        }
         break;
 
 
@@ -108,22 +129,22 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 //Fetch
     instruction insIF; //Creation de la nouvelle instruction
-    flag = exceptionHandler(fetch(&insIF));
+    exceptionHandler(fetch(&insIF));
 
 //Decode
     //Resolution des adresses registre ?
     int dico_entry=-1;
-    flag = exceptionHandler(decode(insID,&dico_entry));
+    exceptionHandler(decode(insID,&dico_entry));
 
 
 //Execute
-    flag =  exceptionHandler(execute(insEX,EX,dico_entry,&EXtmp));
+    flag = exceptionHandler(execute(insEX,EX,dico_entry,&EXtmp));
 
 //Memory
-    flag =    exceptionHandler(execute(insMEM,MEM,dico_entry,&MEMtmp));
+    exceptionHandler(execute(insMEM,MEM,dico_entry,&MEMtmp));
 
 //Write Back
-    flag = exceptionHandler(execute(insWB,WB,dico_entry,&WBtmp));
+    exceptionHandler(execute(insWB,WB,dico_entry,&WBtmp));
 
 
 //Temporisation
@@ -156,6 +177,7 @@ int pipeline(uint32_t end, state running, int affichage) {
         printf("Executing: %8.8X\n", insEX.value);
     }
 //Test de sortie
+    if(flag==quit){initprog();return 0;}
     if(reg_mips[PC]>=end+16 || present(reg_mips[PC],breaklist)!=NULL || flag==BreakPoint) {
         printf("\nFin du run\n");
         return 0;
