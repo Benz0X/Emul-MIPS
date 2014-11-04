@@ -719,3 +719,27 @@ int getInstr(uint32_t adress, instruction* instr_ptr) {
     //printf("content : %8.8X\t",temp); printf("adress %8.8X\n", adress);
     return 1;
 }
+
+void initprog() {
+    insID.value=-1;     //Init à -1 : aucune instruction
+    insEX.value=-1;
+    insMEM.value=-1;
+    insWB.value=-1;
+    int j;
+
+    for (j=0; j < NBREG+3; ++j)
+    {
+        reg_mips[j]=0;             //Initialisation des registres pour debug avant load
+    }
+
+    reg_mips[29]=0xFFFFF000;
+    //Initialisation de PC
+    //Recuperation de la plage .text
+    int k;
+
+    for (k = 0; k < memory->nseg; k++) {
+        if(strcmp(memory->seg[k].name,".text")==0) {
+            reg_mips[PC]=memory->seg[k].start._32;
+        }
+    }
+}

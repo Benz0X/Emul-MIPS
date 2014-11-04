@@ -22,4 +22,5 @@ int isReg(char* reg_name);									//test si le nom ou numero de registre est co
 int parseReg(int index, char* regname);						//Prends un numéro de registre et associe regname au nom de registre adequat. renvoie -1 si index est innaproprié
 int readDico(char* dico_name); 								//Stocke les info du dico en mémoire dans la variable globale Dico.
 int getInstr(uint32_t adress, instruction* instr_ptr);		//Recupere une instruction en memoire
+void initprog();											//Initialise les registres et le pipeline en début de programme
 #endif

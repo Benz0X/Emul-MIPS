@@ -11,14 +11,14 @@
 
 typedef enum{stop,running,step,stepinto} state;
 typedef enum{IF,ID,EX,MEM,WB} pipestep;
-typedef enum {OK,EmptyPipe,InvalidInstruction} exception;
+typedef enum {OK,EmptyPipe,InvalidInstruction,InvalidExecution} exception;
 
-int pipeline(instruction insID, instruction insEX, instruction insMEM, instruction insWB, uint32_t end, state running, int affichage);
+int pipeline(uint32_t end, state running, int affichage);
 
 void exceptionHandler(exception number);
 
 int fetch(instruction* pinsIF);
 int decode(instruction insID, int* res);
-
+int execute(instruction insEX, pipestep EX, int dico_entry, int* tmp);
 
 #endif

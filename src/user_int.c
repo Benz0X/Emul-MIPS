@@ -17,6 +17,7 @@
 int scriptmode;
 list breaklist;                     //Initialisation de la liste de points d'arret
 int clocktime=0;
+instruction insID, insEX, insMEM, insWB;
 
 /* syntaxe strtok
 
@@ -552,12 +553,10 @@ int decrypt(char input [])
         }
 
         //Initialisation des differentes instructions a traiter
-        instruction insID, insEX, insMEM, insWB;
-        insID.value=-1;     //Init à -1 : aucune instruction
-        insEX.value=-1;     //Faut initialiser à -1 que SI c'est en début de prog
-        insMEM.value=-1;
-        insWB.value=-1;
-        return pipeline(insID,insEX,insMEM,insWB,end,running,1);
+        if(reg_mips[PC]==start) {
+            initprog();
+        }
+        return pipeline(end,running,1);
         break;
 
 
@@ -595,12 +594,10 @@ int decrypt(char input [])
                     breaklist=insert(adress,breaklist);
                     rem=1;
                 };
-                instruction insID, insEX, insMEM, insWB;
-                insID.value=-1;     //Init à -1 : aucune instruction
-                insEX.value=-1;
-                insMEM.value=-1;
-                insWB.value=-1;
-                pipeline(insID,insEX,insMEM,insWB,textend,running,1);
+                if(reg_mips[PC]==textstart) {
+                    initprog();
+                }
+                pipeline(textend,running,1);
                 if (rem==1) {
                     breaklist=del(adress,breaklist);
                 }
