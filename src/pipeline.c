@@ -10,7 +10,7 @@
 #include "pipeline.h"
 #include "common/notify.h"
 
-void exceptionHandler(exception number) {
+int exceptionHandler(exception number) {
     //Permet de parser les erreurs et exceptions
     switch(number) {
     case OK:
@@ -36,7 +36,8 @@ void exceptionHandler(exception number) {
         break;
 
     case BreakPoint:
-        //WARNING_MSG("IntegerOverflow : %8.8X",insEX.value);
+        WARNING_MSG("Break : %8.8X",insEX.value);
+        return BreakPoint;
         break;
 
     case SysCall:
@@ -48,6 +49,7 @@ void exceptionHandler(exception number) {
         WARNING_MSG("Unknown error - Number %d", number);
         break;
     }
+    return OK;
 }
 
 
@@ -79,8 +81,21 @@ int execute(instruction insEX, pipestep EX, int dico_entry, int* tmp) {
     return dico_data[dico_entry].exec(insEX,EX,tmp);
 }
 
+
+
+
+
+
+
+
+
+
 int pipeline(uint32_t end, state running, int affichage) {
-    if(affichage==1)WARNING_MSG("Nouvelle iteration");
+    int flag;
+    if(affichage==1) {
+        WARNING_MSG("Nouvelle iteration");
+        printf("Pipe : ID %X\t EX %X\t MEM %X\t WB %X\n\n",insID.value,insEX.value,insMEM.value,insWB.value);
+    }
 //Clock
     int tick= clock();
 
@@ -93,22 +108,22 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 //Fetch
     instruction insIF; //Creation de la nouvelle instruction
-    exceptionHandler(fetch(&insIF));
+    flag = exceptionHandler(fetch(&insIF));
+
 //Decode
     //Resolution des adresses registre ?
     int dico_entry=-1;
-    exceptionHandler(decode(insID,&dico_entry));
+    flag = exceptionHandler(decode(insID,&dico_entry));
 
 
 //Execute
-    //int tmp;
-    //exceptionHandler(execute(insEX,EX,&tmp));
+    flag =  exceptionHandler(execute(insEX,EX,dico_entry,&EXtmp));
 
 //Memory
-    //exceptionHandler(execute(insMEM,MEM,&tmp));
+    flag =    exceptionHandler(execute(insMEM,MEM,dico_entry,&MEMtmp));
 
 //Write Back
-    //exceptionHandler(execute(insWB,WB,&tmp));
+    flag = exceptionHandler(execute(insWB,WB,dico_entry,&WBtmp));
 
 
 //Temporisation
@@ -120,9 +135,14 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
 //avancement du pipeline
     insWB=insMEM;
+    WBtmp=MEMtmp;
     insMEM=insEX;
+    MEMtmp=EXtmp;
     insEX=insID;
+    EXtmp=0;
     insID=insIF;
+
+
 
 //Gestion fin de programme
     if(reg_mips[PC]>=end) {
@@ -131,12 +151,12 @@ int pipeline(uint32_t end, state running, int affichage) {
 //Affichage
     if(affichage==1) {
         //disasm(reg_mips[PC]-4,1);
-        printf("Pipe : %X %X %X %X %X\n\n",insIF.value,insID.value,insEX.value,insMEM.value,insWB.value);
         printf("\nPC: %8.8X->%8.8X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], insIF.value);
         printf("Decoding: %8.8X  Dico: %d-> %s\n", insID.value, dico_entry, dico_data[dico_entry].name);
+        printf("Executing: %8.8X\n", insEX.value);
     }
 //Test de sortie
-    if(reg_mips[PC]>=end+16 || present(reg_mips[PC],breaklist)!=NULL) {
+    if(reg_mips[PC]>=end+16 || present(reg_mips[PC],breaklist)!=NULL || flag==BreakPoint) {
         printf("\nFin du run\n");
         return 0;
     } else {

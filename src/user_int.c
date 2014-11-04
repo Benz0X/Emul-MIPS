@@ -18,6 +18,7 @@ int scriptmode;
 list breaklist;                     //Initialisation de la liste de points d'arret
 int clocktime=0;
 instruction insID, insEX, insMEM, insWB;
+int EXtmp,MEMtmp,WBtmp;
 
 /* syntaxe strtok
 

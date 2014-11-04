@@ -314,6 +314,6 @@ int disasm(uint32_t start_addr,uint32_t size) {
         current_addr+=4;
         i+=4;
     }
-    //printf("\n");
+    printf("\n");
     return 0;
 }

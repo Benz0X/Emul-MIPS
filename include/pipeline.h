@@ -15,7 +15,7 @@ typedef enum {OK,EmptyPipe,InvalidInstruction,InvalidExecution,IntegerOverflow,B
 
 int pipeline(uint32_t end, state running, int affichage);
 
-void exceptionHandler(exception number);
+int exceptionHandler(exception number);
 
 int fetch(instruction* pinsIF);
 int decode(instruction insID, int* res);

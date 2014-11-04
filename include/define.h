@@ -81,6 +81,7 @@ extern int nbinstr;                     //contain the number of instruction in t
 extern list breaklist;                  //Liste des points d'arrets
 extern int clocktime;                       //Vitesse d'execution : 0 pour max
 extern instruction insID, insEX, insMEM, insWB;
+extern int EXtmp,MEMtmp,WBtmp;
 
 
 #endif
