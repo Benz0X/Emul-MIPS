@@ -5,80 +5,80 @@
 //Prennent l'instruction en paramètre
 
 //ADDITION
-int ADD(instruction ins);
-int ADDI(instruction ins);
-int ADDIU(instruction ins);
-int ADDU(instruction ins);
+int ADD(instruction ins, int pipestep, int* tmp);
+int ADDI(instruction ins, int pipestep, int* tmp);
+int ADDIU(instruction ins, int pipestep, int* tmp);
+int ADDU(instruction ins, int pipestep, int* tmp);
 
 //AND
-int AND(instruction ins);
-int ANDI(instruction ins);
+int AND(instruction ins, int pipestep, int* tmp);
+int ANDI(instruction ins, int pipestep, int* tmp);
 
 //BRANCH
-int BEQ(instruction ins);
-int BGEZ(instruction ins);
-int BGTZ(instruction ins);
-int BLEZ(instruction ins);
-int BLTZ(instruction ins);
-int BNE(instruction ins);
+int BEQ(instruction ins, int pipestep, int* tmp);
+int BGEZ(instruction ins, int pipestep, int* tmp);
+int BGTZ(instruction ins, int pipestep, int* tmp);
+int BLEZ(instruction ins, int pipestep, int* tmp);
+int BLTZ(instruction ins, int pipestep, int* tmp);
+int BNE(instruction ins, int pipestep, int* tmp);
 
 //BREAK
-int BREAKprog(instruction ins);
+int BREAKprog(instruction ins, int pipestep, int* tmp);
 
 //DIV
-int DIV(instruction ins);
+int DIV(instruction ins, int pipestep, int* tmp);
 
 //JUMP
-int J(instruction ins);
-int JAL(instruction ins);
-int JALR(instruction ins);
-int JR(instruction ins);
+int J(instruction ins, int pipestep, int* tmp);
+int JAL(instruction ins, int pipestep, int* tmp);
+int JALR(instruction ins, int pipestep, int* tmp);
+int JR(instruction ins, int pipestep, int* tmp);
 
 //LOAD
-int LB(instruction ins);
-int LBU(instruction ins);
-int LUI(instruction ins);
-int LW(instruction ins);
+int LB(instruction ins, int pipestep, int* tmp);
+int LBU(instruction ins, int pipestep, int* tmp);
+int LUI(instruction ins, int pipestep, int* tmp);
+int LW(instruction ins, int pipestep, int* tmp);
 
 //MF
-int MFHI(instruction ins);
-int MFLO(instruction ins);
+int MFHI(instruction ins, int pipestep, int* tmp);
+int MFLO(instruction ins, int pipestep, int* tmp);
 
 //MULT
-int MULT(instruction ins);
+int MULT(instruction ins, int pipestep, int* tmp);
 
 //NOP
-int NOP(instruction ins);
+int NOP(instruction ins, int pipestep, int* tmp);
 
 //OR
-int OR(instruction ins);
-int ORI(instruction ins);
-int XOR(instruction ins);
+int OR(instruction ins, int pipestep, int* tmp);
+int ORI(instruction ins, int pipestep, int* tmp);
+int XOR(instruction ins, int pipestep, int* tmp);
 
 //STORE
-int SB(instruction ins);
-int SW(instruction ins);
+int SB(instruction ins, int pipestep, int* tmp);
+int SW(instruction ins, int pipestep, int* tmp);
 
 //SIGN EXTEND
-int SEB(instruction ins);
+int SEB(instruction ins, int pipestep, int* tmp);
 
 //SHIFT
-int SLL(instruction ins);
-int SRA(instruction ins);
-int SRL(instruction ins);
+int SLL(instruction ins, int pipestep, int* tmp);
+int SRA(instruction ins, int pipestep, int* tmp);
+int SRL(instruction ins, int pipestep, int* tmp);
 
 //SET
-int SLT(instruction ins);
-int SLTI(instruction ins);
-int SLTIU(instruction ins);
-int SLTU(instruction ins);
+int SLT(instruction ins, int pipestep, int* tmp);
+int SLTI(instruction ins, int pipestep, int* tmp);
+int SLTIU(instruction ins, int pipestep, int* tmp);
+int SLTU(instruction ins, int pipestep, int* tmp);
 
 //SUB
-int SUB(instruction ins);
-int SUBU(instruction ins);
+int SUB(instruction ins, int pipestep, int* tmp);
+int SUBU(instruction ins, int pipestep, int* tmp);
 
 //SYSCALL
-int SYSCALL(instruction ins);
+int SYSCALL(instruction ins, int pipestep, int* tmp);
 
 
 

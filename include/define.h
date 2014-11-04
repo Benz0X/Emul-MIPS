@@ -51,7 +51,7 @@ uint32_t instr;
 short type;                             //0=R, 1=I,2=J
 short nb_arg;
 char argname[MAX_INSTR_ARG][MAX_NAME_SIZE];
-int (*exec)(instruction);
+int (*exec)(instruction,int,int*);
 }dico_info;                             //Structure containing everything about an instruction
 
 

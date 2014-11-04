@@ -29,6 +29,21 @@ void exceptionHandler(exception number) {
         WARNING_MSG("Invalid execution : %8.8X at adress %X", insEX.value, reg_mips[PC]-8);
         break;
 
+
+
+    case IntegerOverflow:
+        WARNING_MSG("IntegerOverflow : %8.8X",insEX.value);
+        break;
+
+    case BreakPoint:
+        //WARNING_MSG("IntegerOverflow : %8.8X",insEX.value);
+        break;
+
+    case SysCall:
+        WARNING_MSG("Syscall : %8.8X",insEX.value);
+        break;
+
+
     default :
         WARNING_MSG("Unknown error - Number %d", number);
         break;
@@ -61,7 +76,7 @@ int decode(instruction insID, int* res) {
 
 int execute(instruction insEX, pipestep EX, int dico_entry, int* tmp) {
     if (dico_entry==-1) return InvalidExecution;
-    return dico_data[dico_entry].exec(insEX);
+    return dico_data[dico_entry].exec(insEX,EX,tmp);
 }
 
 int pipeline(uint32_t end, state running, int affichage) {
