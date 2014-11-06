@@ -19,6 +19,7 @@ list breaklist;                     //Initialisation de la liste de points d'arr
 int clocktime=0;
 instruction insID, insEX, insMEM, insWB;
 int EXtmp,MEMtmp,WBtmp;
+int EXdic=-1,MEMdic=-1,WBdic=-1;
 
 /* syntaxe strtok
 

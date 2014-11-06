@@ -138,13 +138,13 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 
 //Execute
-    flag = exceptionHandler(execute(insEX,EX,dico_entry,&EXtmp));
+    flag = exceptionHandler(execute(insEX,EX,EXdic,&EXtmp));
 
 //Memory
-    exceptionHandler(execute(insMEM,MEM,dico_entry,&MEMtmp));
+    exceptionHandler(execute(insMEM,MEM,MEMdic,&MEMtmp));
 
 //Write Back
-    exceptionHandler(execute(insWB,WB,dico_entry,&WBtmp));
+    exceptionHandler(execute(insWB,WB,WBdic,&WBtmp));
 
 
 //Temporisation
@@ -154,13 +154,29 @@ int pipeline(uint32_t end, state running, int affichage) {
         printf("Attente de %ldms\n", clocktime-tick/CLOCKS_PER_SEC*1000);
         if((double)tick/CLOCKS_PER_SEC*1000<clocktime) DELAY((clocktime-tick/CLOCKS_PER_SEC*1000)*1000); //*1000 pour le passage en us->ms
     }
+
+//Affichage
+    if(affichage==1) {
+        //disasm(reg_mips[PC]-4,1);
+        printf("PC: %8.8X->%8.8X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], insIF.value);
+        printf("Decoding: %8.8X  Dico: %d-> %s\n", insID.value, dico_entry, dico_data[dico_entry].name);
+        printf("Executing: %8.8X\n", insEX.value);
+        printf("\n\n");
+    }
+
 //avancement du pipeline
     insWB=insMEM;
     WBtmp=MEMtmp;
+    WBdic=MEMdic;
+
     insMEM=insEX;
     MEMtmp=EXtmp;
+    MEMdic=EXdic;
+
     insEX=insID;
     EXtmp=0;
+    EXdic=dico_entry;
+
     insID=insIF;
 
 
@@ -169,13 +185,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     if(reg_mips[PC]>=end) {
         insID.value=-1;
     }
-//Affichage
-    if(affichage==1) {
-        //disasm(reg_mips[PC]-4,1);
-        printf("\nPC: %8.8X->%8.8X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], insIF.value);
-        printf("Decoding: %8.8X  Dico: %d-> %s\n", insID.value, dico_entry, dico_data[dico_entry].name);
-        printf("Executing: %8.8X\n", insEX.value);
-    }
+
 //Test de sortie
     if(flag==quit){initprog();return 0;}
     if(reg_mips[PC]>=end+16 || present(reg_mips[PC],breaklist)!=NULL || flag==BreakPoint) {

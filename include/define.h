@@ -82,6 +82,7 @@ extern list breaklist;                  //Liste des points d'arrets
 extern int clocktime;                       //Vitesse d'execution : 0 pour max
 extern instruction insID, insEX, insMEM, insWB;
 extern int EXtmp,MEMtmp,WBtmp;
+extern int EXdic,MEMdic,WBdic;
 
 
 #endif
