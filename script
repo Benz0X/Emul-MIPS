@@ -1,3 +1,4 @@
 load Tests/boucle.o
 run
+disp reg all
 debug

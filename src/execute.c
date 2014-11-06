@@ -113,46 +113,84 @@ int ANDI(instruction ins, int pipestep, int* tmp) {
 
 //BRANCH
 int BEQ(instruction ins, int pipestep, int* tmp) {
+        switch (pipestep) {
+    case EX:
     if(reg_mips[ins.i.rs]==reg_mips[ins.i.rt]) {
-        // writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);
+        *tmp=reg_mips[PC]+4*ins.i.immediate;
+    }
+        break;
+    case MEM:
+        writeRegindex(PC,*tmp);
+        break;
     }
     return 0;
 }
 
 int BGEZ(instruction ins, int pipestep, int* tmp) {
+        switch (pipestep) {
+    case EX:
     if(reg_mips[ins.i.rs]>=0) {
-        //  writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);
+        *tmp=reg_mips[PC]+4*ins.i.immediate;
+    }
+        break;
+    case MEM:
+        writeRegindex(PC,*tmp);
+        break;
     }
     return 0;
 }
 
 int BGTZ(instruction ins, int pipestep, int* tmp) {
+    switch (pipestep) {
+    case EX:
     if(reg_mips[ins.i.rs]>0) {
-        // writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);
+        *tmp=reg_mips[PC]+4*ins.i.immediate;
+    }
+        break;
+    case MEM:
+        writeRegindex(PC,*tmp);
+        break;
     }
     return 0;
 }
 
 int BLEZ(instruction ins, int pipestep, int* tmp) {
+    switch (pipestep) {
+    case EX:
     if(reg_mips[ins.i.rs]<=0) {
-        // writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);
+        *tmp=reg_mips[PC]+4*ins.i.immediate;
+    }
+        break;
+    case MEM:
+        writeRegindex(PC,*tmp);
+        break;
     }
     return 0;
 }
 
 int BLTZ(instruction ins, int pipestep, int* tmp) {
+    switch (pipestep) {
+    case EX:
     if(reg_mips[ins.i.rs]<0) {
-        // writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);
+        *tmp=reg_mips[PC]+4*ins.i.immediate;
+    }
+        break;
+    case MEM:
+        writeRegindex(PC,*tmp);
+        break;
     }
     return 0;
 }
 
 int BNE(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
-        case EX:
+    case EX:
         if(reg_mips[ins.i.rs]!=reg_mips[ins.i.rt]) {
-            writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);
-        }
+        *tmp=reg_mips[PC]+4*ins.i.immediate;
+    }
+        break;
+    case MEM:
+        writeRegindex(PC,*tmp);
         break;
     }
     return 0;
