@@ -122,7 +122,7 @@ int ANDI(instruction ins, int pipestep, int* tmp) {
 
 //BRANCH
 int BEQ(instruction ins, int pipestep, int* tmp) {
-        switch (pipestep) {
+    switch (pipestep) {
     case EX:
     if(reg_mips[ins.i.rs]==reg_mips[ins.i.rt]) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
@@ -136,7 +136,7 @@ int BEQ(instruction ins, int pipestep, int* tmp) {
 }
 
 int BGEZ(instruction ins, int pipestep, int* tmp) {
-        switch (pipestep) {
+    switch (pipestep) {
     case EX:
     if(reg_mips[ins.i.rs]>=0) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
@@ -267,19 +267,51 @@ int DIV(instruction ins, int pipestep, int* tmp) {
 
 //JUMP
 int J(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case MEM:
+        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | ins.j.target)-8;    //-8 ?
+        break;
+    }
+    
+    return OK;
 }
 
 int JAL(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case EX:
+        reg_mips[31]=reg_mips[PC]; 
+        break;
+    
+    case MEM:
+        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | ins.j.target)-8;    //-8 ?
+        break;
+    }
+    
+    return OK;
 }
 
-int JALR(instruction ins, int pipestep, int* tmp) {
-    return 0;
+int JALR(instruction ins, int pipestep, int* tmp) {     //NOTE : RD SHOULDN'T BE 31
+    switch (pipestep) {
+    case EX:
+        reg_mips[ins.r.rd]=reg_mips[PC]; 
+        break;
+    
+    case MEM:
+        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | reg_mips[ins.r.rs])-8;    //-8 ?
+        break;
+    }
+
+    return OK;
 }
 
 int JR(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case MEM:
+        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | reg_mips[ins.r.rs])-8;    //-8 ?
+        break;
+    }
+    
+    return OK;
 }
 
 
@@ -303,12 +335,21 @@ int LW(instruction ins, int pipestep, int* tmp) {
 
 //MF
 int MFHI(instruction ins, int pipestep, int* tmp) {
-
-    return writeRegindex(ins.r.rd,reg_mips[HI]);
+    switch (pipestep) {
+    case WB:
+        writeRegindex(ins.r.rd,reg_mips[HI]);
+        break;
+    }
+    return OK;
 }
 
 int MFLO(instruction ins, int pipestep, int* tmp) {
-    return writeRegindex(ins.r.rd,reg_mips[LO]);
+    switch (pipestep) {
+    case WB:
+        writeRegindex(ins.r.rd,reg_mips[LO]);
+        break;
+    }
+    return OK; 
 }
 
 
@@ -391,7 +432,12 @@ int SW(instruction ins, int pipestep, int* tmp) {
 
 //SIGN EXTEND
 int SEB(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case WB:
+        writeRegindex(ins.r.rd,(int32_t)reg_mips[ins.r.rt]);
+        break;
+    }
+    return OK; 
 }
 
 
