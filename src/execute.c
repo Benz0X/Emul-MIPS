@@ -41,14 +41,16 @@ int ADDI(instruction ins, int pipestep, int* tmp) {
     case EX:
         ;
         int64_t max=0xFFFFFFFF;
-        if ((int64_t)ins.i.immediate + (int64_t)reg_mips[ins.i.rs]>max) {
+        if ((int64_t)ins.i.immediate + (int64_t)reg_mips[ins.i.rs]>max || (int64_t)ins.i.immediate + (int64_t)reg_mips[ins.i.rs]<-max) {
             *tmp=reg_mips[ins.i.rt];
             return IntegerOverflow;
         }
         *tmp=ins.i.immediate + reg_mips[ins.i.rs];
+  //      printf("temp= %d\n", *tmp);
         break;
 
     case WB:
+//    printf("write %d in rt\n", *tmp);
         writeRegindex(ins.i.rt,*tmp);
         break;
     }
@@ -146,8 +148,12 @@ int BLTZ(instruction ins, int pipestep, int* tmp) {
 }
 
 int BNE(instruction ins, int pipestep, int* tmp) {
-    if(reg_mips[ins.i.rs]!=reg_mips[ins.i.rt]) {
-        //writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);
+    switch (pipestep) {
+        case EX:
+        if(reg_mips[ins.i.rs]!=reg_mips[ins.i.rt]) {
+            writeRegindex(PC,reg_mips[PC]+4*ins.i.immediate);
+        }
+        break;
     }
     return 0;
 }

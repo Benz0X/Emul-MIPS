@@ -721,6 +721,7 @@ int getInstr(uint32_t adress, instruction* instr_ptr) {
 }
 
 void initprog() {
+    //INFO_MSG("INIT des données");
     insID.value=-1;     //Init à -1 : aucune instruction
     insEX.value=-1;
     insMEM.value=-1;
