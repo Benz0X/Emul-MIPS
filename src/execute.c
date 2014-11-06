@@ -83,6 +83,10 @@ int ADDU(instruction ins, int pipestep, int* tmp) {
 }
 
 
+
+
+
+
 //AND
 int AND(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
@@ -111,6 +115,11 @@ int ANDI(instruction ins, int pipestep, int* tmp) {
 }
 
 
+
+
+
+
+
 //BRANCH
 int BEQ(instruction ins, int pipestep, int* tmp) {
         switch (pipestep) {
@@ -120,7 +129,7 @@ int BEQ(instruction ins, int pipestep, int* tmp) {
     }
         break;
     case MEM:
-        writeRegindex(PC,*tmp);
+        writeRegindex(PC,*tmp-8);
         break;
     }
     return 0;
@@ -134,7 +143,7 @@ int BGEZ(instruction ins, int pipestep, int* tmp) {
     }
         break;
     case MEM:
-        writeRegindex(PC,*tmp);
+        writeRegindex(PC,*tmp-8);
         break;
     }
     return 0;
@@ -148,7 +157,7 @@ int BGTZ(instruction ins, int pipestep, int* tmp) {
     }
         break;
     case MEM:
-        writeRegindex(PC,*tmp);
+        writeRegindex(PC,*tmp-8);
         break;
     }
     return 0;
@@ -162,7 +171,7 @@ int BLEZ(instruction ins, int pipestep, int* tmp) {
     }
         break;
     case MEM:
-        writeRegindex(PC,*tmp);
+        writeRegindex(PC,*tmp-8);
         break;
     }
     return 0;
@@ -176,7 +185,7 @@ int BLTZ(instruction ins, int pipestep, int* tmp) {
     }
         break;
     case MEM:
-        writeRegindex(PC,*tmp);
+        writeRegindex(PC,*tmp-8);
         break;
     }
     return 0;
@@ -187,14 +196,21 @@ int BNE(instruction ins, int pipestep, int* tmp) {
     case EX:
         if(reg_mips[ins.i.rs]!=reg_mips[ins.i.rt]) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
+        printf("jump à : %8.8X\n", *tmp-4);
     }
         break;
     case MEM:
-        writeRegindex(PC,*tmp);
+        writeRegindex(PC,*tmp-8);
         break;
     }
     return 0;
 }
+
+
+
+
+
+
 
 
 //BREAK
@@ -206,6 +222,12 @@ int BREAKprog(instruction ins, int pipestep, int* tmp) {
     }
     return OK;
 }
+
+
+
+
+
+
 
 
 //DIV
@@ -235,6 +257,12 @@ int DIV(instruction ins, int pipestep, int* tmp) {
     }
     return 0;
 }
+
+
+
+
+
+
 
 
 //JUMP

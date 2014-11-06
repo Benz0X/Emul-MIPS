@@ -26,7 +26,7 @@ int exceptionHandler(exception number) {
         break;
 
     case InvalidExecution:
-        WARNING_MSG("Invalid execution : %8.8X at adress %X", insEX.value, reg_mips[PC]-8);
+        WARNING_MSG("Invalid execution in pipe");
         break;
 
 
@@ -127,24 +127,22 @@ int pipeline(uint32_t end, state running, int affichage) {
         return -1;
     }
 
-//Fetch
-    instruction insIF; //Creation de la nouvelle instruction
-    exceptionHandler(fetch(&insIF));
 
+
+
+//Write Back
+    exceptionHandler(execute(insWB,WB,WBdic,&WBtmp));
+//Memory
+    exceptionHandler(execute(insMEM,MEM,MEMdic,&MEMtmp));
+//Execute
+    flag = exceptionHandler(execute(insEX,EX,EXdic,&EXtmp));
 //Decode
     //Resolution des adresses registre ?
     int dico_entry=-1;
     exceptionHandler(decode(insID,&dico_entry));
-
-
-//Execute
-    flag = exceptionHandler(execute(insEX,EX,EXdic,&EXtmp));
-
-//Memory
-    exceptionHandler(execute(insMEM,MEM,MEMdic,&MEMtmp));
-
-//Write Back
-    exceptionHandler(execute(insWB,WB,WBdic,&WBtmp));
+//Fetch
+    instruction insIF; //Creation de la nouvelle instruction
+    exceptionHandler(fetch(&insIF));
 
 
 //Temporisation
@@ -161,6 +159,8 @@ int pipeline(uint32_t end, state running, int affichage) {
         printf("PC: %8.8X->%8.8X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], insIF.value);
         printf("Decoding: %8.8X  Dico: %d-> %s\n", insID.value, dico_entry, dico_data[dico_entry].name);
         printf("Executing: %8.8X\n", insEX.value);
+        printf("MEM writing: %8.8X\n", insMEM.value);
+        printf("REG writing: %8.8X\n", insWB.value);
         printf("\n\n");
     }
 

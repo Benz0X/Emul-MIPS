@@ -549,7 +549,7 @@ int decrypt(char input [])
         }
 
         //Verification des depassements .text
-        if(reg_mips[PC]>=end || reg_mips[PC]<start) {
+        if(reg_mips[PC]>=end+16 || reg_mips[PC]<start) {    //+16 pour finir le pipe
             reg_mips[PC]=start;
             WARNING_MSG("Out of memory map, start adress set to default");
         }
@@ -580,7 +580,7 @@ int decrypt(char input [])
         }
 
         //Verification des depassements .text
-        if(reg_mips[PC]>=textend || reg_mips[PC]<textstart) {
+        if(reg_mips[PC]>=textend+16 || reg_mips[PC]<textstart) {       //+16 pour finir le pipe
             reg_mips[PC]=textstart;
         }
 
