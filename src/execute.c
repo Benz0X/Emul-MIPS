@@ -29,6 +29,7 @@ int ADD(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+    printf("met %d dans %d \n",*tmp,ins.r.rd );
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -197,10 +198,10 @@ int BNE(instruction ins, int pipestep, int* tmp) {
         if(reg_mips[ins.i.rs]!=reg_mips[ins.i.rt]) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
         printf("jump à : %8.8X\n", *tmp-4);
-    }
+    } else {*tmp=reg_mips[PC];}
         break;
     case MEM:
-        writeRegindex(PC,*tmp-8);
+        writeRegindex(PC,*tmp-4);
         break;
     }
     return 0;

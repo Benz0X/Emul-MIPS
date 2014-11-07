@@ -188,10 +188,12 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 //Test de sortie
     if(flag==quit){initprog();return 0;}
-    if(reg_mips[PC]>=end+16 || present(reg_mips[PC],breaklist)!=NULL || flag==BreakPoint) {
-        printf("\nFin du run\n");
+    if (reg_mips[PC]>=end+16){INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN"); return 0;}
+    else if(present(reg_mips[PC],breaklist)!=NULL || flag==BreakPoint) {
+        printf("\nBreak\n");
         return 0;
-    } else {
+    }
+    else{
 
 
         return pipeline(end,running,affichage);
