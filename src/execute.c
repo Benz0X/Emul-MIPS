@@ -25,7 +25,7 @@ int ADD(instruction ins, int pipestep, int* tmp) {
             *tmp=reg_mips[ins.r.rd];
             return IntegerOverflow;
         }
-        *tmp=reg_mips[ins.r.rs] + reg_mips[ins.r.rd];
+        *tmp=reg_mips[ins.r.rs] + reg_mips[ins.r.rt];
         break;
 
     case WB:
