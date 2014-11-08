@@ -29,7 +29,7 @@ int ADD(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
-    printf("met %d dans %d \n",*tmp,ins.r.rd );
+    printf("ADD: put %d in %d \n",*tmp,ins.r.rd );
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -51,7 +51,7 @@ int ADDI(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
-//    printf("write %d in rt\n", *tmp);
+        printf("ADDI: put %d in %d \n",*tmp,ins.i.rt );
         writeRegindex(ins.i.rt,*tmp);
         break;
     }
@@ -197,10 +197,13 @@ int BNE(instruction ins, int pipestep, int* tmp) {
     case EX:
         if(reg_mips[ins.i.rs]!=reg_mips[ins.i.rt]) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
-        printf("jump à : %8.8X\n", *tmp-4);
+        printf("INSID and INSIFflushed\n");
+        insID.value=0;
+        //insIF.value=0;
     } else {*tmp=reg_mips[PC];}
         break;
     case MEM:
+        printf("BNE : set PC at %8.8X\n", *tmp-4);
         writeRegindex(PC,*tmp-4);
         break;
     }
