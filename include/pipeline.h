@@ -20,7 +20,7 @@ typedef struct
 */
 
 typedef enum{IF,ID,EX,MEM,WB} pipestep;
-typedef enum {OK,EmptyPipe,InvalidInstruction,InvalidExecution,IntegerOverflow,BreakPoint,ReservedInstruction,SysCall,quit} exception;
+typedef enum {OK,EmptyPipe,InvalidInstruction,InvalidExecution,IntegerOverflow,BreakPoint,ReservedInstruction,SysCall,quit,flush} exception;
 
 int pipeline(uint32_t end, state running, int affichage);
 

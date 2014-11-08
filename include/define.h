@@ -80,7 +80,7 @@ extern dico_info* dico_data;            //contain all info from the dictionnary
 extern int nbinstr;                     //contain the number of instruction in the dictionnary
 extern list breaklist;                  //Liste des points d'arrets
 extern int clocktime;                       //Vitesse d'execution : 0 pour max
-extern instruction insID, insEX, insMEM, insWB;
+extern instruction insIF, insID, insEX, insMEM, insWB;
 extern int EXtmp,MEMtmp,WBtmp;
 extern int EXdic,MEMdic,WBdic;
 

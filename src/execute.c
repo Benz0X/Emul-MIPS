@@ -198,9 +198,10 @@ int BNE(instruction ins, int pipestep, int* tmp) {
         if(reg_mips[ins.i.rs]!=reg_mips[ins.i.rt]) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
         printf("INSID and INSIFflushed\n");
-        insID.value=0;
+        //insID.value=0;
         //insIF.value=0;
-    } else {*tmp=reg_mips[PC];}
+        return flush;
+    } else {*tmp=reg_mips[PC]+8;}
         break;
     case MEM:
         printf("BNE : set PC at %8.8X\n", *tmp-4);

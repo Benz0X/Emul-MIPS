@@ -76,7 +76,10 @@ int exceptionHandler(exception number) {
         }
         break;
 
-
+    case flush:
+    return flush;
+        break;
+    
     default :
         WARNING_MSG("Unknown error - Number %d", number);
         break;
@@ -152,7 +155,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     int dico_entry=-1;
     exceptionHandler(decode(insID,&dico_entry));
 //Fetch
-    instruction insIF; //Creation de la nouvelle instruction
+ //   instruction insIF; //Creation de la nouvelle instruction
     exceptionHandler(fetch(&insIF));
 
 
@@ -175,6 +178,12 @@ int pipeline(uint32_t end, state running, int affichage) {
         printf("\n\n");
     }
 
+//flush
+    if(flag==flush){
+        printf("*\nFLUSH\n*");
+        insIF.value=0;
+        insID.value=0;
+    }
 //avancement du pipeline
     insWB=insMEM;
     WBtmp=MEMtmp;
@@ -193,14 +202,14 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 
 //Gestion fin de programme
-    if(reg_mips[PC]>=end) {
+    if(reg_mips[PC]>=end+16) {
         insID.value=-1;
     }
 
 //Test de sortie
     if(flag==quit){initprog();return 0;}
     if (reg_mips[PC]>=end+16){INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN"); return 0;}
-    else if(present(reg_mips[PC],breaklist)!=NULL || flag==BreakPoint) {
+    else if(present(reg_mips[PC]-16,breaklist)!=NULL || flag==BreakPoint) {
         printf("\nBreak\n");
         return 0;
     }

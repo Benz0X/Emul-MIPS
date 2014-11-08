@@ -17,7 +17,7 @@
 int scriptmode;
 list breaklist;                     //Initialisation de la liste de points d'arret
 int clocktime=0;
-instruction insID, insEX, insMEM, insWB;
+instruction insIF, insID, insEX, insMEM, insWB;
 int EXtmp,MEMtmp,WBtmp;
 int EXdic=-1,MEMdic=-1,WBdic=-1;
 
@@ -551,6 +551,7 @@ int decrypt(char input [])
         //Verification des depassements .text
         if(reg_mips[PC]>=end+16 || reg_mips[PC]<start) {    //+16 pour finir le pipe
             reg_mips[PC]=start;
+            initprog();
             WARNING_MSG("Out of memory map, start adress set to default");
         }
 
@@ -582,6 +583,7 @@ int decrypt(char input [])
         //Verification des depassements .text
         if(reg_mips[PC]>=textend+16 || reg_mips[PC]<textstart) {       //+16 pour finir le pipe
             reg_mips[PC]=textstart;
+            initprog();
         }
 
         //cas "into"
@@ -604,14 +606,14 @@ int decrypt(char input [])
             WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
             return -1;
         }
-        int adress=reg_mips[PC]+4;
+        int adress;
+        if(reg_mips[PC]<textstart+16){adress=reg_mips[PC]+4;}
+            else{adress=reg_mips[PC]-12;}
+        
         if(empty(present(adress,breaklist))) {
             breaklist=insert(adress,breaklist);
             rem=1;
         };
-        if(reg_mips[PC]==textstart) {
-            initprog();
-        }
         pipeline(textend,running,1);
         if (rem==1) {
             breaklist=del(adress,breaklist);
