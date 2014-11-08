@@ -9,6 +9,7 @@
 #include "fonctions.h"
 #include "pipeline.h"
 #include "common/notify.h"
+#include "emul.h"
 
 int exceptionHandler(exception number) {
     //Permet de parser les erreurs et exceptions
@@ -46,15 +47,25 @@ int exceptionHandler(exception number) {
         case 1:
             printf("%d\n",reg_mips[4]); //a0
             break;
-        case 4:
-            //printf("%s\n",reg_mips[4]);
+        case 4:;
+            int i=0,c;
+            do {memRead(reg_mips[4]+i,0,&c);
+                printf("%c\n",(char)c);
+                i+=4;}
+            while(((char)c)!='\0');
+            printf("\n");
             break;
         case 5:
             scanf("%d",&reg_mips[2]);
             break;
-        case 8:
-            //scanf("%s",&reg_mips[2]);
-            //reg_mips[3]=sizeof
+        case 8:;
+            int j;
+            char *input=calloc(reg_mips[5],sizeof(char));
+            scanf("%s",input);
+            for (j = 0; j < reg_mips[5]; ++j)
+            {
+                memWrite(reg_mips[4]+j,0,input[j]);
+            }
             break;
         case 10:
             return quit;
