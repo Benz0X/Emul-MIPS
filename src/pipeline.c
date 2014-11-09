@@ -182,7 +182,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     if(flag==flush){
         printf("*\nFLUSH\n*");
         insIF.value=0;
-        insID.value=0;
+        //insID.value=0;
     }
 //avancement du pipeline
     insWB=insMEM;
