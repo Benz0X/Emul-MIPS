@@ -73,7 +73,7 @@ int ADDIU(instruction ins, int pipestep, int* tmp) {
 int ADDU(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
-        *tmp=reg_mips[ins.r.rs] + reg_mips[ins.r.rd];
+        *tmp=reg_mips[ins.r.rs] + reg_mips[ins.r.rt];
         break;
 
     case WB:
@@ -92,7 +92,7 @@ int ADDU(instruction ins, int pipestep, int* tmp) {
 int AND(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
-        *tmp=reg_mips[ins.r.rs] & reg_mips[ins.r.rd];
+        *tmp=reg_mips[ins.r.rs] & reg_mips[ins.r.rt];
         break;
 
     case WB:
@@ -127,7 +127,8 @@ int BEQ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]==reg_mips[ins.i.rt]) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
-    }else {*tmp=reg_mips[PC];}
+    }else {*tmp=reg_mips[PC]+8;}
+        return flush;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);
@@ -141,7 +142,8 @@ int BGEZ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]>=0) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
-    }else {*tmp=reg_mips[PC];}
+    }else {*tmp=reg_mips[PC]+8;}
+    return flush;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);
@@ -155,7 +157,8 @@ int BGTZ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]>0) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
-    }else {*tmp=reg_mips[PC];}
+    }else {*tmp=reg_mips[PC]+8;}
+    return flush;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);
@@ -169,7 +172,8 @@ int BLEZ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]<=0) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
-    }else {*tmp=reg_mips[PC];}
+    }else {*tmp=reg_mips[PC]+8;}
+    return flush;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);
@@ -183,7 +187,8 @@ int BLTZ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]<0) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
-    } else {*tmp=reg_mips[PC];}
+    } else {*tmp=reg_mips[PC]+8;}
+    return flush;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);
@@ -197,7 +202,7 @@ int BNE(instruction ins, int pipestep, int* tmp) {
     case EX:
         if(reg_mips[ins.i.rs]!=reg_mips[ins.i.rt]) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
-        printf("INSID and INSIFflushed\n");
+//        printf("INSID and INSIFflushed\n");
         //insID.value=0;
         //insIF.value=0;
         return flush;
@@ -274,7 +279,7 @@ int DIV(instruction ins, int pipestep, int* tmp) {
 int J(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case MEM:
-        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | ins.j.target)-8;    //-8 ?
+        reg_mips[PC]=textStart + ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target);    //-8 ?
         break;
     }
     
@@ -285,10 +290,13 @@ int JAL(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
         reg_mips[31]=reg_mips[PC]; 
+        return flush;
         break;
     
     case MEM:
-        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | ins.j.target)-8;    //-8 ?
+            printf("JAL to %X\n",textStart + ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target));
+
+        reg_mips[PC]=textStart + ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target);    //-8 ?
         break;
     }
     
@@ -302,7 +310,7 @@ int JALR(instruction ins, int pipestep, int* tmp) {     //NOTE : RD SHOULDN'T BE
         break;
     
     case MEM:
-        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | reg_mips[ins.r.rs])-8;    //-8 ?
+        reg_mips[PC]=textStart + ((reg_mips[PC] & 0xF0000000) | 4*reg_mips[ins.r.rs]);    //-8 ?
         break;
     }
 
@@ -312,7 +320,7 @@ int JALR(instruction ins, int pipestep, int* tmp) {     //NOTE : RD SHOULDN'T BE
 int JR(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case MEM:
-        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | reg_mips[ins.r.rs])-8;    //-8 ?
+        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | reg_mips[ins.r.rs])-4;    //-8 ?
         break;
     }
     

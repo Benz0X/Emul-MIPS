@@ -9,6 +9,7 @@
 //Defines :
 #define INPUT_SIZE 1024                 //Maximum size of an input string
 #define PROMPT_STRING "EmulMips : > "
+#define DEFAULT_S_ADDR 0x3000
 #define MAX_INSTR_ARG 3                 //Max argument an instruction can have
 #define MAX_NAME_SIZE 10                //Maximum size of an instruction argument name string
 #define DICONAME "dico.dico"            //name of the loaded dictionnary
@@ -83,6 +84,7 @@ extern int clocktime;                       //Vitesse d'execution : 0 pour max
 extern instruction insIF, insID, insEX, insMEM, insWB;
 extern int EXtmp,MEMtmp,WBtmp;
 extern int EXdic,MEMdic,WBdic;
+extern uint32_t textStart;
 
 
 #endif

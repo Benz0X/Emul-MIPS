@@ -199,7 +199,8 @@ int pipeline(uint32_t end, state running, int affichage) {
 
     insID=insIF;
 
-
+//Stepinto
+    if (running==stepinto){running=stop;}
 
 //Gestion fin de programme
     if(reg_mips[PC]>=end+16) {
@@ -209,7 +210,7 @@ int pipeline(uint32_t end, state running, int affichage) {
 //Test de sortie
     if(flag==quit){initprog();return 0;}
     if (reg_mips[PC]>=end+16){INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN"); return 0;}
-    else if(present(reg_mips[PC]-16,breaklist)!=NULL || flag==BreakPoint) {
+    else if(present(reg_mips[PC]-16,breaklist)!=NULL || flag==BreakPoint || running==stop) {
         printf("\nBreak\n");
         return 0;
     }

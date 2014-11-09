@@ -221,14 +221,13 @@ void print_segment_raw_content(segment* seg) {      //Affiche un segment donné
 
 int loadELF (char* name,int nbparam,...) {
     va_list ap;
-    uint32_t start_adress=0x3000;
     va_start(ap, nbparam);
     if(nbparam>1) {
         va_arg(ap, uint32_t); //dirty
-        start_adress = va_arg(ap, uint32_t);
+        textStart = va_arg(ap, uint32_t);
     }
-    if(start_adress%0x1000>0) {
-        start_adress = start_adress+0x1000-start_adress%0x1000;
+    if(textStart%0x1000>0) {
+        textStart = textStart+0x1000-textStart%0x1000;
     }
 
     va_end(ap);
@@ -240,7 +239,7 @@ int loadELF (char* name,int nbparam,...) {
     unsigned int type_machine;
     unsigned int endianness;   //little ou big endian
     unsigned int bus_width;    // 32 bits ou 64bits
-    unsigned int next_segment_start = start_adress; // compteur pour designer le début de la prochaine section
+    unsigned int next_segment_start = textStart; // compteur pour designer le début de la prochaine section
 
     symtab=new_stab(0);
 

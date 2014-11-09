@@ -1,4 +1,4 @@
-load Tests/boucle.o
+load Tests/procedure.o 0x5000
 clock 100
 step
 debug

@@ -20,6 +20,7 @@ int clocktime=0;
 instruction insIF, insID, insEX, insMEM, insWB;
 int EXtmp,MEMtmp,WBtmp;
 int EXdic=-1,MEMdic=-1,WBdic=-1;
+uint32_t textStart=DEFAULT_S_ADDR;
 
 /* syntaxe strtok
 
@@ -65,9 +66,9 @@ int decrypt(char input [])
                     WARNING_MSG("Adress must be hexadecimal");
                     return -1;
                 } else {        //Sinon si l'arguement suivant est une adresse hexa, on charge à cette adresse.
-                    uint32_t adress = strtol(word,NULL,16);
-                    INFO_MSG("Chargement du fichier '%s' à l'adresse '0x%8.8X'(arrondi au ko superieur)",filename,adress);
-                    return loadELF(filename,adress,2);
+                    textStart = strtol(word,NULL,16);
+                    INFO_MSG("Chargement du fichier '%s' à l'adresse '0x%8.8X'(arrondi au ko superieur)",filename,textStart);
+                    return loadELF(filename,textStart,2);
                 }
             }
         }
@@ -539,25 +540,19 @@ int decrypt(char input [])
         }
         //Recuperation de la plage .text
         int k;
-        int start,end;
+        int end;
 
         for (k = 0; k < memory->nseg; k++) {
             if(strcmp(memory->seg[k].name,".text")==0) {
-                start=memory->seg[k].start._32;
                 end=memory->seg[k].start._32+memory->seg[k].size._32;
             }
         }
 
         //Verification des depassements .text
-        if(reg_mips[PC]>=end+16 || reg_mips[PC]<start) {    //+16 pour finir le pipe
-            reg_mips[PC]=start;
+        if(reg_mips[PC]>=end+16 || reg_mips[PC]<textStart) {    //+16 pour finir le pipe
+            reg_mips[PC]=textStart;
             initprog();
             WARNING_MSG("Out of memory map, start adress set to default");
-        }
-
-        //Initialisation des differentes instructions a traiter
-        if(reg_mips[PC]==start) {
-            initprog();
         }
         return pipeline(end,running,1);
         break;
@@ -572,17 +567,16 @@ int decrypt(char input [])
             return -1;
         }
 
-        int textstart,textend,l,rem=0;
+        int textend,l,rem=0;
         for (l = 0; l < memory->nseg; l++) {
             if(strcmp(memory->seg[l].name,".text")==0) {
-                textstart=memory->seg[l].start._32;
-                textend=memory->seg[l].start._32+memory->seg[l].size._32;
+            textend=memory->seg[l].start._32+memory->seg[l].size._32;
             }
         }
 
         //Verification des depassements .text
-        if(reg_mips[PC]>=textend+16 || reg_mips[PC]<textstart) {       //+16 pour finir le pipe
-            reg_mips[PC]=textstart;
+        if(reg_mips[PC]>=textend+16 || reg_mips[PC]<textStart) {       //+16 pour finir le pipe
+            reg_mips[PC]=textStart;
             initprog();
         }
 
@@ -593,8 +587,8 @@ int decrypt(char input [])
                     WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
                     return -1;
                 }
-                        INFO_MSG("step into");
-                        return 0;
+                pipeline(textend,stepinto,1);
+                return 0;
 
             }
             else {
@@ -607,7 +601,7 @@ int decrypt(char input [])
             return -1;
         }
         int adress;
-        if(reg_mips[PC]<textstart+16){adress=reg_mips[PC]+4;}
+        if(reg_mips[PC]<textStart+16){adress=reg_mips[PC]+4;}
             else{adress=reg_mips[PC]-12;}
         
         if(empty(present(adress,breaklist))) {
@@ -640,11 +634,10 @@ int decrypt(char input [])
             }
             //Recuperation de la plage .text
             int k;
-            int start,end;
+            int end;
 
             for (k = 0; k < memory->nseg; k++) {
                 if(strcmp(memory->seg[k].name,".text")==0) {
-                    start=memory->seg[k].start._32;
                     end=memory->seg[k].start._32+memory->seg[k].size._32;
                 }
             }
@@ -665,7 +658,7 @@ int decrypt(char input [])
                             uint32_t adress=strtol(word,NULL,0);
 
 
-                            if(adress>=start && adress<end) { //                             Test de seg
+                            if(adress>=textStart && adress<end) { //                             Test de seg
                                 breaklist=del(adress,breaklist);    //suppression du breakpoint
                             } else {
                                 WARNING_MSG("Adress %8.8X can't be breakpoint, segment not allowed",adress);
@@ -686,7 +679,7 @@ int decrypt(char input [])
 
                         uint32_t adress=strtol(word,NULL,0);
                         adress-=adress % 4;
-                        if(adress>=start && adress<end) { //                             Test de seg .text
+                        if(adress>=textStart && adress<end) { //                             Test de seg .text
                             if(empty(present(adress,breaklist))) breaklist=insert(adress,breaklist); //Si le point n'existe pas, on le rajoute
                         } else {
                             WARNING_MSG("Adress 0x%8.8X can't be breakpoint, segment not allowed",adress);
