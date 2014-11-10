@@ -33,16 +33,16 @@ int exceptionHandler(exception number) {
 
 
     case IntegerOverflow:
-        WARNING_MSG("IntegerOverflow : %8.8X",insEX.value);
+        WARNING_MSG("IntegerOverflow : %8.8X",vpipeline[EX].ins.value);
         break;
 
     case BreakPoint:
-        WARNING_MSG("Break : %8.8X",insEX.value);
+        WARNING_MSG("Break : %8.8X",vpipeline[EX].ins.value);
         return BreakPoint;
         break;
 
     case SysCall:
-        WARNING_MSG("Syscall : %8.8X",insEX.value);
+        WARNING_MSG("Syscall : %8.8X",vpipeline[EX].ins.value);
         switch (reg_mips[2]) { //v0
         case 1:
             printf("%d\n",reg_mips[4]); //a0
@@ -146,22 +146,16 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 //Write Back
     exceptionHandler(execute(vpipeline[WB].ins,vpipeline[WB].step,vpipeline[WB].dico_entry,&(vpipeline[WB].tmp)));
-    //exceptionHandler(execute(insWB,WB,WBdic,&WBtmp));
 //Memory
     exceptionHandler(execute(vpipeline[MEM].ins,vpipeline[MEM].step,vpipeline[MEM].dico_entry,&(vpipeline[MEM].tmp)));
-    //exceptionHandler(execute(insMEM,MEM,MEMdic,&MEMtmp));
 //Execute
     flag = exceptionHandler(execute(vpipeline[EX].ins,vpipeline[EX].step,vpipeline[EX].dico_entry,&(vpipeline[EX].tmp)));
-    //flag = exceptionHandler(execute(insEX,EX,EXdic,&EXtmp));
 //Decode
     //Resolution des adresses registre ?
     int dico_entry=-1;
     exceptionHandler(decode(vpipeline[ID].ins,&dico_entry));
-    //exceptionHandler(decode(insID,&dico_entry));
 //Fetch
- //   instruction insIF; //Creation de la nouvelle instruction
     exceptionHandler(fetch(&(vpipeline[IF].ins)));
-    //exceptionHandler(fetch(&insIF));
 
 
 //Temporisation
@@ -186,28 +180,17 @@ int pipeline(uint32_t end, state running, int affichage) {
 //flush
     if(flag==flush){
         printf("*\nFLUSH\n*");
-        pipeflush(vpipeline[IF]);
+        pipeflush(&vpipeline[IF]);
     }
 //avancement du pipeline
-    //insWB=insMEM;
-    //WBtmp=MEMtmp;
-    //WBdic=MEMdic;
-    pipecpy(vpipeline[WB],vpipeline[MEM]);
+    pipecpy(&vpipeline[WB],vpipeline[MEM]);
+    pipecpy(&vpipeline[MEM],vpipeline[EX]);
+    pipecpy(&vpipeline[EX],vpipeline[ID]);
 
-    //insMEM=insEX;
-    //MEMtmp=EXtmp;
-    //MEMdic=EXdic;
-    pipecpy(vpipeline[MEM],vpipeline[WB]);
-
-    //insEX=insID;
-    //EXtmp=0;
-    //EXdic=dico_entry;
-    pipecpy(vpipeline[EX],vpipeline[ID]);
     vpipeline[EX].tmp=0;
     vpipeline[EX].dico_entry=dico_entry;
 
-    //insID=insIF;
-    pipecpy(vpipeline[ID],vpipeline[IF]);
+    pipecpy(&vpipeline[ID],vpipeline[IF]);
 
 //Stepinto
     if (running==stepinto){running=stop;}

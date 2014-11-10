@@ -98,11 +98,8 @@ extern list breaklist;                  //Liste des points d'arrets
 extern int clocktime;                   //Vitesse d'execution : 0 pour max
 extern uint32_t textStart;              //Debut du segment text
 
-extern instruction insIF, insID, insEX, insMEM, insWB;
-extern int EXtmp,MEMtmp,WBtmp;
-extern int EXdic,MEMdic,WBdic;
 
-extern pipeblock vpipeline[5];
+extern pipeblock vpipeline[5];          //Virtual Pipeline
 
 
 #endif

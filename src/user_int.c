@@ -19,10 +19,6 @@ list breaklist;                     //Initialisation de la liste de points d'arr
 int clocktime=0;
 
 
-instruction insIF, insID, insEX, insMEM, insWB;
-int EXtmp,MEMtmp,WBtmp;
-int EXdic=-1,MEMdic=-1,WBdic=-1;
-
 pipeblock vpipeline[5];
 
 uint32_t textStart=DEFAULT_S_ADDR;

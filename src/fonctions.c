@@ -728,10 +728,6 @@ int getInstr(uint32_t adress, instruction* instr_ptr) {
 
 void initprog() {
     INFO_MSG("\n*\n*\nINIT des données\n*\n*\n");
-    insID.value=-1;     //Init à -1 : aucune instruction
-    insEX.value=-1;
-    insMEM.value=-1;
-    insWB.value=-1;
 //Initialisation des Pipeblocks
     vpipeline[IF].ins.value=-1; vpipeline[IF].dico_entry=-1; vpipeline[IF].step=IF;
     vpipeline[ID].ins.value=-1; vpipeline[ID].dico_entry=-1; vpipeline[ID].step=ID;
@@ -759,16 +755,16 @@ void initprog() {
     }
 }
 
-int pipecpy(pipeblock A, pipeblock B){
-    A.ins.value=B.ins.value;
-    A.dico_entry=B.dico_entry;
-    A.tmp=B.tmp;
+int pipecpy(pipeblock* A, pipeblock B){
+    A->ins.value=B.ins.value;
+    A->dico_entry=B.dico_entry;
+    A->tmp=B.tmp;
 
     return 0;
 }
 
-int pipeflush(pipeblock A){
-    A.ins.value=0;
+int pipeflush(pipeblock* A){
+    A->ins.value=0;
 
     return 0;
 }
