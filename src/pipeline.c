@@ -77,7 +77,7 @@ int exceptionHandler(exception number) {
         break;
 
     case flush:
-    return flush;
+        return flush;
         break;
     
     default :

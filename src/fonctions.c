@@ -713,7 +713,7 @@ int readDico(char* dico_name) {
 
 int getInstr(uint32_t adress, instruction* instr_ptr) {
     int32_t temp;
-    memRead(adress,1,&temp);
+    if(memRead(adress,1,&temp)==-1){temp=-1;}  //En cas de depassement de la zone .text on ne recupere aucune instr
     //FLIP_ENDIANNESS(temp);
     memcpy(instr_ptr,&temp,4);
     //printf("content : %8.8X\t",temp); printf("adress %8.8X\n", adress);
