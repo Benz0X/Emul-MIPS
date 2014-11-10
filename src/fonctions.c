@@ -720,6 +720,12 @@ int getInstr(uint32_t adress, instruction* instr_ptr) {
     return 1;
 }
 
+
+
+
+
+
+
 void initprog() {
     INFO_MSG("\n*\n*\nINIT des données\n*\n*\n");
     insID.value=-1;     //Init à -1 : aucune instruction
@@ -743,4 +749,19 @@ void initprog() {
             reg_mips[PC]=memory->seg[k].start._32;
         }
     }
+}
+
+int pipecpy(pipeblock A, pipeblock B){
+    A.ins=B.ins;
+    A.step=B.step;
+    A.dico_entry=B.dico_entry;
+    A.tmp=B.tmp;
+
+    return 0;
+}
+
+int pipeflush(pipeblock A){
+    A.ins.value=0;
+
+    return 0;
 }

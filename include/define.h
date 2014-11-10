@@ -72,6 +72,21 @@ typedef enum {
     UNKNOWN
 } command ;
 
+
+
+
+typedef enum{IF,ID,EX,MEM,WB} pipestep;
+typedef struct 
+{
+    instruction ins;
+    pipestep step;
+    int dico_entry;
+    int tmp;
+}pipeblock;
+
+
+
+
 //Global datas :
 extern int32_t reg_mips[NBREG+3];       //All mips registers
 extern mem memory;                      //Virtual machine memory
@@ -80,11 +95,14 @@ extern int scriptmode;                  //allow easy switch between interactive 
 extern dico_info* dico_data;            //contain all info from the dictionnary
 extern int nbinstr;                     //contain the number of instruction in the dictionnary
 extern list breaklist;                  //Liste des points d'arrets
-extern int clocktime;                       //Vitesse d'execution : 0 pour max
+extern int clocktime;                   //Vitesse d'execution : 0 pour max
+extern uint32_t textStart;              //Debut du segment text
+
 extern instruction insIF, insID, insEX, insMEM, insWB;
 extern int EXtmp,MEMtmp,WBtmp;
 extern int EXdic,MEMdic,WBdic;
-extern uint32_t textStart;
+
+extern pipeblock vpipeline[5];
 
 
 #endif

@@ -17,10 +17,22 @@
 int scriptmode;
 list breaklist;                     //Initialisation de la liste de points d'arret
 int clocktime=0;
+
+
 instruction insIF, insID, insEX, insMEM, insWB;
 int EXtmp,MEMtmp,WBtmp;
 int EXdic=-1,MEMdic=-1,WBdic=-1;
+
+pipeblock vpipeline[5];
+/*
+vpipeline[EX].dico_entry=-1;
+vpipeline[MEM].dico_entry=-1;
+vpipeline[WB].dico_entry=-1;
+*/
+
 uint32_t textStart=DEFAULT_S_ADDR;
+
+
 
 /* syntaxe strtok
 
