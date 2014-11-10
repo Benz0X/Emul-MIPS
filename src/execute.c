@@ -226,7 +226,7 @@ int BNE(instruction ins, int pipestep, int* tmp) {
 //BREAK
 int BREAKprog(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
-    case EX:
+    case WB:
         return BreakPoint;
         break;
     }
@@ -279,7 +279,7 @@ int DIV(instruction ins, int pipestep, int* tmp) {
 int J(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case MEM:
-        reg_mips[PC]=textStart + ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target);    //-8 ?
+        reg_mips[PC]= ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target);    //-8 ?
         break;
     }
     
@@ -296,7 +296,7 @@ int JAL(instruction ins, int pipestep, int* tmp) {
     case MEM:
             printf("JAL to %X\n",textStart + ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target));
 
-        reg_mips[PC]=textStart + ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target);    //-8 ?
+        reg_mips[PC]= ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target);    //-8 ?
         break;
     }
     
@@ -310,7 +310,7 @@ int JALR(instruction ins, int pipestep, int* tmp) {     //NOTE : RD SHOULDN'T BE
         break;
     
     case MEM:
-        reg_mips[PC]=textStart + ((reg_mips[PC] & 0xF0000000) | 4*reg_mips[ins.r.rs]);    //-8 ?
+        reg_mips[PC]= ((reg_mips[PC] & 0xF0000000) | 4*reg_mips[ins.r.rs]);    //-8 ?
         break;
     }
 
@@ -612,7 +612,7 @@ int SUBU(instruction ins, int pipestep, int* tmp) {
 //SYSCALL
 int SYSCALL(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
-    case EX:
+    case WB:
         return SysCall;
         break;
     }

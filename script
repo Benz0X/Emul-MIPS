@@ -1,4 +1,4 @@
-load Tests/procedure.o 0x5000
+load Tests/pile.o 0x5000
 clock 100
 step
 debug

@@ -50,8 +50,8 @@ int exceptionHandler(exception number) {
         case 4:;
             int i=0,c;
             do {memRead(reg_mips[4]+i,0,&c);
-                printf("%c\n",(char)c);
-                i+=4;}
+                printf("%c",(char)c);
+                i+=1;}
             while(((char)c)!='\0');
             printf("\n");
             break;
@@ -68,6 +68,7 @@ int exceptionHandler(exception number) {
             }
             break;
         case 10:
+        INFO_MSG("Exit called by program");
             return quit;
             break;
         default:
@@ -126,7 +127,7 @@ int execute(instruction insEX, pipestep EX, int dico_entry, int* tmp) {
 
 
 int pipeline(uint32_t end, state running, int affichage) {
-    int flag;
+    int flag[5];
     if(affichage==1) {
         WARNING_MSG("Nouvelle iteration");
         printf("Pipe : ID %X\t EX %X\t MEM %X\t WB %X\n\n",vpipeline[ID].ins.value,vpipeline[EX].ins.value,vpipeline[MEM].ins.value,vpipeline[WB].ins.value);
@@ -145,11 +146,11 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 
 //Write Back
-    exceptionHandler(execute(vpipeline[WB].ins,vpipeline[WB].step,vpipeline[WB].dico_entry,&(vpipeline[WB].tmp)));
+    flag[WB] = exceptionHandler(execute(vpipeline[WB].ins,vpipeline[WB].step,vpipeline[WB].dico_entry,&(vpipeline[WB].tmp)));
 //Memory
     exceptionHandler(execute(vpipeline[MEM].ins,vpipeline[MEM].step,vpipeline[MEM].dico_entry,&(vpipeline[MEM].tmp)));
 //Execute
-    flag = exceptionHandler(execute(vpipeline[EX].ins,vpipeline[EX].step,vpipeline[EX].dico_entry,&(vpipeline[EX].tmp)));
+    flag[EX] = exceptionHandler(execute(vpipeline[EX].ins,vpipeline[EX].step,vpipeline[EX].dico_entry,&(vpipeline[EX].tmp)));
 //Decode
     //Resolution des adresses registre ?
     int dico_entry=-1;
@@ -178,7 +179,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
 
 //flush
-    if(flag==flush){
+    if(flag[EX]==flush){
         printf("*\nFLUSH\n*");
         pipeflush(&vpipeline[IF]);
     }
@@ -201,9 +202,9 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
 
 //Test de sortie
-    if(flag==quit){initprog();return 0;}
+    if(flag[WB]==quit){initprog();return 0;}
     if (reg_mips[PC]>=end+16){INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN"); return 0;}
-    else if(present(reg_mips[PC]-16,breaklist)!=NULL || flag==BreakPoint || running==stop) {
+    else if(present(reg_mips[PC]-16,breaklist)!=NULL || flag[WB]==BreakPoint || running==stop) {
         printf("\nBreak\n");
         return 0;
     }
