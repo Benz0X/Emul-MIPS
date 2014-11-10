@@ -732,6 +732,14 @@ void initprog() {
     insEX.value=-1;
     insMEM.value=-1;
     insWB.value=-1;
+//Initialisation des Pipeblocks
+    vpipeline[IF].ins.value=-1; vpipeline[IF].dico_entry=-1; vpipeline[IF].step=IF;
+    vpipeline[ID].ins.value=-1; vpipeline[ID].dico_entry=-1; vpipeline[ID].step=ID;
+    vpipeline[EX].ins.value=-1; vpipeline[EX].dico_entry=-1; vpipeline[EX].step=EX;
+    vpipeline[MEM].ins.value=-1; vpipeline[MEM].dico_entry=-1; vpipeline[MEM].step=MEM;
+    vpipeline[WB].ins.value=-1; vpipeline[WB].dico_entry=-1; vpipeline[WB].step=WB;
+
+
     int j;
 
     for (j=0; j < NBREG+3; ++j)
@@ -752,8 +760,7 @@ void initprog() {
 }
 
 int pipecpy(pipeblock A, pipeblock B){
-    A.ins=B.ins;
-    A.step=B.step;
+    A.ins.value=B.ins.value;
     A.dico_entry=B.dico_entry;
     A.tmp=B.tmp;
 

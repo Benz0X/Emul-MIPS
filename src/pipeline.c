@@ -129,7 +129,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     int flag;
     if(affichage==1) {
         WARNING_MSG("Nouvelle iteration");
-        printf("Pipe : ID %X\t EX %X\t MEM %X\t WB %X\n\n",insID.value,insEX.value,insMEM.value,insWB.value);
+        printf("Pipe : ID %X\t EX %X\t MEM %X\t WB %X\n\n",vpipeline[ID].ins.value,vpipeline[EX].ins.value,vpipeline[MEM].ins.value,vpipeline[WB].ins.value);
     }
 //Clock
     int tick= clock();
@@ -145,18 +145,23 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 
 //Write Back
-    exceptionHandler(execute(insWB,WB,WBdic,&WBtmp));
+    exceptionHandler(execute(vpipeline[WB].ins,vpipeline[WB].step,vpipeline[WB].dico_entry,&(vpipeline[WB].tmp)));
+    //exceptionHandler(execute(insWB,WB,WBdic,&WBtmp));
 //Memory
-    exceptionHandler(execute(insMEM,MEM,MEMdic,&MEMtmp));
+    exceptionHandler(execute(vpipeline[MEM].ins,vpipeline[MEM].step,vpipeline[MEM].dico_entry,&(vpipeline[MEM].tmp)));
+    //exceptionHandler(execute(insMEM,MEM,MEMdic,&MEMtmp));
 //Execute
-    flag = exceptionHandler(execute(insEX,EX,EXdic,&EXtmp));
+    flag = exceptionHandler(execute(vpipeline[EX].ins,vpipeline[EX].step,vpipeline[EX].dico_entry,&(vpipeline[EX].tmp)));
+    //flag = exceptionHandler(execute(insEX,EX,EXdic,&EXtmp));
 //Decode
     //Resolution des adresses registre ?
     int dico_entry=-1;
-    exceptionHandler(decode(insID,&dico_entry));
+    exceptionHandler(decode(vpipeline[ID].ins,&dico_entry));
+    //exceptionHandler(decode(insID,&dico_entry));
 //Fetch
  //   instruction insIF; //Creation de la nouvelle instruction
-    exceptionHandler(fetch(&insIF));
+    exceptionHandler(fetch(&(vpipeline[IF].ins)));
+    //exceptionHandler(fetch(&insIF));
 
 
 //Temporisation
@@ -170,41 +175,46 @@ int pipeline(uint32_t end, state running, int affichage) {
 //Affichage
     if(affichage==1) {
         //disasm(reg_mips[PC]-4,1);
-        printf("PC: %8.8X->%8.8X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], insIF.value);
-        printf("Decoding: %8.8X  Dico: %d-> %s\n", insID.value, dico_entry, dico_data[dico_entry].name);
-        printf("Executing: %8.8X\n", insEX.value);
-        printf("MEM writing: %8.8X\n", insMEM.value);
-        printf("REG writing: %8.8X\n", insWB.value);
+        printf("PC: %8.8X->%8.8X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], vpipeline[IF].ins.value);
+        printf("Decoding: %8.8X  Dico: %d-> %s\n", vpipeline[ID].ins.value, dico_entry, dico_data[dico_entry].name);
+        printf("Executing: %8.8X\n", vpipeline[EX].ins.value);
+        printf("MEM writing: %8.8X\n", vpipeline[MEM].ins.value);
+        printf("REG writing: %8.8X\n", vpipeline[WB].ins.value);
         printf("\n\n");
     }
 
 //flush
     if(flag==flush){
         printf("*\nFLUSH\n*");
-        insIF.value=0;
-        //insID.value=0;
+        pipeflush(vpipeline[IF]);
     }
 //avancement du pipeline
-    insWB=insMEM;
-    WBtmp=MEMtmp;
-    WBdic=MEMdic;
+    //insWB=insMEM;
+    //WBtmp=MEMtmp;
+    //WBdic=MEMdic;
+    pipecpy(vpipeline[WB],vpipeline[MEM]);
 
-    insMEM=insEX;
-    MEMtmp=EXtmp;
-    MEMdic=EXdic;
+    //insMEM=insEX;
+    //MEMtmp=EXtmp;
+    //MEMdic=EXdic;
+    pipecpy(vpipeline[MEM],vpipeline[WB]);
 
-    insEX=insID;
-    EXtmp=0;
-    EXdic=dico_entry;
+    //insEX=insID;
+    //EXtmp=0;
+    //EXdic=dico_entry;
+    pipecpy(vpipeline[EX],vpipeline[ID]);
+    vpipeline[EX].tmp=0;
+    vpipeline[EX].dico_entry=dico_entry;
 
-    insID=insIF;
+    //insID=insIF;
+    pipecpy(vpipeline[ID],vpipeline[IF]);
 
 //Stepinto
     if (running==stepinto){running=stop;}
 
 //Gestion fin de programme
     if(reg_mips[PC]>=end+16) {
-        insID.value=-1;
+        vpipeline[ID].ins.value=-1;
     }
 
 //Test de sortie
