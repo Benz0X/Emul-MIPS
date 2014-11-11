@@ -137,8 +137,9 @@ int BEQ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]==reg_mips[ins.i.rt]) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
-    }else {*tmp=reg_mips[PC]+8;}
         return flush;
+    }else {*tmp=reg_mips[PC]+8;}
+        return OK;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);
@@ -152,8 +153,9 @@ int BGEZ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]>=0) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
+        return flush;
     }else {*tmp=reg_mips[PC]+8;}
-    return flush;
+    return OK;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);
@@ -167,8 +169,9 @@ int BGTZ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]>0) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
+        return flush;
     }else {*tmp=reg_mips[PC]+8;}
-    return flush;
+    return OK;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);
@@ -182,8 +185,9 @@ int BLEZ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]<=0) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
+        return flush;
     }else {*tmp=reg_mips[PC]+8;}
-    return flush;
+    return OK;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);
@@ -197,8 +201,9 @@ int BLTZ(instruction ins, int pipestep, int* tmp) {
     case EX:
     if(reg_mips[ins.i.rs]<0) {
         *tmp=reg_mips[PC]+4*ins.i.immediate;
+        return flush;
     } else {*tmp=reg_mips[PC]+8;}
-    return flush;
+    return OK;
         break;
     case MEM:
         writeRegindex(PC,*tmp-4);

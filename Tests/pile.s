@@ -13,19 +13,19 @@ add $t2,$zero,$t1
 SLL $t1,$t1,2
 JAL 0x5024      # appel explicite à l'adresse de la procedure  
 NOP
-BEQ $t1,$t2,0x38  # branchement à OK si les deux valeurs sont égales
+BEQ $t3,$t2,0x38  # branchement à OK si les deux valeurs sont égales
 NOP
 J 0x505C 						# sinon saut à KO
 NOP
 
 
 procedure:
+ ADDI $sp,$sp,-4
  SW $31,0($sp)   # on stocke l'adresse de retour
  ADDI $sp,$sp,-4 # on decremente le pointeur de pile
  SW $t1,0($sp)   # on stocke les registres sur lesquels la procedure agit (ici $t1 seulement)
- ADDI $sp,$sp,-4
 
- SRL $t1,$t1,2
+ SRL $t3,$t1,2
 
  LW $t1,0($sp)   # on recupere les registres sur lesquels la procedure agit (ici $t1 seulement)
  ADDI $sp,$sp,4

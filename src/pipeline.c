@@ -219,7 +219,7 @@ if (stall==1){reg_mips[PC]-=4;}
     }
 
 //Test de sortie
-    if(flag[WB]==quit){initprog();return 0;}
+    if(flag[WB]==quit){return 0;}
     if(reg_mips[PC]<textStart||reg_mips[PC]>end+16){WARNING_MSG("PC out of .text, halt");return 0;}
     if (reg_mips[PC]==end+16){INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN"); return 0;}
     else if(present(reg_mips[PC]-16,breaklist)!=NULL || flag[WB]==BreakPoint || running==stop) {
