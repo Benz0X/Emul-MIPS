@@ -9,7 +9,7 @@
 #define DELAY(temps) usleep(temps)
 #endif
 
-typedef enum{stop,running,step,stepinto} state;
+typedef enum{stop,running,step,stepinto,step_return} state;
 typedef enum {OK,EmptyPipe,InvalidInstruction,InvalidExecution,IntegerOverflow,BreakPoint,ReservedInstruction,SysCall,quit,flush,memFail} exception;
 
 

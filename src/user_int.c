@@ -22,6 +22,7 @@ int clocktime=0;
 pipeblock vpipeline[5];
 
 uint32_t textStart=DEFAULT_S_ADDR;
+uint32_t return_addr;
 
 
 
@@ -570,7 +571,7 @@ int decrypt(char input [])
             return -1;
         }
 
-        int textend,l,rem=0;
+        int textend,l;
         for (l = 0; l < memory->nseg; l++) {
             if(strcmp(memory->seg[l].name,".text")==0) {
             textend=memory->seg[l].start._32+memory->seg[l].size._32;
@@ -603,19 +604,9 @@ int decrypt(char input [])
             WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
             return -1;
         }
-        int adress;
-        if(reg_mips[PC]<textStart+16){adress=reg_mips[PC]+4;}
-            else{adress=reg_mips[PC]-12;}
         
-        if(empty(present(adress,breaklist))) {
-            breaklist=insert(adress,breaklist);
-            rem=1;
-        };
-        pipeline(textend,running,1);
-        if (rem==1) {
-            breaklist=del(adress,breaklist);
-        }
-        rem=0;
+        pipeline(textend,step,1);
+        
         return 0;
 
 

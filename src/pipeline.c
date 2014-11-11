@@ -210,8 +210,18 @@ if (stall==1){reg_mips[PC]-=4;}
 
     pipecpy(&vpipeline[ID],vpipeline[IF]);
 }
-//Stepinto
+//Step
+
+    if (running==step_return && reg_mips[PC]==return_addr){printf("\nBreak\n"); return 0;}
     if (running==stepinto){running=stop;}
+    if (running==step){
+        if (strcmp(dico_data[vpipeline[EX].dico_entry].name,"JAL")==0 || strcmp(dico_data[vpipeline[EX].dico_entry].name,"JALR")==0){
+            running=step_return;
+            return_addr=reg_mips[PC];
+            printf("RETURN ADRESS %d\n",return_addr);
+        }
+        else {running=stop;}
+    }
 
 //Gestion fin de programme
     if(reg_mips[PC]>=end+16) {
@@ -222,7 +232,7 @@ if (stall==1){reg_mips[PC]-=4;}
     if(flag[WB]==quit){return 0;}
     if(reg_mips[PC]<textStart||reg_mips[PC]>end+16){WARNING_MSG("PC out of .text, halt");return 0;}
     if (reg_mips[PC]==end+16){INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN"); return 0;}
-    else if(present(reg_mips[PC]-16,breaklist)!=NULL || flag[WB]==BreakPoint || running==stop) {
+    else if(present(reg_mips[PC],breaklist)!=NULL || flag[WB]==BreakPoint || running==stop) {
         printf("\nBreak\n");
         return 0;
     }
