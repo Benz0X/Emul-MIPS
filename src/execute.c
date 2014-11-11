@@ -255,24 +255,19 @@ int DIV(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
         if(reg_mips[ins.r.rt]==0) {
+            vpipeline[EX].tmp2=reg_mips[HI];
             *tmp=reg_mips[LO];
+
             INFO_MSG("Division by 0");
         }
         else {
             *tmp=reg_mips[ins.r.rs]/reg_mips[ins.r.rt];
-        }
-        break;
-    case MEM:
-        reg_mips[LO]=*tmp;
-        if(reg_mips[ins.r.rt]==0) {
-            *tmp=reg_mips[HI];
-        }
-        else {
-            *tmp=reg_mips[ins.r.rs] % reg_mips[ins.r.rt];
+            vpipeline[EX].tmp2=reg_mips[ins.r.rs] % reg_mips[ins.r.rt];
         }
         break;
     case WB:
-        reg_mips[HI]=*tmp;
+        reg_mips[LO]=*tmp;
+        reg_mips[HI]=vpipeline[WB].tmp2;
         break;
     }
     return 0;
@@ -288,6 +283,9 @@ int DIV(instruction ins, int pipestep, int* tmp) {
 //JUMP
 int J(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
+    case EX:
+        return flush;
+        break;
     case MEM:
         reg_mips[PC]= ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target);    //-8 ?
         break;
@@ -317,6 +315,7 @@ int JALR(instruction ins, int pipestep, int* tmp) {     //NOTE : RD SHOULDN'T BE
     switch (pipestep) {
     case EX:
         reg_mips[ins.r.rd]=reg_mips[PC]; 
+        return flush;
         break;
     
     case MEM:
@@ -329,6 +328,9 @@ int JALR(instruction ins, int pipestep, int* tmp) {     //NOTE : RD SHOULDN'T BE
 
 int JR(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
+    case EX:
+        return flush;
+        break;
     case MEM:
         reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | reg_mips[ins.r.rs])-4;    //-8 ?
         break;
@@ -425,16 +427,14 @@ int MFLO(instruction ins, int pipestep, int* tmp) {
 
 //MULT
 int MULT(instruction ins, int pipestep, int* tmp) {
-    int64_t prod=reg_mips[ins.r.rd]*reg_mips[ins.r.rs];
     switch (pipestep) {
-    case EX:
+    case EX:;
+    int64_t prod=reg_mips[ins.r.rd]*reg_mips[ins.r.rs];
+        vpipeline[EX].tmp2=(int32_t)(prod >> 32);
         *tmp=(int32_t)prod;
         break;
-    case MEM:
-        reg_mips[LO]=*tmp;
-        *tmp=(int32_t)(prod >> 32);
-        break;
     case WB:
+        reg_mips[LO]=vpipeline[EX].tmp2;
         reg_mips[HI]=*tmp;
         break;
     }
@@ -538,6 +538,7 @@ int SLL(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+    printf("SLL\n");
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
