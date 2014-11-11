@@ -378,7 +378,7 @@ int LBU(instruction ins, int pipestep, int* tmp) {
 int LUI(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case WB:
-        writeRegindex(ins.i.rt,(ins.i.immediate>>16));
+        writeRegindex(ins.i.rt,(int32_t)(ins.i.immediate<<16));
         break;
     }
     return OK;
@@ -498,7 +498,7 @@ int SB(instruction ins, int pipestep, int* tmp) {
         break;
     
     case MEM:
-        if(memWriteChecked(*tmp,0,reg_mips[ins.i.rt])!=0){return memFail;}
+        if(memWrite(*tmp,0,reg_mips[ins.i.rt])!=0){return memFail;}
         break;
     }
 
@@ -512,7 +512,7 @@ int SW(instruction ins, int pipestep, int* tmp) {
         break;
     
     case MEM:
-        if(memWriteChecked(*tmp,1,reg_mips[ins.i.rt])!=0){return memFail;}
+        if(memWrite(*tmp,1,reg_mips[ins.i.rt])!=0){return memFail;}
         break;
     }
     return OK;

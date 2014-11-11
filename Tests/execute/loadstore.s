@@ -11,7 +11,7 @@ LUI $t5, 12345
 
 #Test des stores
 SB $t5, 0($t1)
-ADDi $t1, $zero, 0x4003
+ADDi $t1, $zero, 0x4002
 SW $t5, 0($t1)
 
 .data 
