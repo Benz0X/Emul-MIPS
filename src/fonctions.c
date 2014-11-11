@@ -5,6 +5,7 @@
 #include <readline/history.h>
 #include <stdlib.h>
 #include "define.h"
+#include "liste.h"
 #include "user_int.h"
 #include "fonctions.h"
 #include "common/notify.h"
@@ -768,3 +769,36 @@ int pipeflush(pipeblock* A){
 
     return 0;
 }
+
+list listUsedReg(instruction ins, int dico_entry){
+    list L=NULL;
+    if(ins.value==-1){printf("a");return L;} //Si l'instruction est invalide
+    switch(dico_data[dico_entry].type){
+        case 0: //R type
+            if(ins.r.rs!=0){
+                L=insert(ins.r.rs,L);
+            }
+            if(ins.r.rt!=0){
+                L=insert(ins.r.rt,L);
+            }
+            if(ins.r.rd!=0){
+                L=insert(ins.r.rd,L);
+            }
+        break;
+
+        case 1: //I type
+            if(ins.r.rs!=0){
+                L=insert(ins.r.rs,L);
+            }
+            if(ins.r.rt!=0){
+                L=insert(ins.r.rt,L);
+            }
+        break;
+
+        default: //J type no register
+        break;
+    }
+    //printList(L);
+    return L;
+}
+

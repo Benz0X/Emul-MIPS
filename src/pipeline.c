@@ -42,7 +42,7 @@ int exceptionHandler(exception number) {
         break;
 
     case SysCall:
-        WARNING_MSG("Syscall : %8.8X",vpipeline[EX].ins.value);
+        WARNING_MSG("Syscall : %8.8X",vpipeline[WB].ins.value);
         switch (reg_mips[2]) { //v0
         case 1:
             printf("%d\n",reg_mips[4]); //a0
@@ -127,7 +127,9 @@ int execute(instruction insEX, pipestep EX, int dico_entry, int* tmp) {
 
 
 int pipeline(uint32_t end, state running, int affichage) {
+//Initialisation des variables internes 
     int flag[5];
+
     if(affichage==1) {
         WARNING_MSG("Nouvelle iteration");
         printf("Pipe : ID %X\t EX %X\t MEM %X\t WB %X\n\n",vpipeline[ID].ins.value,vpipeline[EX].ins.value,vpipeline[MEM].ins.value,vpipeline[WB].ins.value);
@@ -142,7 +144,15 @@ int pipeline(uint32_t end, state running, int affichage) {
         return -1;
     }
 
-
+//Test RegStall
+    //printList(listUsedReg(vpipeline[WB].ins,vpipeline[WB].dico_entry));
+    //printList(listUsedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry));
+    if(overlap(listUsedReg(vpipeline[WB].ins,vpipeline[WB].dico_entry),listUsedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry))==1){
+        //Si les registres utilisés par WB et EX coincident
+        WARNING_MSG("Need to regStall");
+    } 
+//Test MemStall
+    
 
 
 //Write Back

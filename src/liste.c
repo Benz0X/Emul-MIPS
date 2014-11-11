@@ -69,6 +69,15 @@ list present(element e, list L) {
     return p;
 }
 
+int overlap(list L1, list L2){
+    if(empty(L2)||empty(L1)) return 0;
+    if(present(L1->val,L2)!=NULL){
+        return 1;
+    }else{
+        return overlap(pop(L1),L2);
+    }
+}
+
 void printList(list L) {
     list p=L;
     for(p=L; !empty(p); p=p->suiv) {
