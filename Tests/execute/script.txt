@@ -1,0 +1,8 @@
+#fichier de test des fonctions load et store
+
+load Tests/execute/loadstore.o
+disp mem map
+run
+disp reg all
+disp mem 0x4000+20
+debug
