@@ -59,13 +59,14 @@ int exceptionHandler(exception number) {
             scanf("%d",&reg_mips[2]);
             break;
         case 8:;
-            int j;
+            int j=0;
             char *input=calloc(reg_mips[5],sizeof(char));
-            scanf("%s",input);
-            for (j = 0; j < reg_mips[5]; ++j)
+            fgets(input,reg_mips[5],stdin);
+            do
             {
+                j++;
                 memWrite(reg_mips[4]+j,0,input[j]);
-            }
+            }while((input[j-1])!='\0' && j <= reg_mips[5]);
             break;
         case 10:
         INFO_MSG("Exit called by program");
