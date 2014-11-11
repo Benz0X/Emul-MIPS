@@ -80,6 +80,9 @@ int exceptionHandler(exception number) {
     case flush:
         return flush;
         break;
+    case memFail:
+    WARNING_MSG("Invalid memory write");
+    break;
     
     default :
         WARNING_MSG("Unknown error - Number %d", number);
