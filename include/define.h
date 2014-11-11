@@ -82,6 +82,7 @@ typedef struct
     pipestep step;
     int dico_entry;
     int tmp;
+    int tmp2;
 }pipeblock;
 
 
