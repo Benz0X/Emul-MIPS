@@ -129,6 +129,7 @@ int execute(instruction insEX, pipestep EX, int dico_entry, int* tmp) {
 int pipeline(uint32_t end, state running, int affichage) {
 //Initialisation des variables internes 
     int flag[5];
+    int stall=0;
 
     if(affichage==1) {
         WARNING_MSG("Nouvelle iteration");
@@ -147,9 +148,10 @@ int pipeline(uint32_t end, state running, int affichage) {
 //Test RegStall
     //printList(listUsedReg(vpipeline[WB].ins,vpipeline[WB].dico_entry));
     //printList(listUsedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry));
-    if(overlap(listUsedReg(vpipeline[WB].ins,vpipeline[WB].dico_entry),listUsedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry))==1){
+    if(overlap(listUsedReg(vpipeline[MEM].ins,vpipeline[MEM].dico_entry),listUsedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry))==1){
         //Si les registres utilisés par WB et EX coincident
         WARNING_MSG("Need to regStall");
+        stall=1;
     } 
 //Test MemStall
     
@@ -167,7 +169,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     exceptionHandler(decode(vpipeline[ID].ins,&dico_entry));
 //Fetch
     exceptionHandler(fetch(&(vpipeline[IF].ins)));
-
+if (stall==1){reg_mips[PC]-=4;}
 
 //Temporisation
     if(clocktime!=0) {
@@ -191,10 +193,12 @@ int pipeline(uint32_t end, state running, int affichage) {
 //flush
     if(flag[EX]==flush){
         printf("*\nFLUSH\n*");
-        pipeflush(&vpipeline[IF]);
+        addNOP(&vpipeline[IF]);
     }
 //avancement du pipeline
     pipecpy(&vpipeline[WB],vpipeline[MEM]);
+    addNOP(&vpipeline[MEM]);
+    if(stall==0){
     pipecpy(&vpipeline[MEM],vpipeline[EX]);
     pipecpy(&vpipeline[EX],vpipeline[ID]);
 
@@ -202,7 +206,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     vpipeline[EX].dico_entry=dico_entry;
 
     pipecpy(&vpipeline[ID],vpipeline[IF]);
-
+}
 //Stepinto
     if (running==stepinto){running=stop;}
 

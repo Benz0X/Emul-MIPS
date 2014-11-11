@@ -764,11 +764,6 @@ int pipecpy(pipeblock* A, pipeblock B){
     return 0;
 }
 
-int pipeflush(pipeblock* A){
-    A->ins.value=0;
-
-    return 0;
-}
 
 list listUsedReg(instruction ins, int dico_entry){
     list L=NULL;
@@ -802,3 +797,9 @@ list listUsedReg(instruction ins, int dico_entry){
     return L;
 }
 
+int addNOP(pipeblock * A){
+    A->ins.value=0;
+    A->dico_entry=0;//toujours 0 car dico trié par masque
+    A->tmp=0;
+    return 0;
+}
