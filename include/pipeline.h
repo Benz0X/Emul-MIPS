@@ -10,7 +10,7 @@
 #endif
 
 typedef enum{stop,running,step,stepinto} state;
-typedef enum {OK,EmptyPipe,InvalidInstruction,InvalidExecution,IntegerOverflow,BreakPoint,ReservedInstruction,SysCall,quit,flush} exception;
+typedef enum {OK,EmptyPipe,InvalidInstruction,InvalidExecution,IntegerOverflow,BreakPoint,ReservedInstruction,SysCall,quit,flush,memFail} exception;
 
 
 int pipeline(uint32_t end, state running, int affichage);

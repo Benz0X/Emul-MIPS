@@ -138,7 +138,7 @@ int memRead(uint32_t start_addr,int type, int* value) {             //Lit la mem
         j++;
     }
 //printf("%d, current addr = 0x%X, start addr = 0x%X, size = %d",j,start_addr,memory->seg[j-1].start._32,memory->seg[j-1].size._32);
-    if(type==0) {
+    if(type==0) { //type 0 pour byte
         if(j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)) {
             *value=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
             // printf(" \nécriture\n");

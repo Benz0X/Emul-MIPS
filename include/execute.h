@@ -3,7 +3,7 @@
 
 //Fonction simulant les instructions du MIPS
 //Prennent l'instruction en paramètre
-
+int32_t sign_extend(int16_t A);
 //ADDITION
 int ADD(instruction ins, int pipestep, int* tmp);
 int ADDI(instruction ins, int pipestep, int* tmp);

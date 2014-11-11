@@ -4,6 +4,7 @@
 #include "define.h"
 #include "pipeline.h"
 #include "fonctions.h"
+#include "emul.h"
 #include "common/notify.h"
 #include <stdint.h>
 
@@ -14,6 +15,15 @@
     }
     return OK;
 */
+//SIGN EXTEND
+int32_t sign_extend(int16_t A){
+    if (A >= 0){
+        return (int32_t) A;
+    }else{
+        return (0xFFFF0000+A);
+    }
+}
+
 
 //ADDITION
 int ADD(instruction ins, int pipestep, int* tmp) {
@@ -330,19 +340,66 @@ int JR(instruction ins, int pipestep, int* tmp) {
 
 //LOAD
 int LB(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case EX:
+        *tmp=reg_mips[ins.i.rs]+sign_extend(ins.i.immediate); //GPR[base]+sign_extend(offset)
+        break;
+    
+    case MEM:
+        if(memRead(*tmp,0,tmp)!=0){return memFail;}
+        break;
+    
+    case WB:
+        writeRegindex(ins.i.rt,sign_extend(*tmp));
+        break;
+    }
+
+    return OK;
 }
 
 int LBU(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case EX:
+        *tmp=reg_mips[ins.i.rs]+sign_extend(ins.i.immediate); //GPR[base]+sign_extend(offset)
+        break;
+    
+    case MEM:
+        if(memRead(*tmp,0,tmp)!=0){return memFail;}
+        break;
+    
+    case WB:
+        writeRegindex(ins.i.rt,(uint32_t)*tmp);
+        break;
+    }
+
+    return OK;
 }
 
 int LUI(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case WB:
+        writeRegindex(ins.i.rt,(ins.i.immediate>>16));
+        break;
+    }
+    return OK;
 }
 
 int LW(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case EX:
+        *tmp=reg_mips[ins.i.rs]+sign_extend(ins.i.immediate); //GPR[base]+sign_extend(offset)
+        break;
+    
+    case MEM:
+        if(memRead(*tmp,1,tmp)!=0){return memFail;}
+        break;
+    
+    case WB:
+        writeRegindex(ins.i.rt,(uint32_t)*tmp);
+        break;
+    }
+
+    return OK;
 }
 
 
@@ -435,11 +492,30 @@ int XOR(instruction ins, int pipestep, int* tmp) {
 
 //STORE
 int SB(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case EX:
+        *tmp=reg_mips[ins.i.rs]+sign_extend(ins.i.immediate); //GPR[base]+sign_extend(offset)
+        break;
+    
+    case MEM:
+        if(memWrite(*tmp,0,reg_mips[ins.i.rt])!=0){return memFail;}
+        break;
+    }
+
+    return OK;
 }
 
 int SW(instruction ins, int pipestep, int* tmp) {
-    return 0;
+    switch (pipestep) {
+    case EX:
+        *tmp=reg_mips[ins.i.rs]+sign_extend(ins.i.immediate); //GPR[base]+sign_extend(offset)
+        break;
+    
+    case MEM:
+        if(memWrite(*tmp,1,reg_mips[ins.i.rt])!=0){return memFail;}
+        break;
+    }
+    return OK;
 }
 
 
@@ -447,7 +523,7 @@ int SW(instruction ins, int pipestep, int* tmp) {
 int SEB(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case WB:
-        writeRegindex(ins.r.rd,(int32_t)reg_mips[ins.r.rt]);
+        writeRegindex(ins.r.rd,(int32_t)(0x000000FF&reg_mips[ins.r.rt]));
         break;
     }
     return OK; 
