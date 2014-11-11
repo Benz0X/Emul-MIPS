@@ -498,7 +498,7 @@ int SB(instruction ins, int pipestep, int* tmp) {
         break;
     
     case MEM:
-        if(memWrite(*tmp,0,reg_mips[ins.i.rt])!=0){return memFail;}
+        if(memWriteChecked(*tmp,0,reg_mips[ins.i.rt])!=0){return memFail;}
         break;
     }
 
@@ -512,7 +512,7 @@ int SW(instruction ins, int pipestep, int* tmp) {
         break;
     
     case MEM:
-        if(memWrite(*tmp,1,reg_mips[ins.i.rt])!=0){return memFail;}
+        if(memWriteChecked(*tmp,1,reg_mips[ins.i.rt])!=0){return memFail;}
         break;
     }
     return OK;

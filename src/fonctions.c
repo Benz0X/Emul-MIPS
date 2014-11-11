@@ -767,7 +767,7 @@ int pipecpy(pipeblock* A, pipeblock B){
 
 list listReadedReg(instruction ins, int dico_entry){
     list L=NULL;
-    if(ins.value==-1){printf("a");return L;} //Si l'instruction est invalide
+    if(ins.value==-1){return L;} //Si l'instruction est invalide
     switch(dico_data[dico_entry].type){
         case 0: //R type
             if(ins.r.rs!=0){
@@ -791,13 +791,13 @@ list listReadedReg(instruction ins, int dico_entry){
         default: //J type no register
         break;
     }
-    printList(L);
+    //printList(L);
     return L;
 }
 
 list listWritedReg(instruction ins, int dico_entry){
     list L=NULL;
-    if(ins.value==-1){printf("a");return L;} //Si l'instruction est invalide
+    if(ins.value==-1){return L;} //Si l'instruction est invalide
     switch(dico_data[dico_entry].type){
         case 0: //R type
             if(ins.r.rd!=0){
@@ -814,7 +814,7 @@ list listWritedReg(instruction ins, int dico_entry){
         default: //J type no register
         break;
     }
-    printList(L);
+    //printList(L);
     return L;
 }
 
