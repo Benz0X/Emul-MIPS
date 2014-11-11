@@ -1,6 +1,6 @@
 #fichier de test des fonctions load et store
 
-load Tests/execute/loadstore.o
+load Tests/execute/operations.o
 disp mem map
 run
 disp reg all
