@@ -1,4 +1,4 @@
-load Tests/pile.o 0x5000
-clock 100
+load Tests/boucle.o
 step
+disasm 0x3000+100
 debug

@@ -148,7 +148,7 @@ int pipeline(uint32_t end, state running, int affichage) {
 //Test RegStall
     //printList(listUsedReg(vpipeline[WB].ins,vpipeline[WB].dico_entry));
     //printList(listUsedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry));
-    if(overlap(listUsedReg(vpipeline[MEM].ins,vpipeline[MEM].dico_entry),listUsedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry))==1){
+    if(overlap(listWritedReg(vpipeline[MEM].ins,vpipeline[MEM].dico_entry),listReadedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry))==1){
         //Si les registres utilisés par WB et EX coincident
         WARNING_MSG("Need to regStall");
         stall=1;

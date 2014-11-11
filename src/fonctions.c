@@ -765,7 +765,7 @@ int pipecpy(pipeblock* A, pipeblock B){
 }
 
 
-list listUsedReg(instruction ins, int dico_entry){
+list listReadedReg(instruction ins, int dico_entry){
     list L=NULL;
     if(ins.value==-1){printf("a");return L;} //Si l'instruction est invalide
     switch(dico_data[dico_entry].type){
@@ -776,9 +776,6 @@ list listUsedReg(instruction ins, int dico_entry){
             if(ins.r.rt!=0){
                 L=insert(ins.r.rt,L);
             }
-            if(ins.r.rd!=0){
-                L=insert(ins.r.rd,L);
-            }
         break;
 
         case 1: //I type
@@ -788,12 +785,36 @@ list listUsedReg(instruction ins, int dico_entry){
             if(ins.r.rt!=0){
                 L=insert(ins.r.rt,L);
             }
+
         break;
 
         default: //J type no register
         break;
     }
-    //printList(L);
+    printList(L);
+    return L;
+}
+
+list listWritedReg(instruction ins, int dico_entry){
+    list L=NULL;
+    if(ins.value==-1){printf("a");return L;} //Si l'instruction est invalide
+    switch(dico_data[dico_entry].type){
+        case 0: //R type
+            if(ins.r.rd!=0){
+                L=insert(ins.r.rd,L);
+            }
+        break;
+
+        case 1: //I type
+            if(ins.r.rt!=0){
+                L=insert(ins.r.rt,L);
+            }
+        break;
+
+        default: //J type no register
+        break;
+    }
+    printList(L);
     return L;
 }
 
