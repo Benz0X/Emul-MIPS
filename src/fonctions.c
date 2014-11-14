@@ -744,7 +744,7 @@ void initprog() {
         reg_mips[j]=0;             //Initialisation des registres pour debug avant load
     }
 
-    reg_mips[29]=0xFFFFF000;
+    reg_mips[29]=0x0FFFEFFC;
     //Initialisation de PC
     //Recuperation de la plage .text
     int k;
