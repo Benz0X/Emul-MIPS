@@ -1,0 +1,12 @@
+#-------
+#TEST_RETURN_CODE=PASS        
+#TEST_COMMENT=""
+#-------
+load Tests/execute/add_sub.o
+run
+assert reg t1 1
+assert reg t2 2
+assert reg t3 3
+assert reg t4 2
+assert reg t5 -1
+exit

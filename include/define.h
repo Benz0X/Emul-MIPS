@@ -69,6 +69,7 @@ typedef enum {
     STEP,
     BREAK,
     CLOCK,
+    VERB,
     UNKNOWN
 } command ;
 
@@ -99,7 +100,7 @@ extern list breaklist;                  //Liste des points d'arrets
 extern int clocktime;                   //Vitesse d'execution : 0 pour max
 extern uint32_t textStart;              //Debut du segment text
 extern uint32_t return_addr;
-
+extern short verbose;
 
 extern pipeblock vpipeline[5];          //Virtual Pipeline
 

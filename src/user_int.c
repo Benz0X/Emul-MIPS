@@ -23,6 +23,7 @@ pipeblock vpipeline[5];
 
 uint32_t textStart=DEFAULT_S_ADDR;
 uint32_t return_addr;
+short verbose=0;
 
 
 
@@ -80,7 +81,7 @@ int decrypt(char input [])
 
 
     case EXIT:
-        INFO_MSG("Sortie du programme");
+        INFO_MSG("Exit program");
         return 2;
         break;
 
@@ -555,8 +556,8 @@ int decrypt(char input [])
         //Verification des depassements .text
         if(reg_mips[PC]>=end+16 || reg_mips[PC]<textStart) {    //+16 pour finir le pipe
             reg_mips[PC]=textStart;
-            initprog();
             WARNING_MSG("Out of memory map, start adress set to default");
+            initprog();
         }
         return pipeline(end,running,1);
         break;
@@ -711,6 +712,23 @@ int decrypt(char input [])
         return -1;
         break;
 
+
+    case VERB:
+            ;
+            int verb;
+            if(nextword(&word,input,&n) && isDecimal(word)) {
+                verb=strtol(word,NULL,0);
+                if(verb>=0 && verb<6 && !nextword(&word,input,&n)) {
+                    verbose=verb;
+                    return 0;
+                }
+            }
+
+            INFO_MSG("verbose [integer v] : \nv=0 : no output\nv=1 : Warnings output\nv=2 : instruction output\nv=3 : Warnings and instruction output \nv=4 : add pipeline content output\nv=5 : add deep pipeline output (flush and stalls)");
+            return -1;
+            break;
+
+       
     case UNKNOWN:
         WARNING_MSG("Unknown command : %s",word);
         return -1;

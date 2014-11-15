@@ -39,7 +39,7 @@ int ADD(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
-    printf("ADD: put %d in %d \n",*tmp,ins.r.rd );
+    if(verbose>1) {printf("ADD: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -61,7 +61,7 @@ int ADDI(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
-        printf("ADDI: put %d in %d \n",*tmp,ins.i.rt );
+        if(verbose>1) {printf("ADDI: put %d in %d \n",*tmp,ins.i.rt );}
         writeRegindex(ins.i.rt,*tmp);
         break;
     }
@@ -74,6 +74,7 @@ int ADDIU(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("ADDIU: put %d in %d \n",*tmp,ins.i.rt );}
         writeRegindex(ins.i.rt,*tmp);
         break;
     }
@@ -87,6 +88,7 @@ int ADDU(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("ADDU: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -106,6 +108,7 @@ int AND(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("AND: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -119,6 +122,7 @@ int ANDI(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("ANDI: put %d in %d \n",*tmp,ins.i.rt );}
         writeRegindex(ins.i.rt,*tmp);
         break;
     }
@@ -142,6 +146,7 @@ int BEQ(instruction ins, int pipestep, int* tmp) {
         return OK;
         break;
     case MEM:
+        if(verbose>1) {printf("BEQ: put %d in PC \n",*tmp-4);}
         writeRegindex(PC,*tmp-4);
         break;
     }
@@ -158,6 +163,7 @@ int BGEZ(instruction ins, int pipestep, int* tmp) {
     return OK;
         break;
     case MEM:
+        if(verbose>1) {printf("BEQ: put %d in PC \n",*tmp-4);}
         writeRegindex(PC,*tmp-4);
         break;
     }
@@ -174,6 +180,7 @@ int BGTZ(instruction ins, int pipestep, int* tmp) {
     return OK;
         break;
     case MEM:
+        if(verbose>1) {printf("BEQ: put %d in PC \n",*tmp-4);}
         writeRegindex(PC,*tmp-4);
         break;
     }
@@ -190,6 +197,7 @@ int BLEZ(instruction ins, int pipestep, int* tmp) {
     return OK;
         break;
     case MEM:
+        if(verbose>1) {printf("BEQ: put %d in PC \n",*tmp-4);}
         writeRegindex(PC,*tmp-4);
         break;
     }
@@ -206,6 +214,7 @@ int BLTZ(instruction ins, int pipestep, int* tmp) {
     return OK;
         break;
     case MEM:
+        if(verbose>1) {printf("BEQ: put %d in PC \n",*tmp-4);}
         writeRegindex(PC,*tmp-4);
         break;
     }
@@ -224,7 +233,7 @@ int BNE(instruction ins, int pipestep, int* tmp) {
     } else {*tmp=reg_mips[PC]+8;}
         break;
     case MEM:
-        printf("BNE : set PC at %8.8X\n", *tmp-4);
+        if(verbose>1) {printf("BEQ: put %d in PC \n",*tmp-4);}
         writeRegindex(PC,*tmp-4);
         break;
     }
@@ -262,8 +271,7 @@ int DIV(instruction ins, int pipestep, int* tmp) {
         if(reg_mips[ins.r.rt]==0) {
             vpipeline[EX].tmp2=reg_mips[HI];
             *tmp=reg_mips[LO];
-
-            INFO_MSG("Division by 0");
+            if (verbose>0){INFO_MSG("Division by 0");}
         }
         else {
             *tmp=reg_mips[ins.r.rs]/reg_mips[ins.r.rt];
@@ -271,6 +279,7 @@ int DIV(instruction ins, int pipestep, int* tmp) {
         }
         break;
     case WB:
+        if(verbose>1) {printf("DIV: put %d in HI and %d in LO \n",vpipeline[WB].tmp2,*tmp);}
         reg_mips[LO]=*tmp;
         reg_mips[HI]=vpipeline[WB].tmp2;
         break;
@@ -292,6 +301,7 @@ int J(instruction ins, int pipestep, int* tmp) {
         return flush;
         break;
     case MEM:
+        printf("J to %X\n",((reg_mips[PC] & 0xF0000000) | 4*ins.j.target));
         reg_mips[PC]= ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target);    //-8 ?
         break;
     }
@@ -307,7 +317,7 @@ int JAL(instruction ins, int pipestep, int* tmp) {
         break;
     
     case MEM:
-            printf("JAL to %X\n",textStart + ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target));
+            printf("JAL to %X\n",((reg_mips[PC] & 0xF0000000) | 4*ins.j.target));
 
         reg_mips[PC]= ((reg_mips[PC] & 0xF0000000) | 4*ins.j.target);    //-8 ?
         break;
@@ -324,6 +334,7 @@ int JALR(instruction ins, int pipestep, int* tmp) {     //NOTE : RD SHOULDN'T BE
         break;
     
     case MEM:
+        printf("JALR to %X\n",((reg_mips[PC] & 0xF0000000) | 4*reg_mips[ins.r.rs]));
         reg_mips[PC]= ((reg_mips[PC] & 0xF0000000) | 4*reg_mips[ins.r.rs]);    //-8 ?
         break;
     }
@@ -337,7 +348,8 @@ int JR(instruction ins, int pipestep, int* tmp) {
         return flush;
         break;
     case MEM:
-        reg_mips[PC]=((reg_mips[PC] & 0xF0000000) | reg_mips[ins.r.rs])-4;    //-8 ?
+        printf("JALR to %X\n",reg_mips[ins.r.rs]);
+        reg_mips[PC]=reg_mips[ins.r.rs];    //-8 ?
         break;
     }
     
@@ -357,6 +369,7 @@ int LB(instruction ins, int pipestep, int* tmp) {
         break;
     
     case WB:
+        if(verbose>1) {printf("LB: put %d in %d \n",sign_extend(*tmp),ins.i.rt );}
         writeRegindex(ins.i.rt,sign_extend(*tmp));
         break;
     }
@@ -375,6 +388,7 @@ int LBU(instruction ins, int pipestep, int* tmp) {
         break;
     
     case WB:
+        if(verbose>1) {printf("LBU: put %d in %d \n",(uint32_t)*tmp,ins.i.rt );}
         writeRegindex(ins.i.rt,(uint32_t)*tmp);
         break;
     }
@@ -385,6 +399,7 @@ int LBU(instruction ins, int pipestep, int* tmp) {
 int LUI(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case WB:
+        if(verbose>1) {printf("LUI: put %d in %d \n",(int32_t)(ins.i.immediate<<16),ins.i.rt );}
         writeRegindex(ins.i.rt,(int32_t)(ins.i.immediate<<16));
         break;
     }
@@ -402,6 +417,7 @@ int LW(instruction ins, int pipestep, int* tmp) {
         break;
     
     case WB:
+        if(verbose>1) {printf("LW: put %d in %d \n",(uint32_t)*tmp,ins.i.rt );}
         writeRegindex(ins.i.rt,(uint32_t)*tmp);
         break;
     }
@@ -414,6 +430,7 @@ int LW(instruction ins, int pipestep, int* tmp) {
 int MFHI(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case WB:
+        if(verbose>1) {printf("MFHI: put %d in %d \n",reg_mips[HI],ins.r.rd );}
         writeRegindex(ins.r.rd,reg_mips[HI]);
         break;
     }
@@ -423,6 +440,7 @@ int MFHI(instruction ins, int pipestep, int* tmp) {
 int MFLO(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case WB:
+        if(verbose>1) {printf("MFLO: put %d in %d \n",reg_mips[LO],ins.r.rd );}
         writeRegindex(ins.r.rd,reg_mips[LO]);
         break;
     }
@@ -439,7 +457,8 @@ int MULT(instruction ins, int pipestep, int* tmp) {
         *tmp=(int32_t)prod;
         break;
     case WB:
-        reg_mips[LO]=vpipeline[EX].tmp2;
+        if(verbose>1) {printf("MULT: put %d in HI and %d in LO \n",vpipeline[WB].tmp2,*tmp);}
+        reg_mips[LO]=vpipeline[WB].tmp2;
         reg_mips[HI]=*tmp;
         break;
     }
@@ -462,6 +481,7 @@ int OR(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("OR: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -475,6 +495,7 @@ int ORI(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("ORI: put %d in %d \n",*tmp,ins.i.rt );}
         writeRegindex(ins.i.rt,*tmp);
         break;
     }
@@ -488,6 +509,7 @@ int XOR(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("XOR: put %d in %d \n",*tmp,ins.r.rd);}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -503,6 +525,7 @@ int SB(instruction ins, int pipestep, int* tmp) {
         break;
     
     case MEM:
+        if(verbose>1) {printf("SB: store %d at %d \n",*tmp,reg_mips[ins.i.rt]);}
         if(memWrite(*tmp,0,reg_mips[ins.i.rt])!=0){return memFail;}
         break;
     }
@@ -517,6 +540,7 @@ int SW(instruction ins, int pipestep, int* tmp) {
         break;
     
     case MEM:
+        if(verbose>1) {printf("SW: store %d at %d \n",*tmp,reg_mips[ins.i.rt]);}
         if(memWrite(*tmp,1,reg_mips[ins.i.rt])!=0){return memFail;}
         break;
     }
@@ -528,6 +552,7 @@ int SW(instruction ins, int pipestep, int* tmp) {
 int SEB(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case WB:
+    if(verbose>1) {printf("SEB: put %d in %d \n",(int32_t)(0x000000FF&reg_mips[ins.r.rt]),ins.r.rd);}
         writeRegindex(ins.r.rd,(int32_t)(0x000000FF&reg_mips[ins.r.rt]));
         break;
     }
@@ -543,7 +568,7 @@ int SLL(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
-    printf("SLL\n");
+        if(verbose>1) {printf("SLL: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -562,6 +587,7 @@ int SRA(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("SRA: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -575,6 +601,7 @@ int SRL(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("SRL: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -596,6 +623,7 @@ int SLT(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("SLT: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -614,6 +642,7 @@ int SLTI(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("SLTI: put %d in %d \n",*tmp,ins.i.rt );}
         writeRegindex(ins.i.rt,*tmp);
         break;
     }
@@ -631,6 +660,7 @@ int SLTIU(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("SLTIU: put %d in %d \n",*tmp,ins.i.rt );}
         writeRegindex(ins.i.rt,*tmp);
         break;
     }
@@ -649,6 +679,7 @@ int SLTU(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("SLTU: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -666,10 +697,11 @@ int SUB(instruction ins, int pipestep, int* tmp) {
             *tmp=reg_mips[ins.r.rd];
             return IntegerOverflow;
         }
-        *tmp=reg_mips[ins.r.rs] - reg_mips[ins.r.rd];
+        *tmp=reg_mips[ins.r.rs] - reg_mips[ins.r.rt];
         break;
 
     case WB:
+        if(verbose>1) {printf("SUB: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }
@@ -684,6 +716,7 @@ int SUBU(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
+        if(verbose>1) {printf("SUBU: put %d in %d \n",*tmp,ins.r.rd );}
         writeRegindex(ins.r.rd,*tmp);
         break;
     }

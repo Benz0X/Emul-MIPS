@@ -58,6 +58,8 @@ command getCommand(char word[]) {
         return BREAK;
     if (!strcmp(word,"clock"))
         return CLOCK;
+    if (!strcmp(word,"verbose"))
+        return VERB;
     return UNKNOWN;
 }
 
@@ -728,7 +730,7 @@ int getInstr(uint32_t adress, instruction* instr_ptr) {
 
 
 void initprog() {
-    INFO_MSG("\n*\n*\nINIT des données\n*\n*\n");
+    INFO_MSG("*\nProgram initialisation\n*");
 //Initialisation des Pipeblocks
     vpipeline[IF].ins.value=-1; vpipeline[IF].dico_entry=-1; vpipeline[IF].step=IF;
     vpipeline[ID].ins.value=-1; vpipeline[ID].dico_entry=-1; vpipeline[ID].step=ID;
@@ -744,7 +746,7 @@ void initprog() {
         reg_mips[j]=0;             //Initialisation des registres pour debug avant load
     }
 
-    reg_mips[29]=0x0FFFEFFC;
+    reg_mips[29]=0xFFFFF000-4;
     //Initialisation de PC
     //Recuperation de la plage .text
     int k;

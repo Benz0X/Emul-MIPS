@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=FAIL        
+#TEST_COMMENT="disasm"
+#-------
+load Tests/test_all.o
+clock aze
+exit

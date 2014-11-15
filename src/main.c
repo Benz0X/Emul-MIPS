@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
 
         if( scriptmode==1 && feof(script_file) ) {
             /* mode fichier, fin de fichier => sortie propre du programme */
-            DEBUG_MSG("FIN DE FICHIER");
+            DEBUG_MSG("END OF FILE");
             fclose( script_file );
             exit(0);
         }

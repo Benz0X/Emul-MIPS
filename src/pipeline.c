@@ -18,31 +18,31 @@ int exceptionHandler(exception number) {
         break;
 
     case EmptyPipe:
-        WARNING_MSG("Pipeline vide");
+        //WARNING_MSG("Empty pipe");
         break;
 
 
     case InvalidInstruction:
-        WARNING_MSG("Invalid instruction at adress %X",reg_mips[PC]);
+    if (verbose==1||verbose>2){WARNING_MSG("Invalid instruction at adress %X",reg_mips[PC]);}
         break;
 
     case InvalidExecution:
-        WARNING_MSG("Invalid execution in pipe");
+        if (verbose==1||verbose>2){WARNING_MSG("Invalid execution in pipe");}
         break;
 
 
 
     case IntegerOverflow:
-        WARNING_MSG("IntegerOverflow : %8.8X",vpipeline[EX].ins.value);
+        if (verbose==1||verbose>2){WARNING_MSG("IntegerOverflow : %8.8X",vpipeline[EX].ins.value);}
         break;
 
     case BreakPoint:
-        WARNING_MSG("Break : %8.8X",vpipeline[EX].ins.value);
+        if (verbose==1||verbose>2){WARNING_MSG("Break : %8.8X",vpipeline[EX].ins.value);}
         return BreakPoint;
         break;
 
     case SysCall:
-        WARNING_MSG("Syscall : %8.8X",vpipeline[WB].ins.value);
+        if (verbose==1||verbose>2){INFO_MSG("Syscall : %8.8X",vpipeline[WB].ins.value);}
         switch (reg_mips[2]) { //v0
         case 1:
             printf("%d\n",reg_mips[4]); //a0
@@ -73,7 +73,7 @@ int exceptionHandler(exception number) {
             return quit;
             break;
         default:
-            WARNING_MSG("Unknown SysCall, %d",reg_mips[2]);
+            if (verbose==1||verbose>2){WARNING_MSG("Unknown SysCall, %d",reg_mips[2]);}
             break;
         }
         break;
@@ -82,7 +82,7 @@ int exceptionHandler(exception number) {
         return flush;
         break;
     case memFail:
-    WARNING_MSG("Invalid memory write");
+    if (verbose==1||verbose>2){WARNING_MSG("Invalid memory write");}
     break;
     
     default :
@@ -135,7 +135,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     int flag[5];
     int stall=0;
 
-    if(affichage==1) {
+    if(verbose>3) {
         WARNING_MSG("Nouvelle iteration");
         printf("Pipe : ID %X\t EX %X\t MEM %X\t WB %X\n\n",vpipeline[ID].ins.value,vpipeline[EX].ins.value,vpipeline[MEM].ins.value,vpipeline[WB].ins.value);
     }
@@ -154,7 +154,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     //printList(listUsedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry));
     if(overlap(listWritedReg(vpipeline[MEM].ins,vpipeline[MEM].dico_entry),listReadedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry))==1){
         //Si les registres utilisés par WB et EX coincident
-        WARNING_MSG("Need to regStall");
+        if(verbose>4) {WARNING_MSG("Need to regStall");}
         stall=1;
     } 
 //Test MemStall
@@ -178,13 +178,13 @@ if (stall==1){reg_mips[PC]-=4;}
 //Temporisation
     if(clocktime!=0) {
         tick=clock()-tick;
-        printf("Temps mis: %fms\t", (double)tick/CLOCKS_PER_SEC*1000);
-        printf("Attente de %ldms\n", clocktime-tick/CLOCKS_PER_SEC*1000);
+        if(verbose>0) {printf("Temps mis: %fms\t", (double)tick/CLOCKS_PER_SEC*1000);
+        printf("Attente de %ldms\n", clocktime-tick/CLOCKS_PER_SEC*1000);}
         if((double)tick/CLOCKS_PER_SEC*1000<clocktime) DELAY((clocktime-tick/CLOCKS_PER_SEC*1000)*1000); //*1000 pour le passage en us->ms
     }
 
 //Affichage
-    if(affichage==1) {
+    if(verbose>3) {
         //disasm(reg_mips[PC]-4,1);
         printf("PC: %8.8X->%8.8X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], vpipeline[IF].ins.value);
         printf("Decoding: %8.8X  Dico: %d-> %s\n", vpipeline[ID].ins.value, dico_entry, dico_data[dico_entry].name);
@@ -196,7 +196,7 @@ if (stall==1){reg_mips[PC]-=4;}
 
 //flush
     if(flag[EX]==flush){
-        printf("*\nFLUSH\n*");
+        if(verbose>4) {printf("*\nFlush IF\n*");}
         addNOP(&vpipeline[IF]);
     }
 //avancement du pipeline
@@ -219,7 +219,7 @@ if (stall==1){reg_mips[PC]-=4;}
         if (strcmp(dico_data[vpipeline[EX].dico_entry].name,"JAL")==0 || strcmp(dico_data[vpipeline[EX].dico_entry].name,"JALR")==0){
             running=step_return;
             return_addr=reg_mips[PC];
-            printf("RETURN ADRESS %d\n",return_addr);
+            if(verbose>0) {printf("RETURN ADRESS SET TO %d\n",return_addr);}
         }
         else {running=stop;}
     }
