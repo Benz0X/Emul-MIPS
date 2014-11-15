@@ -31,7 +31,7 @@ int ADD(instruction ins, int pipestep, int* tmp) {
     case EX:
         ;
         int64_t max=0x7FFFFFFF;
-        if ((int64_t)reg_mips[ins.r.rs] + (int64_t)reg_mips[ins.r.rt]>max || (int64_t)reg_mips[ins.r.rs] + (int64_t)reg_mips[ins.r.rt]<(-max-1) { //Overflow pour ...>max ou ...<-max-1
+        if ((int64_t)reg_mips[ins.r.rs] + (int64_t)reg_mips[ins.r.rt]>max || (int64_t)reg_mips[ins.r.rs] + (int64_t)reg_mips[ins.r.rt]<(-max-1)) { //Overflow pour ...>max ou ...<-max-1
             *tmp=reg_mips[ins.r.rd];
             return IntegerOverflow;
         }
@@ -54,7 +54,7 @@ int ADDI(instruction ins, int pipestep, int* tmp) {
     case EX:
         ;
         int64_t max=0x7FFFFFFF;
-        if ((int64_t)ins.i.immediate + (int64_t)reg_mips[ins.i.rs]>max || (int64_t)ins.i.immediate + (int64_t)reg_mips[ins.i.rs]<-max) { //Overflow pour ...>max ou ...<-max-1
+        if ((int64_t)ins.i.immediate + (int64_t)reg_mips[ins.i.rs]>max || (int64_t)ins.i.immediate + (int64_t)reg_mips[ins.i.rs]<(-max-1)) { //Overflow pour ...>max ou ...<-max-1
             *tmp=reg_mips[ins.i.rt];
             return IntegerOverflow;
         }
