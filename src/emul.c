@@ -261,7 +261,9 @@ int loadELF (char* name,int nbparam,...) {
         va_arg(ap, uint32_t); //dirty
         textStart = va_arg(ap, uint32_t);
     }
-    else {textStart=DEFAULT_S_ADDR;}
+    else {
+        textStart=DEFAULT_S_ADDR;
+    }
     if(textStart%0x1000>0) {
         textStart = textStart+0x1000-textStart%0x1000;
     }

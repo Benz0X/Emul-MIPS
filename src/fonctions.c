@@ -716,7 +716,9 @@ int readDico(char* dico_name) {
 
 int getInstr(uint32_t adress, instruction* instr_ptr) {
     int32_t temp;
-    if(memRead(adress,1,&temp)==-1){temp=-1;}  //En cas de depassement de la zone .text on ne recupere aucune instr
+    if(memRead(adress,1,&temp)==-1) {
+        temp=-1;   //En cas de depassement de la zone .text on ne recupere aucune instr
+    }
     //FLIP_ENDIANNESS(temp);
     memcpy(instr_ptr,&temp,4);
     //printf("content : %8.8X\t",temp); printf("adress %8.8X\n", adress);
@@ -732,11 +734,21 @@ int getInstr(uint32_t adress, instruction* instr_ptr) {
 void initprog() {
     INFO_MSG("*\nProgram initialisation\n*");
 //Initialisation des Pipeblocks
-    vpipeline[IF].ins.value=-1; vpipeline[IF].dico_entry=-1; vpipeline[IF].step=IF;
-    vpipeline[ID].ins.value=-1; vpipeline[ID].dico_entry=-1; vpipeline[ID].step=ID;
-    vpipeline[EX].ins.value=-1; vpipeline[EX].dico_entry=-1; vpipeline[EX].step=EX;
-    vpipeline[MEM].ins.value=-1; vpipeline[MEM].dico_entry=-1; vpipeline[MEM].step=MEM;
-    vpipeline[WB].ins.value=-1; vpipeline[WB].dico_entry=-1; vpipeline[WB].step=WB;
+    vpipeline[IF].ins.value=-1;
+    vpipeline[IF].dico_entry=-1;
+    vpipeline[IF].step=IF;
+    vpipeline[ID].ins.value=-1;
+    vpipeline[ID].dico_entry=-1;
+    vpipeline[ID].step=ID;
+    vpipeline[EX].ins.value=-1;
+    vpipeline[EX].dico_entry=-1;
+    vpipeline[EX].step=EX;
+    vpipeline[MEM].ins.value=-1;
+    vpipeline[MEM].dico_entry=-1;
+    vpipeline[MEM].step=MEM;
+    vpipeline[WB].ins.value=-1;
+    vpipeline[WB].dico_entry=-1;
+    vpipeline[WB].step=WB;
 
 
     int j;
@@ -758,7 +770,7 @@ void initprog() {
     }
 }
 
-int pipecpy(pipeblock* A, pipeblock B){
+int pipecpy(pipeblock* A, pipeblock B) {
     A->ins.value=B.ins.value;
     A->dico_entry=B.dico_entry;
     A->tmp=B.tmp;
@@ -767,60 +779,64 @@ int pipecpy(pipeblock* A, pipeblock B){
 }
 
 
-list listReadedReg(instruction ins, int dico_entry){
+list listReadedReg(instruction ins, int dico_entry) {
     list L=NULL;
-    if(ins.value==-1){return L;} //Si l'instruction est invalide
-    switch(dico_data[dico_entry].type){
-        case 0: //R type
-            if(ins.r.rs!=0){
-                L=insert(ins.r.rs,L);
-            }
-            if(ins.r.rt!=0){
-                L=insert(ins.r.rt,L);
-            }
+    if(ins.value==-1) {
+        return L;   //Si l'instruction est invalide
+    }
+    switch(dico_data[dico_entry].type) {
+    case 0: //R type
+        if(ins.r.rs!=0) {
+            L=insert(ins.r.rs,L);
+        }
+        if(ins.r.rt!=0) {
+            L=insert(ins.r.rt,L);
+        }
         break;
 
-        case 1: //I type
-            if(ins.r.rs!=0){
-                L=insert(ins.r.rs,L);
-            }
-            if(ins.r.rt!=0){
-                L=insert(ins.r.rt,L);
-            }
+    case 1: //I type
+        if(ins.r.rs!=0) {
+            L=insert(ins.r.rs,L);
+        }
+        if(ins.r.rt!=0) {
+            L=insert(ins.r.rt,L);
+        }
 
         break;
 
-        default: //J type no register
+    default: //J type no register
         break;
     }
     //printList(L);
     return L;
 }
 
-list listWritedReg(instruction ins, int dico_entry){
+list listWritedReg(instruction ins, int dico_entry) {
     list L=NULL;
-    if(ins.value==-1){return L;} //Si l'instruction est invalide
-    switch(dico_data[dico_entry].type){
-        case 0: //R type
-            if(ins.r.rd!=0){
-                L=insert(ins.r.rd,L);
-            }
+    if(ins.value==-1) {
+        return L;   //Si l'instruction est invalide
+    }
+    switch(dico_data[dico_entry].type) {
+    case 0: //R type
+        if(ins.r.rd!=0) {
+            L=insert(ins.r.rd,L);
+        }
         break;
 
-        case 1: //I type
-            if(ins.r.rt!=0){
-                L=insert(ins.r.rt,L);
-            }
+    case 1: //I type
+        if(ins.r.rt!=0) {
+            L=insert(ins.r.rt,L);
+        }
         break;
 
-        default: //J type no register
+    default: //J type no register
         break;
     }
     //printList(L);
     return L;
 }
 
-int addNOP(pipeblock * A){
+int addNOP(pipeblock * A) {
     A->ins.value=0;
     A->dico_entry=0;//toujours 0 car dico trié par masque
     A->tmp=0;

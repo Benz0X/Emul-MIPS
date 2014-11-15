@@ -69,11 +69,11 @@ list present(element e, list L) {
     return p;
 }
 
-int overlap(list L1, list L2){
+int overlap(list L1, list L2) {
     if(empty(L2)||empty(L1)) return 0;
-    if(present(L1->val,L2)!=NULL){
+    if(present(L1->val,L2)!=NULL) {
         return 1;
-    }else{
+    } else {
         return overlap(pop(L1),L2);
     }
 }
