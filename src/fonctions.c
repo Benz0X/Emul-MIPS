@@ -774,6 +774,7 @@ int pipecpy(pipeblock* A, pipeblock B) {
     A->ins.value=B.ins.value;
     A->dico_entry=B.dico_entry;
     A->tmp=B.tmp;
+    A->tmp2=B.tmp2;
 
     return 0;
 }

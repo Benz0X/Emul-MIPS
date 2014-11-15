@@ -1,0 +1,16 @@
+#-------
+#TEST_RETURN_CODE=PASS        
+#TEST_COMMENT=""
+#-------
+load Tests/execute/mult_div.o
+verbose 5
+set reg t0 0x9
+set reg t8 0x70000000
+set reg t1 0x4
+
+run
+assert reg a0 1
+assert reg a1 0xc0000000
+assert reg a2 1
+assert reg a3 2
+exit

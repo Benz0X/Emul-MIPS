@@ -511,16 +511,17 @@ int MULT(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
         ;
-        int64_t prod=reg_mips[ins.r.rd]*reg_mips[ins.r.rs];
+        int64_t prod=(int64_t)reg_mips[ins.r.rt]*(int64_t)reg_mips[ins.r.rs];
         vpipeline[EX].tmp2=(int32_t)(prod >> 32);
         *tmp=(int32_t)prod;
+                printf("prod=%lx tmp= %d pipe=%d\n",prod,(int32_t)prod,vpipeline[EX].tmp2 );
         break;
     case WB:
         if(verbose>1) {
             printf("MULT: put %d in HI and %d in LO \n",vpipeline[WB].tmp2,*tmp);
         }
-        reg_mips[LO]=vpipeline[WB].tmp2;
-        reg_mips[HI]=*tmp;
+        reg_mips[HI]=vpipeline[WB].tmp2;
+        reg_mips[LO]=*tmp;
         break;
     }
     return 0;
