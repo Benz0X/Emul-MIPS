@@ -474,7 +474,7 @@ int readDico(char* dico_name) {
     dico_file = fopen (dico_name, "r");
     if (dico_file == NULL)
     {
-        WARNING_MSG("Impossible d'ouvrir le dictionnaire '%s'",dico_name);
+        WARNING_MSG("Can't open dictionnary file '%s'",dico_name);
         return 1;
     }
     char line[INPUT_SIZE];

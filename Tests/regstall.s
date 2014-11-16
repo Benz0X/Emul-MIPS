@@ -5,16 +5,16 @@
 _start:
 .global _start
 addi $t1,$zero,8
-addi $t1,$zero,8	#don't need stalling
+addi $t1,$zero,8	#no stall needed
 NOP
 NOP
 addi $t1,$zero,8
-addi $t2,$t1,8		#need stalling
+addi $t2,$t1,8		#stall needed
 NOP
 NOP
-addi $t2,$t2,8		#don't need stalling
+addi $t2,$t2,8		#no stall needed
 
 KO:
-ADDI $v0,$zero,10  # appel explicite à exit
+ADDI $v0,$zero,10  	#appel explicite à exit
 syscall
 

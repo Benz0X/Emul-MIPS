@@ -44,7 +44,7 @@ int decrypt(char input [])
                     return -1;
                 } else {        //Sinon si l'arguement suivant est une adresse hexa, on charge à cette adresse.
                     textStart = strtol(word,NULL,16);
-                    INFO_MSG("Chargement du fichier '%s' à l'adresse '0x%8.8X'(arrondi au ko superieur)",filename,textStart);
+                    INFO_MSG("Loading file '%s' at '0x%8.8X'(closest 1 ko multiple adress)",filename,textStart);
                     return loadELF(filename,textStart,2);
                 }
             }
@@ -71,7 +71,7 @@ int decrypt(char input [])
                             WARNING_MSG("No memory loaded");
                             return -1;
                         }
-                        INFO_MSG("Affichage de la map mémoire");
+                        INFO_MSG("Displaying memory map");
                         print_mem(memory);
                         return 0;
                     } else if(what_type(word)>1) {  //il faudrait vérifier qu'il est <0 et prendre en compte le décimal pour
@@ -87,7 +87,7 @@ int decrypt(char input [])
                                             WARNING_MSG("Adress 2 must be superior to adress 1");
                                             return -1;
                                         }
-                                        INFO_MSG("Affichage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress2);
+                                        INFO_MSG("Displaying memory from 0x%8.8X to 0x%8.8X",adress1,adress2);
                                         dispmemPlage(adress1,size);
                                         return 0;
                                     }
@@ -99,7 +99,7 @@ int decrypt(char input [])
                                 if(nextword(&word,input,&n)) {
                                     if(isDecimal(word)&& isdigit(word[0])) {
                                         uint32_t size=strtol(word,NULL,10);
-                                        INFO_MSG("Affichage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress1+size);
+                                        INFO_MSG("Displaying memory from 0x%8.8X to 0x%8.8X",adress1,adress1+size);
                                         dispmemPlage(adress1,size);
                                         return 0;
                                     }
@@ -146,7 +146,7 @@ int decrypt(char input [])
                             i++;
                         }
                         else {
-                            WARNING_MSG("Le registre '%s' n'existe pas",word); //On ne renvoie pas -1, on continue à lire les prochains arguments.
+                            WARNING_MSG("Register '%s' does not exist",word); //On ne renvoie pas -1, on continue à lire les prochains arguments.
                         }
                     }
                 }
@@ -180,7 +180,7 @@ int decrypt(char input [])
                                     WARNING_MSG("Adress 2 must be superior to adress 1");
                                     return -1;
                                 }
-                                INFO_MSG("Désassemblage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress2);
+                                INFO_MSG("Disassembling memory from 0x%8.8X to 0x%8.8X",adress1,adress2);
 
                                 return disasm(adress1,size);;
                             }
@@ -192,7 +192,7 @@ int decrypt(char input [])
                         if(nextword(&word,input,&n)) {
                             if(isDecimal(word)&& isdigit(word[0])) {
                                 uint32_t size=strtol(word,NULL,10);
-                                INFO_MSG("Désassemblage de la mémoire de 0x%8.8X à 0x%8.8X",adress1,adress1+size);
+                                INFO_MSG("Disassembling memory from 0x%8.8X to 0x%8.8X",adress1,adress1+size);
 
                                 return disasm(adress1,size);;
                             }
@@ -218,7 +218,7 @@ int decrypt(char input [])
         break;
 
     case SET:
-        INFO_MSG("Modification memoire");
+        //INFO_MSG("Modification memoire");
 
         if(!nextword(&word,input,&n)) {
             WARNING_MSG("Too few arguments. Syntax is :\n\t'set mem <type> <adress> <value>'  or\n\t'set reg <register> <value>'");
@@ -238,6 +238,7 @@ int decrypt(char input [])
                                     }
                                     else {
                                         if(memWrite(adress,0,value)==0) {
+                                            printf("Memory modified\n");
                                             return 0;
                                         }
                                         else {
@@ -271,6 +272,7 @@ int decrypt(char input [])
                                     }
                                     else {
                                         if(memWrite(adress,1,value)==0) {
+                                            printf("Memory modified\n");
                                             return 0;
                                         }
                                         else {
@@ -328,6 +330,7 @@ int decrypt(char input [])
                             return -1;
                         }
                         writeReg(reg_name,value);
+                        printf("Register modified\n");
                         //printf("Registre : %s\t Value : %d\n",reg_name,value);
                         //printf("%d\n", reg_mips[isReg(reg_name)]);
                         return 0;
@@ -351,7 +354,7 @@ int decrypt(char input [])
 
 
     case ASSERT:
-        INFO_MSG("Test de valeur");
+        //INFO_MSG("Test de valeur");
 
         if(!nextword(&word,input,&n)) {
             WARNING_MSG("Too few arguments. Syntax is :\n\t'assert reg <register> <value>'  or\n\t'assert <type> <adress> <value>'");
@@ -376,10 +379,10 @@ int decrypt(char input [])
                                 return -1;
                             }
                             if(reg_mips[isReg(reg_name)]==value) {
-                                printf("Le test est correct\n");
+                                printf("Value is correct\n");
                                 return 0;
                             } else {
-                                printf("Le test est incorrect\n");
+                                printf("Value is not correct\n");
                                 return 1;
                             }
                         } else {
@@ -411,10 +414,10 @@ int decrypt(char input [])
                                 }
                                 if(memRead(adress,1,&value2)==0) {
                                     if(value1==value2) {
-                                        printf("Le test est correct\n");
+                                        printf("Value is correct\n");
                                         return 0;
                                     } else {
-                                        printf("Le test est incorrect\n");
+                                        printf("Value is not correct\n");
                                         return -1;
                                     }
                                 } else {
@@ -455,10 +458,10 @@ int decrypt(char input [])
                                 }
                                 if(memRead(adress,0,&value2)==0) {
                                     if(value1==value2) {
-                                        printf("Le test est correct\n");
+                                        printf("Value is correct\n");
                                         return 0;
                                     } else {
-                                        printf("Le test est incorrect\n");
+                                        printf("Value is not correct\n");
                                         return -1;
                                     }
                                 } else {
@@ -486,7 +489,7 @@ int decrypt(char input [])
         }
         break;
     case DEBUG:
-        INFO_MSG("Mode interactif debug");
+        INFO_MSG("Interactive debug");
         scriptmode=0;
         return 0;
         break;
@@ -611,7 +614,7 @@ int decrypt(char input [])
 
 
             if(strcmp(word,"list")==0) {
-                printf("Liste des points d'arrêt :\n");
+                printf("Breakpoints list :\n");
                 printList(breaklist);
                 return 0;
             } else if(strcmp(word,"del")==0) {
@@ -710,6 +713,6 @@ int decrypt(char input [])
 
         break;
     }
-    printf("Il manque un retour d'erreur\n");
+    printf("MISSING ERROR CONTROL\n");
     return -1;
 }

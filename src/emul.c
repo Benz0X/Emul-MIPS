@@ -330,7 +330,7 @@ int loadELF (char* name,int nbparam,...) {
 
 
 
-    INFO_MSG("Chargement du fichier '%s'",name);
+    INFO_MSG("Loading file :'%s'",name);
     fclose(pf_elf);
     //puts("");
     return 0;

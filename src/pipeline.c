@@ -159,7 +159,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     int stall=0;
 
     if(verbose>3) {
-        WARNING_MSG("Nouvelle iteration");  //Affiche l'état courant du pipeline
+        WARNING_MSG("New clock cycle");  //Affiche l'état courant du pipeline
         printf("\tPipeline current state :\n ID %8.8X\t EX %8.8X\t MEM %8.8X\t WB %8.8X\n\n",vpipeline[ID].ins.value,vpipeline[EX].ins.value,vpipeline[MEM].ins.value,vpipeline[WB].ins.value);
     }
 //Clock
@@ -176,7 +176,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     if(overlap(listWritedReg(vpipeline[MEM].ins,vpipeline[MEM].dico_entry),listReadedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry))==1) {
         //Si les registres écrits par MEM et lus par EX coincident
         if(verbose>4) {
-            WARNING_MSG("Need to regStall");
+            printf("Stall\n");
         }
         stall=1;    //Alors un stall est necéssaire
     }
@@ -209,8 +209,8 @@ int pipeline(uint32_t end, state running, int affichage) {
     if(clocktime!=0) {      //Si la clock est fixée
         tick=clock()-tick;
         if(verbose>0) {
-            printf("Temps mis: %g us\t", (double)tick/CLOCKS_PER_SEC*1000);
-            printf("Attente de %g us\n\n", (double)(clocktime-tick/CLOCKS_PER_SEC*1000));
+            printf("Time spent: %g us\t", (double)tick/CLOCKS_PER_SEC*1000);
+            printf("Wainting %g us\n", (double)(clocktime-tick/CLOCKS_PER_SEC*1000));
         }
         if((double)tick/CLOCKS_PER_SEC*1000<clocktime) DELAY((clocktime-tick/CLOCKS_PER_SEC*1000)*1); //On DELAY
     }
@@ -229,7 +229,7 @@ int pipeline(uint32_t end, state running, int affichage) {
 //Flush
     if(flag[EX]==flush) {
         if(verbose>4) {
-            printf("*\nFlush IF\n*");
+            printf("*\nFlush Instruction Fetch\n*");
         }
         addNOP(&vpipeline[IF]);         //On remplace l'instruction fetched par NOP
     }
