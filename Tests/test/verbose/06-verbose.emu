@@ -1,0 +1,7 @@
+#-------
+#TEST_RETURN_CODE=PASS        
+#TEST_COMMENT=""
+#-------
+load Tests/test_all.o
+verbose 0
+exit
