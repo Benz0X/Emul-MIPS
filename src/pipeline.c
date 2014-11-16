@@ -40,15 +40,14 @@ int exceptionHandler(exception number) {
         return flush;
         break;
 
+
+//Exceptions relatives au programme
     case memFail:       //Lorsqu'une instruction effectue une écriture mémoire illégale
         if (verbose==1||verbose>2) {
             WARNING_MSG("Invalid memory write");
         }
         break;
 
-
-
-//Exceptions relatives au programme
     case IntegerOverflow:
         if (verbose==1||verbose>2) {
             WARNING_MSG("IntegerOverflow : %8.8X",vpipeline[EX].ins.value);
