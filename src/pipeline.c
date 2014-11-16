@@ -249,7 +249,6 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 //Step
     if (running==step_return && reg_mips[PC]==return_addr) {    //Lors d'un step, on attend d'arriver sur return_addr pour break
-        printf("\nBreak\n");
         return 0;
     }
     if (running==stepinto) {        //stepinto break
