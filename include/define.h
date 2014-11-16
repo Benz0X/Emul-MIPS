@@ -21,28 +21,29 @@
 //Typedef :
 
 
-typedef struct{
-uint function:6,sa:5,rd:5,rt:5,rs:5,opcode:6;
+typedef struct {
+    uint function:6,sa:5,rd:5,rt:5,rs:5,opcode:6;
 } r_type;
-typedef struct{
-int immediate:16; uint rt:5,rs:5,opcode:6;
+typedef struct {
+    int immediate:16;
+    uint rt:5,rs:5,opcode:6;
 } i_type;
-typedef struct{
-uint target:26,opcode:6;
+typedef struct {
+    uint target:26,opcode:6;
 } j_type;
 
-typedef union{
-r_type r;
-i_type i;
-j_type j;
-uint32_t value;
-}instruction;                           //union allowing easy access of each member of R, I or J instr, and also the int value
+typedef union {
+    r_type r;
+    i_type i;
+    j_type j;
+    uint32_t value;
+} instruction;                          //union allowing easy access of each member of R, I or J instr, and also the int value
 
 typedef struct {
-	uint b4:8,
-	b3:8,
-	b2:8,
-	b1:8;
+    uint b4:8,
+         b3:8,
+         b2:8,
+         b1:8;
 } struct_word;                          //word of 4 bytes
 
 typedef struct {
@@ -53,7 +54,7 @@ typedef struct {
     short nb_arg;
     char argname[MAX_INSTR_ARG][MAX_NAME_SIZE];
     int (*exec)(instruction,int,int*);
-}dico_info;                             //Structure containing everything about an instruction
+} dico_info;                            //Structure containing everything about an instruction
 
 
 typedef enum {
@@ -76,15 +77,15 @@ typedef enum {
 
 
 
-typedef enum{IF,ID,EX,MEM,WB} pipestep;
-typedef struct 
+typedef enum {IF,ID,EX,MEM,WB} pipestep;
+typedef struct
 {
     instruction ins;
     pipestep step;
     int dico_entry;
     int tmp;
-    int tmp2;
-}pipeblock;
+    int tmp2;           //used only for MULT and DIV
+} pipeblock;                            // all information required for each pipeline state
 
 
 
@@ -99,8 +100,8 @@ extern int nbinstr;                     //contain the number of instruction in t
 extern list breaklist;                  //Liste des points d'arrets
 extern int clocktime;                   //Vitesse d'execution : 0 pour max
 extern uint32_t textStart;              //Debut du segment text
-extern uint32_t return_addr;
-extern short verbose;
+extern uint32_t return_addr;            //Allow step to get back after a function call
+extern short verbose;                   //Carry verbose value [0..5]
 
 extern pipeblock vpipeline[5];          //Virtual Pipeline
 

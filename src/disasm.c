@@ -82,7 +82,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         printf("%s: ",symtab.sym[k].name);
                         break;
                     }
-                }
+                }// à revoir après la relloc
 
 
 

@@ -25,9 +25,9 @@ int getInstr(uint32_t adress, instruction* instr_ptr);		//Recupere une instructi
 
 
 void initprog();											//Initialise les registres et le pipeline en début de programme
-int pipecpy(pipeblock* A, pipeblock B);
-int addNOP(pipeblock * block);
-list listWritedReg(instruction ins, int dico_entry);
-list listReadedReg(instruction ins, int dico_entry);
+int pipecpy(pipeblock* A, pipeblock B);						//Copy a pipeblock in another
+int addNOP(pipeblock * block);								//Replace the instruction in a pipeblock with a addNOP
+list listWritedReg(instruction ins, int dico_entry);		//extract writed register from an instruction
+list listReadedReg(instruction ins, int dico_entry);		//extract read registers from an instruction
 
 #endif

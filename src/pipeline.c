@@ -177,7 +177,7 @@ int pipeline(uint32_t end, state running, int affichage) {
         }
         stall=1;
     }
-//Test MemStall
+
 
 
 
@@ -194,7 +194,7 @@ int pipeline(uint32_t end, state running, int affichage) {
 //Fetch
     exceptionHandler(fetch(&(vpipeline[IF].ins)));
     if (stall==1) {
-        reg_mips[PC]-=4;
+        reg_mips[PC]-=4;    //If stall PC doesn't increase
     }
 
 //Temporisation
@@ -227,7 +227,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
 //avancement du pipeline
     pipecpy(&vpipeline[WB],vpipeline[MEM]);
-    addNOP(&vpipeline[MEM]);
+    addNOP(&vpipeline[MEM]);                    //If stall not needed, will be overwrited
     if(stall==0) {
         pipecpy(&vpipeline[MEM],vpipeline[EX]);
         pipecpy(&vpipeline[EX],vpipeline[ID]);
@@ -248,9 +248,9 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
     if (running==step) {
         if (strcmp(dico_data[vpipeline[EX].dico_entry].name,"JAL")==0 || strcmp(dico_data[vpipeline[EX].dico_entry].name,"JALR")==0) {
-            running=step_return;
+            running=step_return; //will wait for return adress
             return_addr=reg_mips[PC];
-            if(verbose>0) {
+            if (verbose==1||verbose>2) {
                 printf("RETURN ADRESS SET TO %d\n",return_addr);
             }
         }
@@ -268,21 +268,19 @@ int pipeline(uint32_t end, state running, int affichage) {
     if(flag[WB]==quit) {
         return 0;
     }
-    if(reg_mips[PC]<textStart||reg_mips[PC]>end+16) {
+    if(reg_mips[PC]<textStart||reg_mips[PC]>end+16) {//Should not happen if program is correct
         WARNING_MSG("PC out of .text, halt");
         return 0;
     }
-    if (reg_mips[PC]==end+16) {
+    if (reg_mips[PC]==end+16) {//end of file
         INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN");
         return 0;
     }
-    else if(present(reg_mips[PC],breaklist)!=NULL || flag[WB]==BreakPoint || running==stop) {
+    else if(present(reg_mips[PC],breaklist)!=NULL || flag[WB]==BreakPoint || running==stop) {//BreakPoint
         printf("\nBreak\n");
         return 0;
     }
-    else {
-
-
+    else {//Execution
         return pipeline(end,running,affichage);
     }
 }
