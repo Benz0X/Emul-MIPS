@@ -1,0 +1,8 @@
+#fichier de test du mecanisme de stalling du pipeline
+load Tests/regstall.o
+disp mem map
+verbose 5
+run
+debug
+
+

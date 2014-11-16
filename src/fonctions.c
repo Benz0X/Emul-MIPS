@@ -756,6 +756,7 @@ void initprog() {
     {
         reg_mips[j]=0;             //Initialisation des registres pour debug avant load
     }
+    
     //Initialisation de stack
     reg_mips[29]=0xFFFFF000-4;
     //Initialisation de PC

@@ -26,13 +26,13 @@ int exceptionHandler(exception number) {
 
     case InvalidInstruction:        //Lorsque l'instruction fetch n'existe pas
         if (verbose==1||verbose>2) {
-            WARNING_MSG("Invalid instruction at adress %X : Pipe may be empty",reg_mips[PC]);
+            WARNING_MSG("Invalid instruction at adress %X",reg_mips[PC]);
         }
         break;
 
     case InvalidExecution:          //Lorsque l'execution n'est pas possible
         if (verbose==1||verbose>2) {
-            WARNING_MSG("Invalid execution in pipe");
+            WARNING_MSG("Invalid execution in pipe : Pipe may be empty");
         }
         break;
 
@@ -220,9 +220,9 @@ int pipeline(uint32_t end, state running, int affichage) {
         //disasm(reg_mips[PC]-4,1);
         printf("PC: %X->%X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], vpipeline[IF].ins.value);
         printf("Decoding: %8.8X  Dico: %d-> %s\n", vpipeline[ID].ins.value, dico_entry, dico_data[dico_entry].name);
-        printf("Executing: %8.8X -> %s\n", vpipeline[EX].ins.value, dico_data[vpipeline[EX].dico_entry].name);
-        printf("MEM writing: %8.8X -> %s\n", vpipeline[MEM].ins.value, dico_data[vpipeline[MEM].dico_entry].name);
-        printf("REG writing: %8.8X -> %s\n", vpipeline[WB].ins.value, dico_data[vpipeline[WB].dico_entry].name);
+        printf("Executing: %s\n",dico_data[vpipeline[EX].dico_entry].name);
+        printf("MEM writing: %s\n", dico_data[vpipeline[MEM].dico_entry].name);
+        printf("REG writing: %s\n", dico_data[vpipeline[WB].dico_entry].name);
         printf("\n\n");
     }
 
