@@ -1,4 +1,4 @@
-#fichier de test du mecanisme de stalling du pipeline
+#fichier de test du mecanisme de stalling du pipeline, la mention regstall doit apparaitre
 load Tests/regstall.o
 disp mem map
 verbose 5
