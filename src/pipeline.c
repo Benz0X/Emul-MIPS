@@ -182,9 +182,9 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
 
 
-                    /*
-                    Execution principale
-                    */
+    /*
+    Execution principale
+    */
 //Write Back
     flag[WB] = exceptionHandler(execute(vpipeline[WB].ins,vpipeline[WB].step,vpipeline[WB].dico_entry,&(vpipeline[WB].tmp)));
 //Memory
@@ -236,7 +236,7 @@ int pipeline(uint32_t end, state running, int affichage) {
 //Avancement du pipeline
     pipecpy(&vpipeline[WB],vpipeline[MEM]);//WB becomes MEM
     addNOP(&vpipeline[MEM]);                    //If stall not needed, will be overwrited
-    if(stall==0) {                              
+    if(stall==0) {
         pipecpy(&vpipeline[MEM],vpipeline[EX]); //MEM becomes EX
         pipecpy(&vpipeline[EX],vpipeline[ID]);  //EX becomes ID
 
@@ -284,7 +284,7 @@ int pipeline(uint32_t end, state running, int affichage) {
         return 0;
     }
     else if(present(reg_mips[PC],breaklist)!=NULL || flag[WB]==BreakPoint || running==stop) {//BreakPoint
-        printf("\nBreak\n");
+        printf("Break\n");
         return 0;
     }
     else {//Execution

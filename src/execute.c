@@ -18,12 +18,12 @@ Elle ont toutes la syntaxe suivante :
             case EX:
                 ...
             break;
-            
+
             case MEM:
                 ...
             break;
         }
-Ceci permet de changer le comportement d'une même instruction en fonction de l'étape à laquelle elle se trouve dans le pipeline 
+Ceci permet de changer le comportement d'une même instruction en fonction de l'étape à laquelle elle se trouve dans le pipeline
 
 
 N.B. : Verbose > 1 permet d'afficher l'éxécution sur la sortie standard.

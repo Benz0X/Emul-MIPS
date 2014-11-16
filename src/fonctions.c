@@ -756,7 +756,7 @@ void initprog() {
     {
         reg_mips[j]=0;             //Initialisation des registres pour debug avant load
     }
-    
+
     //Initialisation de stack
     reg_mips[29]=0xFFFFF000-4;
     //Initialisation de PC
@@ -779,7 +779,7 @@ int pipecpy(pipeblock* A, pipeblock B) {
     return 0;
 }
 
-int isBranch(int dico_entry){
+int isBranch(int dico_entry) {
     return (strcmp(dico_data[dico_entry].name,"BEQ")*strcmp(dico_data[dico_entry].name,"BGEZ")*strcmp(dico_data[dico_entry].name,"BGTZ")*strcmp(dico_data[dico_entry].name,"BLEZ")*strcmp(dico_data[dico_entry].name,"BLTZ")*strcmp(dico_data[dico_entry].name,"BNE"));
 }
 
@@ -799,19 +799,19 @@ list listReadedReg(instruction ins, int dico_entry) {
         break;
 
     case 1: //I type (il faut separer les branchs, qui n'ont pas le meme comportement)
-        if(isBranch(dico_entry)==0){//Si c'est une branch on lit les deux
+        if(isBranch(dico_entry)==0) { //Si c'est une branch on lit les deux
             if(ins.r.rs!=0) {
                 L=insert(ins.r.rs,L);
             }
             if(ins.r.rt!=0) {
                 L=insert(ins.r.rt,L);
             }
-        }else{                      //Sinon uniquement rs
+        } else {                     //Sinon uniquement rs
             if(ins.r.rs!=0) {
                 L=insert(ins.r.rs,L);
             }
         }
-        
+
 
         break;
 
@@ -835,7 +835,7 @@ list listWritedReg(instruction ins, int dico_entry) {
         break;
 
     case 1: //I type (il faut separer les branchs, qui n'ont pas le meme comportement)
-        if(isBranch(dico_entry)!=0){ //Si ce n'est pas une branch, on write rt
+        if(isBranch(dico_entry)!=0) { //Si ce n'est pas une branch, on write rt
             if(ins.r.rt!=0) {
                 L=insert(ins.r.rt,L);
             }
