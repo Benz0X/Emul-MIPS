@@ -16,5 +16,5 @@ assert reg t5 -1
 assert reg t6 10
 assert reg t7 2147483646
 assert reg t9 10
-debug
+
 exit
