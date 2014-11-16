@@ -779,6 +779,9 @@ int pipecpy(pipeblock* A, pipeblock B) {
     return 0;
 }
 
+int isBranch(int dico_entry){
+    return (strcmp(dico_data[dico_entry].name,"BEQ")*strcmp(dico_data[dico_entry].name,"BGEZ")*strcmp(dico_data[dico_entry].name,"BGTZ")*strcmp(dico_data[dico_entry].name,"BLEZ")*strcmp(dico_data[dico_entry].name,"BLTZ")*strcmp(dico_data[dico_entry].name,"BNE"));
+}
 
 list listReadedReg(instruction ins, int dico_entry) {
     list L=NULL;
@@ -795,13 +798,20 @@ list listReadedReg(instruction ins, int dico_entry) {
         }
         break;
 
-    case 1: //I type
-        if(ins.r.rs!=0) {
-            L=insert(ins.r.rs,L);
+    case 1: //I type (il faut separer les branchs, qui n'ont pas le meme comportement)
+        if(isBranch(dico_entry)==0){//Si c'est une branch on lit les deux
+            if(ins.r.rs!=0) {
+                L=insert(ins.r.rs,L);
+            }
+            if(ins.r.rt!=0) {
+                L=insert(ins.r.rt,L);
+            }
+        }else{                      //Sinon uniquement rs
+            if(ins.r.rs!=0) {
+                L=insert(ins.r.rs,L);
+            }
         }
-        if(ins.r.rt!=0) {
-            L=insert(ins.r.rt,L);
-        }
+        
 
         break;
 
@@ -824,9 +834,11 @@ list listWritedReg(instruction ins, int dico_entry) {
         }
         break;
 
-    case 1: //I type
-        if(ins.r.rt!=0) {
-            L=insert(ins.r.rt,L);
+    case 1: //I type (il faut separer les branchs, qui n'ont pas le meme comportement)
+        if(isBranch(dico_entry)!=0){ //Si ce n'est pas une branch, on write rt
+            if(ins.r.rt!=0) {
+                L=insert(ins.r.rt,L);
+            }
         }
         break;
 
