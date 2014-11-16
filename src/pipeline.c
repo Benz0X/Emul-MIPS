@@ -26,7 +26,7 @@ int exceptionHandler(exception number) {
 
     case InvalidInstruction:        //Lorsque l'instruction fetch n'existe pas
         if (verbose==1||verbose>2) {
-            WARNING_MSG("Invalid instruction at adress %X",reg_mips[PC]);
+            WARNING_MSG("Invalid instruction at adress %X : Pipe may be empty",reg_mips[PC]);
         }
         break;
 
@@ -277,7 +277,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
     if(reg_mips[PC]<textStart||reg_mips[PC]>end+16) {//Should not happen if program is correct
         WARNING_MSG("PC out of .text, halt");
-        return 0;
+        return -1;
     }
     if (reg_mips[PC]==end+16) {//end of file
         INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN");
