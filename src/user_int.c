@@ -13,37 +13,9 @@
 #include "pipeline.h"
 #include <ctype.h>
 
-//Declaration des variables globales
-int scriptmode;
-list breaklist;                     //Initialisation de la liste de points d'arret
-int clocktime=0;
-
-
-pipeblock vpipeline[5];
-
-uint32_t textStart=DEFAULT_S_ADDR;
-uint32_t return_addr;
-short verbose=0;
 
 
 
-/* syntaxe strtok
-
-   const char str[80] = "This is - www.tutorialspoint.com - website";
-   const char s[2] = "-";
-   char *token;
-
-   // get the first token
-   token = strtok(str, s);
-
-   // walk through other tokens
-   while( token != NULL )
-   {
-      printf( " %s\n", token );
-
-      token = strtok(NULL, s);
-   }
-*/
 
 int decrypt(char input [])
 {
@@ -697,7 +669,7 @@ int decrypt(char input [])
 
 
 
-    case CLOCK:
+    case CLOCK:         //Permet de regler la clock du MIPS
         ;
         int tmp;
         if(nextword(&word,input,&n) && isDecimal(word)) {
@@ -713,7 +685,7 @@ int decrypt(char input [])
         break;
 
 
-    case VERB:
+    case VERB:          //Permet de moduler l'affichage
         ;
         int verb;
         if(nextword(&word,input,&n) && isDecimal(word)) {

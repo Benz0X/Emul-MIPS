@@ -8,6 +8,27 @@
 #include "user_int.h"
 #include "elf/syms.h"
 
+//Declaration des variables globales
+int scriptmode;                     //0 for interactive mode, 1 for script mode
+int clocktime=0;                    //Mips clock : 0 for max speed
+int nbinstr=0;                      //Nombre d'instruction du dictionnaire
+list breaklist;                     //Initialisation de la liste de points d'arret
+
+uint32_t textStart=DEFAULT_S_ADDR;  //Début du segment .text
+uint32_t return_addr;               //Utilisée pour break au bon moment de step
+short verbose=0;                    //Module l'affichage
+
+pipeblock vpipeline[5];             //Structure de pipeline : 5 block -> IF, ID, EX, MEM, WB
+
+
+
+
+
+
+
+
+
+
 
 
 int mainTest(int argc, char *argv[])    //This main is only for tests purpose when we need it

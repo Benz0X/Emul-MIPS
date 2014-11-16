@@ -25,7 +25,7 @@ int reg_mips[35];
 mem memory=NULL;
 stab symtab;
 
-//du dictionnaire
+//init du dictionnaire
 dico_info* dico_data=NULL;
 
 

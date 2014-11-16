@@ -13,7 +13,7 @@
 #include "common/bits.h"
 #include "execute.h"
 
-int nbinstr=0;
+
 
 void getFromScript(FILE *fileptr,char * input)
 {

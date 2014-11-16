@@ -8,13 +8,31 @@
 #include "common/notify.h"
 #include <stdint.h>
 
+
 /*
-    switch pipestep{
-        case EX:
-        break;
-    }
-    return OK;
+
+
+Les instructions sont classées par catégories.
+Elle ont toutes la syntaxe suivante :
+        switch(pipestep){
+            case EX:
+                ...
+            break;
+            
+            case MEM:
+                ...
+            break;
+        }
+Ceci permet de changer le comportement d'une même instruction en fonction de l'étape à laquelle elle se trouve dans le pipeline 
+
+
+N.B. : Verbose > 1 permet d'afficher l'éxécution sur la sortie standard.
+
 */
+
+
+
+
 //SIGN EXTEND
 int32_t sign_extend(int16_t A) {
     if (A >= 0) {

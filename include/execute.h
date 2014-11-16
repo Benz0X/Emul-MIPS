@@ -2,7 +2,7 @@
 #define _execute_h
 
 //Fonction simulant les instructions du MIPS
-//Prennent l'instruction en paramètre
+//Prennent l'instruction en paramètre, mais aussi l'étape dans le pipeline et la valeur temporaire stockée à cette étape
 int32_t sign_extend(int16_t A);
 //ADDITION
 int ADD(instruction ins, int pipestep, int* tmp);
