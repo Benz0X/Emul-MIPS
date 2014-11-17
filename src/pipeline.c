@@ -63,7 +63,7 @@ int exceptionHandler(exception number) {
 
     case SysCall:
         if (verbose==1||verbose>2) {
-            INFO_MSG("Syscall : %8.8X",vpipeline[WB].ins.value);
+            INFO_MSG("Syscall : %d",reg_mips[2]);
         }
         switch (reg_mips[2]) { //v0
         case 1:
