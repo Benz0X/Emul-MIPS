@@ -273,6 +273,7 @@ int pipeline(uint32_t end, state running, int affichage) {
 
 //Test de sortie
     if(flag[WB]==quit) {
+        reg_mips[PC]=end+16;
         return 0;
     }
     if(reg_mips[PC]<textStart||reg_mips[PC]>end+16) {//Should not happen if program is correct
