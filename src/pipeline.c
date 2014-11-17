@@ -81,18 +81,22 @@ int exceptionHandler(exception number) {
             printf("\n");
             break;
         case 5:
+            if(verbose>0)printf("Entrez un entier :\n");
             scanf("%d",&reg_mips[2]);
             break;
         case 8:
             ;
             int j=0;
-            char *input=calloc(reg_mips[5],sizeof(char));
-            fgets(input,reg_mips[5],stdin);
+            char *input=calloc(INPUT_SIZE,sizeof(char));
+            //fgets(input,reg_mips[5],stdin);
+            if(verbose>0)printf("Entrez une chaine de caractère :\n");
+            scanf("%s",input);
             do
             {
-                j++;
                 memWrite(reg_mips[4]+j,0,input[j]);
-            } while((input[j-1])!='\0' && j <= reg_mips[5]);
+                j++;
+            } while((input[j-1])!='\0' && j < reg_mips[5]);
+            memWrite(reg_mips[4]+j+1,0,'\0'); //Fin forcée de la chaine de caractère
             break;
         case 10:
             INFO_MSG("Exit called by program");
