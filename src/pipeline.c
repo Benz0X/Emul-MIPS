@@ -38,7 +38,7 @@ int exceptionHandler(exception number) {
         break;
 
     case InvalidExecution:          //Lorsque l'execution n'est pas possible
-        if (verbose==1||verbose>2) {
+        if (verbose>=5) {
             WARNING_MSG("Invalid execution in pipe : Pipe may be empty");
         }
         break;
@@ -88,9 +88,9 @@ int exceptionHandler(exception number) {
             printf("\n");
             break;
         case 5:
-            if(verbose>0)printf("Entrez un entier :\n");
+            if(verbose>0)printf("Entrez un décimal ou héxadécimal:\n");
             char n;
-            while((scanf("%d%c",&reg_mips[2],&n)!=2 || n!='\n') && clean_stdin());
+            while((scanf("%X%c",&reg_mips[2],&n)!=2 || n!='\n') && clean_stdin()){WARNING_MSG("Ceci n'est pas un entier valide");};
             break;
         case 8:
             ;

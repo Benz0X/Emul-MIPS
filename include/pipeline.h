@@ -17,8 +17,6 @@ typedef enum {OK,EmptyPipe,InvalidInstruction,InvalidExecution,IntegerOverflow,B
 int pipeline(uint32_t end, state running, int affichage);				//Main pipeline function
 
 
-int clean_stdin();
-
 int exceptionHandler(exception number);									//Get exception from execution and process it
 
 int fetch(instruction* pinsIF);											//put instruction in insIF from memory

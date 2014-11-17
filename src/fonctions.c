@@ -855,3 +855,11 @@ int addNOP(pipeblock * A) {
     A->tmp=0;
     return 0;
 }
+
+
+int clean_stdin()
+{
+    while (getchar()!='\n');
+    return 1;
+}
+

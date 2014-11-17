@@ -31,4 +31,6 @@ int isBranch(int dico_entry);								//return 0 if dico_entry is a branch, else 
 list listWritedReg(instruction ins, int dico_entry);		//extract writed register from an instruction
 list listReadedReg(instruction ins, int dico_entry);		//extract read registers from an instruction
 
+int clean_stdin();											//As it's named
+
 #endif
