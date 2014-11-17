@@ -11,6 +11,13 @@
 #include "common/notify.h"
 #include "emul.h"
 
+int clean_stdin()
+{
+    while (getchar()!='\n');
+    return 1;
+}
+
+
 int exceptionHandler(exception number) {
     //Permet de parser les erreurs et exceptions
     switch(number) {
@@ -82,7 +89,8 @@ int exceptionHandler(exception number) {
             break;
         case 5:
             if(verbose>0)printf("Entrez un entier :\n");
-            scanf("%d",&reg_mips[2]);
+            char n;
+            while((scanf("%d%c",&reg_mips[2],&n)!=2 || n!='\n') && clean_stdin());
             break;
         case 8:
             ;
@@ -96,7 +104,7 @@ int exceptionHandler(exception number) {
                 memWrite(reg_mips[4]+j,0,input[j]);
                 j++;
             } while((input[j-1])!='\0' && j < reg_mips[5]);
-            memWrite(reg_mips[4]+j+1,0,'\0'); //Fin forcée de la chaine de caractère
+            memWrite(reg_mips[4]+j-1,0,'\0'); //Fin forcée de la chaine de caractère
             break;
         case 10:
             INFO_MSG("Exit called by program");
