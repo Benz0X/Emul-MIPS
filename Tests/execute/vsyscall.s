@@ -13,7 +13,7 @@ li $v0, 5
 syscall		#scanf $v0 as integer
 
 li $a1, 6
-li $v0, 5
+li $v0, 8
 syscall		#scanf asciiz chaine
 
 li $a0,  0x4000
