@@ -57,7 +57,7 @@ typedef struct {
 } dico_info;                            //Structure containing everything about an instruction
 
 
-typedef enum {
+typedef enum {                          //Commandes de l'interpreteur
     LOAD,
     EXIT,
     DISP,
@@ -80,10 +80,10 @@ typedef enum {
 typedef enum {IF,ID,EX,MEM,WB} pipestep;
 typedef struct
 {
-    instruction ins;
-    pipestep step;
-    int dico_entry;
-    int tmp;
+    instruction ins;    //Current instruction at this step
+    pipestep step;      
+    int dico_entry;     //Current decoded number at this step
+    int tmp;            //Current value at this step
     int tmp2;           //used only for MULT and DIV
 } pipeblock;                            // all information required for each pipeline state
 
