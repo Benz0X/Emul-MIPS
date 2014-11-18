@@ -163,6 +163,25 @@ stab new_stab( uint size ) {
 
 
 /**
+ * Find the first occurrence of a symbol corresponding to the input string in the symbol table
+ * @param name the name of the symbole to find
+ * @return -1 if the symbol is not found, the index of the symbol in the table otherwise
+ */
+int get_sym_by_name(char* name, stab s ) {
+
+    int i,index =-1;
+    if ( NULL != s.sym ) {
+        for ( i= 1; i< s.size; i++ ) {
+            if (s.sym[i].name&&!strcmp(name,s.sym[i].name)) return i;
+        }
+
+    }
+    return index;
+}
+
+
+
+/**
 * prints the content of a table of 32-bit symbols on the standard output
 * @param the table of 32-bit symbols
 */

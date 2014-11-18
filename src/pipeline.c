@@ -84,7 +84,9 @@ int exceptionHandler(exception number) {
         case 5:
             if(verbose>0)printf("Entrez un décimal ou héxadécimal:\n");
             char n;
-            while((scanf("%X%c",&reg_mips[2],&n)!=2 || n!='\n') && clean_stdin()){WARNING_MSG("Ceci n'est pas un entier valide");};
+            while((scanf("%X%c",&reg_mips[2],&n)!=2 || n!='\n') && clean_stdin()) {
+                WARNING_MSG("Ceci n'est pas un entier valide");
+            };
             break;
         case 8:
             ;

@@ -74,6 +74,14 @@ int decrypt(char input [])
                         INFO_MSG("Displaying memory map");
                         print_mem(memory);
                         return 0;
+                    } else if(strcmp(word,"symtab")==0) {
+                        if(memory==NULL) {
+                            WARNING_MSG("No memory loaded");
+                            return -1;
+                        }
+                        INFO_MSG("Displaying symtab");
+                        stab32_print(symtab);
+                        return 0;
                     } else if(what_type(word)>1) {  //il faudrait vérifier qu'il est <0 et prendre en compte le décimal pour
                         //coller au cahier des charges mais faudrait utiliser un uint64
                         uint32_t adress1=strtol(word,NULL,0);

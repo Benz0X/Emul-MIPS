@@ -4,6 +4,7 @@
 
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include "define.h"
@@ -14,6 +15,7 @@
 #include "mem.h"
 #include "emul.h"
 #include "fonctions.h"
+#include "elf/relocator.h"
 
 
 
@@ -42,7 +44,8 @@ dico_info* dico_data=NULL;
 #define DATA_SECTION_STR ".data"
 #define BSS_SECTION_STR ".bss"
 
-
+//nom du prefix à appliquer pour la section
+#define RELOC_PREFIX_STR ".rel"
 
 int is_in_symbols(char* name, stab symtab) {
     int i;
@@ -125,6 +128,66 @@ int elf_load_section_in_memory(FILE* fp, mem memory, char* scn,unsigned int perm
 
     return 0;
 }
+
+
+/*--------------------------------------------------------------------------  */
+/**
+ * @param fp le fichier elf original
+ * @param seg le segment à reloger
+ * @param mem l'ensemble des segments
+ *
+ * @brief Cette fonction effectue la relocation du segment passé en parametres
+ * @brief l'ensemble des segments doit déjà avoir été chargé en memoire.
+ *
+ * VOUS DEVEZ COMPLETER CETTE FONCTION POUR METTRE EN OEUVRE LA RELOCATION !!
+ */
+void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,stab symtab) {
+    byte *ehdr    = __elf_get_ehdr( fp );
+    uint32_t  scnsz  = 0;
+    Elf32_Rel *rel = NULL;
+    char* reloc_name = malloc(strlen(seg.name)+strlen(RELOC_PREFIX_STR)+1);
+    scntab section_tab;
+
+    // on recompose le nom de la section
+    memcpy(reloc_name,RELOC_PREFIX_STR,strlen(RELOC_PREFIX_STR)+1);
+    strcat(reloc_name,seg.name);
+
+    // on récupere le tableau de relocation et la table des sections
+    rel = (Elf32_Rel *)elf_extract_scn_by_name( ehdr, fp, reloc_name, &scnsz, NULL );
+    elf_load_scntab(fp ,32, &section_tab);
+
+
+
+    if (rel != NULL &&seg.content!=NULL && seg.size._32!=0) {
+
+        INFO_MSG("--------------Relocation de %s-------------------\n",seg.name) ;
+        INFO_MSG("Nombre de symboles a reloger: %ld\n",scnsz/sizeof(*rel)) ;
+
+
+        //------------------------------------------------------
+
+        //TODO : faire la relocation ICI !
+
+        //------------------------------------------------------
+
+    }
+    del_scntab(section_tab);
+    free( rel );
+    free( reloc_name );
+    free( ehdr );
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 int memRead(uint32_t start_addr,int type, int* value) {             //Lit la memoire et stock dans value
     if(memory==NULL) {
@@ -314,6 +377,11 @@ int loadELF (char* name,int nbparam,...) {
 //            print_segment_raw_content(&memory->seg[j]);
             j++;
         }
+    }
+
+    for (i=0; i<nsegments; i++) {
+        reloc_segment(pf_elf, memory->seg[i], memory,endianness,symtab);
+
     }
 
     //TODO allouer la pile (et donc modifier le nb de segments)

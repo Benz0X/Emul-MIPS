@@ -29,6 +29,8 @@ char *strdup( const char * );
  * @return the address of the swapped bytes (same as input)
  */
 byte * __Elf_Rel_flip_endianness( byte * rel, uint width, endianness e ) {
+
+    printf("%p\n",rel);
     if ( e == get_host_endianness() ) return rel;
 
     if ( width == 32 ) {

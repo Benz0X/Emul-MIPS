@@ -29,6 +29,8 @@ char *strdup( const char * );
  * @return the address of the swapped bytes (same as input)
  */
 byte * __Elf_Rel_flip_endianness( byte * rel, uint width, endianness e ) {
+
+    printf("%p\n",rel);
     if ( e == get_host_endianness() ) return rel;
 
     if ( width == 32 ) {
@@ -583,8 +585,6 @@ byte *elf_extract_symbol_table( byte *ehdr, FILE *fp, char *name, unsigned int *
     uint        sz         = 0;
     byte       *symtab     = elf_extract_scn_by_name( ehdr, fp, name, &sz, NULL );
     uint        width      = WIDTH_FROM_EHDR( ehdr );
-    uint        eendian    = ENDIANNESS_FROM_EHDR( ehdr );
-    endianness  endian     = eendian==ELFDATA2LSB?LSB:MSB;
 
     if ( NULL == symtab ) {
         WARNING_MSG( "No symbol table found" );
@@ -592,26 +592,12 @@ byte *elf_extract_symbol_table( byte *ehdr, FILE *fp, char *name, unsigned int *
     }
 
     if ( width == 32 ) {
-        unsigned int   i = 0;
-
         *nsymbol = sz/sizeof(Elf32_Sym);
-
-        for ( i= 0; i< *nsymbol; i++) {
-            __Elf_Sym_flip_endianness( (byte*)&symtab[i], 32, endian );
-        } /* ! for symbols */
-
         return symtab;
     }
 
     if ( width == 64 ) {
-        unsigned int   i = 0;
-
         *nsymbol = sz/sizeof(Elf64_Sym);
-
-        for ( i= 0; i< *nsymbol; i++) {
-            __Elf_Sym_flip_endianness( (byte*)&symtab[i], 64, endian );
-        } /* ! for symbols */
-
         return symtab;
     }
 
@@ -832,10 +818,10 @@ int elf_load_symtab( FILE *fp,  unsigned int width, unsigned int endian,  stab *
 
             *symtab = new_stab( nsyms );
 
-
             for ( i= 0; i< nsyms; i++ ) {
                 sym_type t;
                 uint     shndx;
+
 
                 __Elf_Sym_flip_endianness( (byte*)&elf_sym[i], 32, endian );
 
@@ -860,14 +846,13 @@ int elf_load_symtab( FILE *fp,  unsigned int width, unsigned int endian,  stab *
                 }
 
 
-                //printf( "ST_NAME[%02u] info %d: %u : %s \n", i,t, elf_sym[i].st_name, &snames[elf_sym[i].st_name] );
+//                printf( "ST_NAME[%02u] info %d: %u : %s \n", i,t, elf_sym[i].st_name, &snames[elf_sym[i].st_name] );
 
 
                 if ( section == t ) {
 
-                    // test the value of the st_name. Sometimes the st_name of the .text section is strangely initialised
-                    // so if the st_name goes outside the strtab -> it is the .text section
-                    if (elf_sym[i].st_name > namesz || '\0' == snames[elf_sym[i].st_name] ) {
+                    // test the value of the st_name.
+                    if ('\0' == snames[elf_sym[i].st_name] ) {
                         /* In case there is no symbol name for section... (used for .text) */
                         uint _i, _j = 0;
                         for ( _i= 0; _i < shndx; _i++ ) {

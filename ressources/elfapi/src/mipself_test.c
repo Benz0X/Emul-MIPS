@@ -14,10 +14,12 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include<stdint.h>
 #include "common/bits.h"
 #include "common/notify.h"
 #include "elf/elf.h"
 #include "elf/syms.h"
+#include "elf/relocator.h"
 #include "mem.h"
 
 // On fixe ici une adresse basse dans la mémoire virtuelle. Le premier segment
@@ -31,6 +33,9 @@
 #define RODATA_SECTION_STR ".rodata"
 #define DATA_SECTION_STR ".data"
 #define BSS_SECTION_STR ".bss"
+
+//nom du prefix à appliquer pour la section
+#define RELOC_PREFIX_STR ".rel"
 
 
 // Fonction permettant de verifier si une chaine de caracteres
@@ -130,6 +135,58 @@ int elf_load_section_in_memory(FILE* fp, mem memory, char* scn,unsigned int perm
     return 0;
 }
 
+
+
+/*--------------------------------------------------------------------------  */
+/**
+ * @param fp le fichier elf original
+ * @param seg le segment à reloger
+ * @param mem l'ensemble des segments
+ *
+ * @brief Cette fonction effectue la relocation du segment passé en parametres
+ * @brief l'ensemble des segments doit déjà avoir été chargé en memoire.
+ *
+ * VOUS DEVEZ COMPLETER CETTE FONCTION POUR METTRE EN OEUVRE LA RELOCATION !!
+ */
+void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,stab symtab) {
+    byte *ehdr    = __elf_get_ehdr( fp );
+    uint32_t  scnsz  = 0;
+    Elf32_Rel *rel = NULL;
+    char* reloc_name = malloc(strlen(seg.name)+strlen(RELOC_PREFIX_STR)+1);
+    scntab section_tab;
+
+    // on recompose le nom de la section
+    memcpy(reloc_name,RELOC_PREFIX_STR,strlen(RELOC_PREFIX_STR)+1);
+    strcat(reloc_name,seg.name);
+
+    // on récupere le tableau de relocation et la table des sections
+    rel = (Elf32_Rel *)elf_extract_scn_by_name( ehdr, fp, reloc_name, &scnsz, NULL );
+    elf_load_scntab(fp ,32, &section_tab);
+
+
+
+    if (rel != NULL &&seg.content!=NULL && seg.size._32!=0) {
+
+        INFO_MSG("--------------Relocation de %s-------------------\n",seg.name) ;
+        INFO_MSG("Nombre de symboles a reloger: %ld\n",scnsz/sizeof(*rel)) ;
+
+
+        //------------------------------------------------------
+
+        //TODO : faire la relocation ICI !
+
+        //------------------------------------------------------
+
+    }
+    del_scntab(section_tab);
+    free( rel );
+    free( reloc_name );
+    free( ehdr );
+
+}
+
+
+
 // fonction affichant les octets d'un segment sur la sortie standard
 // parametres :
 //   seg        : le segment de la mémoire virtuelle à afficher
@@ -197,9 +254,14 @@ int main (int argc, char *argv[]) {
         if (is_in_symbols(section_names[i],symtab)) {
             elf_load_section_in_memory(pf_elf,memory, section_names[i],segment_permissions[i],next_segment_start);
             next_segment_start+= ((memory->seg[j].size._32+0x1000)>>12 )<<12; // on arrondit au 1k suppérieur
-//            print_segment_raw_content(&memory->seg[j]);
+            print_segment_raw_content(&memory->seg[j]);
             j++;
         }
+    }
+
+    for (i=0; i<nsegments; i++) {
+        reloc_segment(pf_elf, memory->seg[i], memory,endianness,symtab);
+
     }
 
     //TODO allouer la pile (et donc modifier le nb de segments)

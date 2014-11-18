@@ -31,7 +31,7 @@ char *strdup( const char * );
 
 mem  init_mem( uint32_t nseg ) {
 
-    mem vm = calloc( nseg, sizeof( *vm ) );
+    mem vm = calloc( 1, sizeof( *vm ) );
 
     if ( NULL == vm ) {
         WARNING_MSG( "Unable to allocate host memory for vmem" );
