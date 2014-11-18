@@ -72,8 +72,7 @@ sym  new_sym64( char *name, vaddr64 addr, uint size, sym_type type, uint scnidx 
 */
 void sym32_print( sym s ) {
 
-    printf( "Symbol %16s (%-4u bytes @ 0x%08x): ", s.name, s.size, s.addr._32 );
-
+printf( "Symbol %16s %d  %d  (%-4u bytes @ 0x%08x): ", s.name,s.scnidx,s.scnidx_link, s.size, s.addr._32 );
     switch( s.type ) {
     case notype :
         printf( "no type" );
