@@ -11,12 +11,6 @@
 #include "common/notify.h"
 #include "emul.h"
 
-int clean_stdin()
-{
-    while (getchar()!='\n');
-    return 1;
-}
-
 
 int exceptionHandler(exception number) {
     //Permet de parser les erreurs et exceptions
