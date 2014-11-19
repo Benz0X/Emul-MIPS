@@ -25,6 +25,8 @@
 // On fixe ici une adresse basse dans la mémoire virtuelle. Le premier segment
 // ira se loger à cette adresse.
 #define START_MEM 0x3000
+
+#define LIBC_MEM_END 0xff7ff000u
 // nombre max de sections que l'on extraira du fichier ELF
 #define NB_SECTIONS 4
 
@@ -37,11 +39,12 @@
 //nom du prefix à appliquer pour la section
 #define RELOC_PREFIX_STR ".rel"
 
+#define PATH_TO_LIBC "./libc/libc.so"
 
 // Fonction permettant de verifier si une chaine de caracteres
 // est bien dans la liste des symboles du fichier ELF
 // parametres :
-// 		name : le nom de la chaine recherchée
+//      name : le nom de la chaine recherchée
 //  symtab : la table des symboles
 //
 // retourne 1 si present, 0 sinon
@@ -142,18 +145,23 @@ int elf_load_section_in_memory(FILE* fp, mem memory, char* scn,unsigned int perm
  * @param fp le fichier elf original
  * @param seg le segment à reloger
  * @param mem l'ensemble des segments
+ * @param endianness le boutisme du programme
+ * @param symtab la table des symbole du programme 
+ * @param symtab_libc la table des symbole de la libc (NULL si inutile)
+ * @param fp_libc le fichier elf de la libc (NULL si inutile)
  *
  * @brief Cette fonction effectue la relocation du segment passé en parametres
  * @brief l'ensemble des segments doit déjà avoir été chargé en memoire.
  *
  * VOUS DEVEZ COMPLETER CETTE FONCTION POUR METTRE EN OEUVRE LA RELOCATION !!
  */
-void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,stab symtab) {
+void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,stab* symtab,stab* symtab_libc,FILE* fp_libc) {
     byte *ehdr    = __elf_get_ehdr( fp );
     uint32_t  scnsz  = 0;
     Elf32_Rel *rel = NULL;
     char* reloc_name = malloc(strlen(seg.name)+strlen(RELOC_PREFIX_STR)+1);
     scntab section_tab;
+    scntab section_tab_libc;
 
     // on recompose le nom de la section
     memcpy(reloc_name,RELOC_PREFIX_STR,strlen(RELOC_PREFIX_STR)+1);
@@ -163,7 +171,8 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
     rel = (Elf32_Rel *)elf_extract_scn_by_name( ehdr, fp, reloc_name, &scnsz, NULL );
     elf_load_scntab(fp ,32, &section_tab);
 
-
+    if (symtab_libc!=NULL && fp_libc!=NULL)
+        elf_load_scntab(fp_libc ,32, &section_tab_libc);
 
     if (rel != NULL &&seg.content!=NULL && seg.size._32!=0) {
 
@@ -171,11 +180,9 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
         INFO_MSG("Nombre de symboles a reloger: %ld\n",scnsz/sizeof(*rel)) ;
 
 
-        //------------------------------------------------------
+    //TODO : faire la relocation ICI!
+        
 
-        //TODO : faire la relocation ICI !
-
-        //------------------------------------------------------
 
     }
     del_scntab(section_tab);
@@ -199,7 +206,7 @@ void print_segment_raw_content(segment* seg) {
             if(k%16==0) printf("\n  0x%08x ",k);
             word = *((unsigned int *) (seg->content+k));
             FLIP_ENDIANNESS(word);
-            printf("%08x ",	word);
+            printf("%08x ", word);
         }
     }
 }
@@ -213,6 +220,7 @@ int main (int argc, char *argv[]) {
 
     char* section_names[NB_SECTIONS]= {TEXT_SECTION_STR,RODATA_SECTION_STR,DATA_SECTION_STR,BSS_SECTION_STR};
     unsigned int segment_permissions[NB_SECTIONS]= {R_X,R__,RW_,RW_};
+
     unsigned int nsegments;
     int i=0,j=0;
     unsigned int type_machine;
@@ -222,7 +230,8 @@ int main (int argc, char *argv[]) {
 
     mem memory;  // memoire virtuelle, c'est elle qui contiendra toute les données du programme
     stab symtab= new_stab(0); // table des symboles
-    FILE * pf_elf;
+    stab symtab_libc= new_stab(0); // table des symboles de la libc
+    FILE * pf_elf, *pf_libc;
 
     if ((argc < 2) || (argc > 2)) {
         printf("Usage: %s <fichier elf> \n", argv[0]);
@@ -237,19 +246,64 @@ int main (int argc, char *argv[]) {
         ERROR_MSG("file %s is not an ELF file", argv[1]);
 
 
+    if ((pf_libc = fopen(PATH_TO_LIBC,"r")) == NULL) {
+        ERROR_MSG("cannot open file %s", PATH_TO_LIBC);
+    }
+
+    if (!assert_elf_file(pf_libc))
+        ERROR_MSG("file %s is not an ELF file", PATH_TO_LIBC);
+
+
+
+
+
     // recuperation des info de l'architecture
     elf_get_arch_info(pf_elf, &type_machine, &endianness, &bus_width);
     // et des symboles
     elf_load_symtab(pf_elf, bus_width, endianness, &symtab);
+    elf_load_symtab(pf_libc, bus_width, endianness, &symtab_libc);
 
 
     nsegments = get_nsegments(symtab,section_names,NB_SECTIONS);
+    nsegments += get_nsegments(symtab_libc,section_names,NB_SECTIONS);
 
     // allouer la memoire virtuelle
     memory=init_mem(nsegments);
 
-    // Ne pas oublier d'allouer les differentes sections
+
+    next_segment_start = LIBC_MEM_END;
+    printf("\ndebut : %08x\n",next_segment_start);
     j=0;
+
+    // on alloue libc
+    for (i=0; i<NB_SECTIONS; i++) {
+        if (is_in_symbols(section_names[i],symtab_libc)) {
+            elf_load_section_in_memory(pf_libc,memory, section_names[i],segment_permissions[i],next_segment_start);
+            next_segment_start-= ((memory->seg[j].size._32+0x1000)>>12 )<<12; // on arrondit au 1k suppérieur
+            memory->seg[j].start._32 = next_segment_start;
+//            print_segment_raw_content(&memory->seg[j]);
+            j++;
+        }
+    }
+
+    // on reloge libc
+    for (i=0; i<j; i++) {
+        reloc_segment(pf_libc, memory->seg[i], memory,endianness,&symtab_libc,NULL,NULL);
+    }
+
+    // on change le nom des differents segments de libc
+    for (i=0; i<j; i++) {
+        char seg_name [256]= {0};
+        strcpy(seg_name,"libc");
+        strcat(seg_name,memory->seg[i].name);
+        free(memory->seg[i].name);
+        memory->seg[i].name=strdup(seg_name);
+    }
+
+
+    // On va chercher les sections du fichier
+    int k =j;
+    next_segment_start = START_MEM;
     for (i=0; i<NB_SECTIONS; i++) {
         if (is_in_symbols(section_names[i],symtab)) {
             elf_load_section_in_memory(pf_elf,memory, section_names[i],segment_permissions[i],next_segment_start);
@@ -259,8 +313,9 @@ int main (int argc, char *argv[]) {
         }
     }
 
-    for (i=0; i<nsegments; i++) {
-        reloc_segment(pf_elf, memory->seg[i], memory,endianness,symtab);
+    // on reloge chaque section du fichier
+    for (i=k; i<j; i++) {
+        reloc_segment(pf_elf, memory->seg[i], memory,endianness,&symtab,&symtab_libc,pf_libc);
 
     }
 
@@ -269,11 +324,14 @@ int main (int argc, char *argv[]) {
     printf("\n------ Fichier ELF \"%s\" : sections lues lors du chargement ------\n", argv[1]) ;
     print_mem(memory);
     stab32_print( symtab);
+    stab32_print( symtab_libc);
 
     // on fait le ménage avant de partir
     del_mem(memory);
+    del_stab(symtab_libc);
     del_stab(symtab);
     fclose(pf_elf);
+    fclose(pf_libc);
     puts("");
     return 0;
 }

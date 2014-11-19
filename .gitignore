@@ -15,3 +15,4 @@ projet
 mipself_test.c.old
 *.out
 !Tests/*/*.o
+!ressources/*.so
