@@ -15,5 +15,5 @@ projet
 mipself_test.c.old
 *.out
 !Tests/*/*.o
-!ressources/*.so
+!include/libc/libc.so
 !Tests/*.o
