@@ -195,7 +195,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
         i=0;
         //------------------------------------------------------
         //Reloc :
-        int32_t S,A,V,P;
+        int S,A,V,P;
         while(i<scnsz/sizeof(*rel)) {
             info=rel[i].r_info;
             offset=rel[i].r_offset;
@@ -203,6 +203,11 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
             FLIP_ENDIANNESS(offset) ;
             sym=ELF32_R_SYM(info);
             type=ELF32_R_TYPE(info);
+
+            //calcul du S
+
+
+
             //printf("Relocation type %s\n",MIPS32_REL[type] );
             switch (type) {
             case 2:
@@ -227,23 +232,28 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
                 break;
             case 5:
             S=memory->seg[sym-1].start._32;
+            printf("seg name %d \n",sym-1);
             P=seg.start._32+offset;
             memRead(P,1,&A);
 
-            int nexttype=rel[i+1].r_info;
-            int nextoffset=rel[i+1].r_offset;
+            uint nexttype=rel[i+1].r_info;
+            uint nextoffset=rel[i+1].r_offset;
             FLIP_ENDIANNESS(nexttype);
             FLIP_ENDIANNESS(nextoffset);
             nexttype=ELF32_R_TYPE(nexttype);
             if(nexttype!=6){WARNING_MSG("R_MIPS_HI16 not followed by R_MIIPS_LO16 : %s",MIPS32_REL[nexttype]);}
             else{
 
-                int32_t P2=seg.start._32+nextoffset,A2;
+                int P2=seg.start._32+nextoffset,A2;
                 memRead(P2,1,&A2);
-                int32_t AHL=(A<<16)+(short)(A2);
-                V=(A&0xFFFF0000)|((AHL+S-(short)AHL+S)>>16);
+                int AHL;
+                AHL=(A<<16)+(short)(A2);
+                //printf("A2=%X short A2=%X\n",A2, (short)A2 );
+                //printf("AHL : %X\n",AHL );
+                printf("Total=%X AHL+S=%X, short=%X, diff=%X\n",((AHL+S-(short)AHL+S)>>16),AHL+S,(short)AHL+S,AHL+S-(short)AHL+S) ;
+                V=(A & 0xFFFF0000)|((AHL+S-(short)AHL+S)>>16);
 
-                //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
+                printf("V= %X,S=%X,A=%X,A2=%X,P=%X,P2=%X, AHL=%X\n",V,S,A,A2,P,P2,AHL);
                 memWrite(P,1,V);
              }
                 break;

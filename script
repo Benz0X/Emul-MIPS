@@ -1,2 +1,2 @@
-load Tests/relocation.o
+load ressources/libc.so
 debug

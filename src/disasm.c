@@ -74,7 +74,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                 //dico_data[dico_entry].exec(current_instr);
 
 
-
+                //affichage des étiquettes en début de ligne
                 for (k = 1; k < symtab.size; ++k)
                 {
                     if(((current_addr-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident)) {
@@ -82,8 +82,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         printf("%s: ",symtab.sym[k].name);
                         break;
                     }
-                }// à revoir après la relloc
-
+                }
 
 
                 printf("%s",dico_data[dico_entry].name );
@@ -287,11 +286,50 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
 
                     printf(" %d",4*current_instr.j.target);
+                   
+
                     for (k = 1; k < symtab.size; ++k) {
-                        if(((4*current_instr.j.target)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)) {
+                        if(((4*current_instr.j.target-textStart)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)) {
                             printf(" <%s>",symtab.sym[k].name);
                             break;
                         }
+
+
+
+                        //To search label in other section than .text : (LW?)
+                        /*
+                        //find in which mem segment we are and get the section name
+                    for (k=0; k<memory->nseg; ++k)
+                    {
+                        if((current_addr>memory->seg[k].start._32) && current_addr > memory->seg[k].start._32+memory->seg[k].size._32);
+                        break;
+                    }
+                    //get the scnidx from the section if valid section
+                    if(k<memory->nseg-1){
+                        int scni;
+                        for (scni = 0; scni < symtab.size; ++scni)
+                        {
+                            if(strcmp(memory->seg[k].name,symtab.sym[scni].name)==0){
+                                scni=symtab.sym[scni].scnidx;
+                                break;
+                            }
+                        }
+                        //print the label
+                        int counter;
+                        for (counter = 1; counter < symtab.size; ++counter) {
+                        if(((4*current_instr.j.target-memory->seg[k].start._32)==symtab.sym[counter].addr._32) && (symtab.sym[counter].scnidx == scni)) {
+                            printf(" <%s>",symtab.sym[counter].name);
+                            break;
+                        }
+
+                        }
+                        */
+
+
+
+
+
+
                     }
                 }
                 else {
