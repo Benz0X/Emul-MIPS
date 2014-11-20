@@ -157,7 +157,6 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
     elf_load_scntab(fp ,32, &section_tab);
 
 
-
     if (rel != NULL &&seg.content!=NULL && seg.size._32!=0) {
 
         INFO_MSG("--------------Relocation de %s-------------------\n",seg.name) ;
@@ -166,8 +165,74 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
 
         //------------------------------------------------------
 
-        //TODO : faire la relocation ICI !
+        int i=0;
+        uint sym;
+        uint type;
+        uint info;
+        uint offset;
+        //display :
 
+        //printf("scnsz=%d\n", scnsz);
+        //print_scntab(section_tab);
+        printf("Offset    Info      Type            Sym.Value  Sym.Name\n");
+        while(i<scnsz/sizeof(*rel)) {
+            info=rel[i].r_info;
+            offset=rel[i].r_offset;
+            FLIP_ENDIANNESS(info) ;
+            FLIP_ENDIANNESS(offset) ;
+            sym=ELF32_R_SYM(info);
+            type=ELF32_R_TYPE(info);
+            if (type>32) {
+                WARNING_MSG("Unknown type : %d",type);
+            }
+            else {
+                printf("%08X  %08X  %-14s  %08X   %s\n",offset,info,MIPS32_REL[type],sym,symtab.sym[sym].name);
+                i++;
+            }
+
+        }
+
+        i=0;
+        //------------------------------------------------------
+        //Reloc :
+        while(i<scnsz/sizeof(*rel)) {
+            info=rel[i].r_info;
+            offset=rel[i].r_offset;
+            FLIP_ENDIANNESS(info) ;
+            FLIP_ENDIANNESS(offset) ;
+            sym=ELF32_R_SYM(info);
+            type=ELF32_R_TYPE(info);
+            printf("Relocation type %s\n",MIPS32_REL[type] );
+            switch (type) {
+            case 2:;
+            uint32_t S=memory->seg[sym-1].start._32;
+            uint32_t A;
+            printf("offset=%d\n",offset );
+            memRead(memory->seg[sym-1].start._32+offset,1,&A);
+            uint32_t V=S+A;
+            printf("V= %X = S (%X) + A (%X)\n",V,S,A );
+            memWrite(memory->seg[sym-1].start._32+offset,1,V);
+                break;
+            case 4:
+
+                break;
+            case 5:
+
+                break;
+            case 6:
+
+                break;
+            default:
+                if (type>32) {
+                    WARNING_MSG("Unknown type : %d, relocation impossible for element %d",type,i);
+                }
+                else {
+                    WARNING_MSG("Unknown type : %s(code : %d), relocation impossible for element %d",MIPS32_REL[type],type,i);
+                }
+                break;
+            }
+            i++;
+        }
         //------------------------------------------------------
 
     }

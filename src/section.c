@@ -65,7 +65,7 @@ void   print_scntab( scntab scntab ) {
         printf( "Listing %u sections:\n", scntab.size );
 
         for ( i= 0; i< scntab.size; i++ ) {
-            printf( "Scn[%02u]: %s\n", i, scntab.scn[i].name );
+            printf( "Scn[%02u]: %s (adress : %X)\n", i, scntab.scn[i].name, scntab.scn[i].addr._32 );
         }
     }
 

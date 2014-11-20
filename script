@@ -1,4 +1,2 @@
-load Tests/pile.o 0x5000
-clock 100
-step
+load Tests/relocation.o
 debug
