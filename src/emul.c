@@ -195,6 +195,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
         i=0;
         //------------------------------------------------------
         //Reloc :
+        int32_t S,A,V,P;
         while(i<scnsz/sizeof(*rel)) {
             info=rel[i].r_info;
             offset=rel[i].r_offset;
@@ -202,25 +203,71 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
             FLIP_ENDIANNESS(offset) ;
             sym=ELF32_R_SYM(info);
             type=ELF32_R_TYPE(info);
-            printf("Relocation type %s\n",MIPS32_REL[type] );
+            //printf("Relocation type %s\n",MIPS32_REL[type] );
             switch (type) {
-            case 2:;
-            uint32_t S=memory->seg[sym-1].start._32;
-            uint32_t A;
-            printf("offset=%d\n",offset );
-            memRead(memory->seg[sym-1].start._32+offset,1,&A);
-            uint32_t V=S+A;
-            printf("V= %X = S (%X) + A (%X)\n",V,S,A );
-            memWrite(memory->seg[sym-1].start._32+offset,1,V);
+            case 2:
+            S=memory->seg[sym-1].start._32;//a vérif
+            P=seg.start._32+offset;
+            memRead(P,1,&A);
+            
+            V=S+A;
+
+            //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
+            memWrite(P,1,V);
                 break;
             case 4:
+            S=memory->seg[sym-1].start._32;
+            P=seg.start._32+offset;
+            memRead(P,1,&A);
 
+            V=((A<<2)|((P&0xF0000000)+S))>>2;
+
+            //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
+            memWrite(P,1,V);
                 break;
             case 5:
+            S=memory->seg[sym-1].start._32;
+            P=seg.start._32+offset;
+            memRead(P,1,&A);
 
+            int nexttype=rel[i+1].r_info;
+            int nextoffset=rel[i+1].r_offset;
+            FLIP_ENDIANNESS(nexttype);
+            FLIP_ENDIANNESS(nextoffset);
+            nexttype=ELF32_R_TYPE(nexttype);
+            if(nexttype!=6){WARNING_MSG("R_MIPS_HI16 not followed by R_MIIPS_LO16 : %s",MIPS32_REL[nexttype]);}
+            else{
+
+                int32_t P2=seg.start._32+nextoffset,A2;
+                memRead(P2,1,&A2);
+                int32_t AHL=(A<<16)+(short)(A2);
+                V=(A&0xFFFF0000)|((AHL+S-(short)AHL+S)>>16);
+
+                //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
+                memWrite(P,1,V);
+             }
                 break;
             case 6:
+                S=memory->seg[sym-1].start._32;
+                P=seg.start._32+offset;
+                memRead(P,1,&A);
 
+                int previoustype=rel[i-1].r_info;
+                int previousoffset=rel[i-1].r_offset;
+                FLIP_ENDIANNESS(previoustype);
+                FLIP_ENDIANNESS(previousoffset);
+                previoustype=ELF32_R_TYPE(previoustype);
+                if(previoustype!=5){WARNING_MSG("R_MIPS_LO16 not preceded by R_MIIPS_HI16 : %s",MIPS32_REL[previoustype]);}
+                else{
+
+                    int32_t P2=seg.start._32+previousoffset,A2;
+                    memRead(P2,1,&A2);
+                    int32_t AHL=(A2<<16)+(short)(A);
+                    V=(A&0xFFFF0000)|(short)(AHL+S);
+
+                    //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
+                    memWrite(P,1,V);
+                 }
                 break;
             default:
                 if (type>32) {
