@@ -33,4 +33,7 @@ list listReadedReg(instruction ins, int dico_entry);		//extract read registers f
 
 int clean_stdin();											//As it's named
 
+
+int seg_from_scnidx(int scnidx,stab symtab, mem memory);	//return memory segment corresponding to scnidx
+int addr_from_symnb(int symnb,stab symtab, mem memory, uint32_t *addr);
 #endif

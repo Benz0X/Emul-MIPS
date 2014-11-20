@@ -863,3 +863,36 @@ int clean_stdin()
     return 1;
 }
 
+int seg_from_scnidx(int scnidx, stab symtab, mem memory){
+    int segnumber=-1;
+    int i,j=-1;
+        while (j<=symtab.size||segnumber==-1){
+            j++;
+            for (i = 0; i < memory->nseg; ++i)
+            {
+                if(symtab.sym[j].scnidx==scnidx && strcmp(symtab.sym[j].name,memory->seg[i].name)==0){
+                    segnumber=i;
+                    break;
+                }
+            }
+        }
+    return segnumber;
+}
+int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr){
+    int segnumber=-1;
+    int i,j=-1;
+        while (j<=symtab.size||segnumber==-1){
+            j++;
+            for (i = 0; i < memory->nseg; ++i)
+            {
+                if(symtab.sym[j].scnidx==symtab.sym[symnb].scnidx && strcmp(symtab.sym[j].name,memory->seg[i].name)==0){
+                    segnumber=i;
+                    break;
+                }
+            }
+        }
+        if (segnumber==-1){return -1;}
+
+        *addr=memory->seg[segnumber].start._32+symtab.sym[symnb].addr._32;
+    return 0;
+}

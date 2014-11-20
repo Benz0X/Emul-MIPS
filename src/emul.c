@@ -195,7 +195,9 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
         i=0;
         //------------------------------------------------------
         //Reloc :
-        int S,A,V,P;
+        int A,V,P;
+        //int segnum;
+        uint32_t S;
         while(i<scnsz/sizeof(*rel)) {
             info=rel[i].r_info;
             offset=rel[i].r_offset;
@@ -203,39 +205,30 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
             FLIP_ENDIANNESS(offset) ;
             sym=ELF32_R_SYM(info);
             type=ELF32_R_TYPE(info);
-
-            //calcul du S
-
-
-
+            //segnum=seg_from_scnidx(symtab.sym[sym].scnidx,symtab,memory);
+            //if(segnum==-1){
+            //    WARNING_MSG("Couldn't resolve scndix correspondance");
+            //    break;
+            //}
+            //S=memory->seg[segnum].start._32+symtab.sym[sym].addr._32;//a vérif
+            if(addr_from_symnb(sym, symtab, memory,&S)==-1){WARNING_MSG("Couldn't resolve scndix correspondance");break;}
+            P=seg.start._32+offset;
+            memRead(P,1,&A);
             //printf("Relocation type %s\n",MIPS32_REL[type] );
             switch (type) {
             case 2:
-            S=memory->seg[sym-1].start._32;//a vérif
-            P=seg.start._32+offset;
-            memRead(P,1,&A);
-            
             V=S+A;
 
             //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
             memWrite(P,1,V);
                 break;
             case 4:
-            S=memory->seg[sym-1].start._32;
-            P=seg.start._32+offset;
-            memRead(P,1,&A);
-
             V=((A<<2)|((P&0xF0000000)+S))>>2;
 
             //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
             memWrite(P,1,V);
                 break;
-            case 5:
-            S=memory->seg[sym-1].start._32;
-            printf("seg name %d \n",sym-1);
-            P=seg.start._32+offset;
-            memRead(P,1,&A);
-
+            case 5:;
             uint nexttype=rel[i+1].r_info;
             uint nextoffset=rel[i+1].r_offset;
             FLIP_ENDIANNESS(nexttype);
@@ -250,18 +243,14 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
                 AHL=(A<<16)+(short)(A2);
                 //printf("A2=%X short A2=%X\n",A2, (short)A2 );
                 //printf("AHL : %X\n",AHL );
-                printf("Total=%X AHL+S=%X, short=%X, diff=%X\n",((AHL+S-(short)AHL+S)>>16),AHL+S,(short)AHL+S,AHL+S-(short)AHL+S) ;
+                //printf("Total=%X AHL+S=%X, short=%X, diff=%X\n",((AHL+S-(short)AHL+S)>>16),AHL+S,(short)AHL+S,AHL+S-(short)AHL+S) ;
                 V=(A & 0xFFFF0000)|((AHL+S-(short)AHL+S)>>16);
 
-                printf("V= %X,S=%X,A=%X,A2=%X,P=%X,P2=%X, AHL=%X\n",V,S,A,A2,P,P2,AHL);
+                //printf("V= %X,S=%X,A=%X,A2=%X,P=%X,P2=%X, AHL=%X\n",V,S,A,A2,P,P2,AHL);
                 memWrite(P,1,V);
              }
                 break;
-            case 6:
-                S=memory->seg[sym-1].start._32;
-                P=seg.start._32+offset;
-                memRead(P,1,&A);
-
+            case 6:;
                 int previoustype=rel[i-1].r_info;
                 int previousoffset=rel[i-1].r_offset;
                 FLIP_ENDIANNESS(previoustype);
