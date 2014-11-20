@@ -1,4 +1,5 @@
 .set noreorder
+
 .text 
 
 ADDI $4,$zero,12345  # met 12345 dans le registre $4
