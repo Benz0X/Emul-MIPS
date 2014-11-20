@@ -1,2 +1,2 @@
-load ressources/libc.so
-debug
+load Tests/boucletest.o
+run

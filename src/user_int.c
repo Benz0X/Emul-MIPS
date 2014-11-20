@@ -542,7 +542,12 @@ int decrypt(char input [])
             WARNING_MSG("Out of memory map, start adress set to default");
             initprog();
         }
-        return pipeline(end,running,1);
+        int flag=running;
+        while(flag>0){
+            flag=pipeiter(end, flag,1);
+        }
+        //return pipeline(end,running,1);
+        return 0;
         break;
 
 

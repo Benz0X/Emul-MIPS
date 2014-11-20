@@ -190,9 +190,8 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
 
 
-    /*
-    Execution principale
-    */
+    //Execution principale
+    
 //Write Back
     flag[WB] = exceptionHandler(execute(vpipeline[WB].ins,vpipeline[WB].step,vpipeline[WB].dico_entry,&(vpipeline[WB].tmp)));
 //Memory
@@ -298,5 +297,148 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
     else {//Execution
         return pipeline(end,running,affichage);
+    }
+}
+
+int pipeiter(uint32_t end, state running, int affichage) {
+//Initialisation des variables internes
+    int flag[5];
+    int stall=0;
+
+    if(verbose>3) {
+        INFO_MSG("New clock cycle");  //Affiche l'état courant du pipeline
+        printf("\tPipeline current state :\n ID %8.8X\t EX %8.8X\t MEM %8.8X\t WB %8.8X\n\n",vpipeline[ID].ins.value,vpipeline[EX].ins.value,vpipeline[MEM].ins.value,vpipeline[WB].ins.value);
+    }
+//Clock
+    int tick= clock();
+
+
+//Test memoire chargee
+    if(memory==NULL) {
+        WARNING_MSG("No memory loaded");
+        return -1;
+    }
+
+//Test RegStall
+    list L1=listWritedReg(vpipeline[MEM].ins,vpipeline[MEM].dico_entry);
+    list L2=listReadedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry);
+    if(overlap(L1,L2)==1) {
+        //Si les registres écrits par MEM et lus par EX coincident
+        if(verbose>4) {
+            INFO_MSG("Stall");
+        }
+        stall=1;    //Alors un stall est necéssaire
+    }
+   // freeList(L1);
+    //freeList(L2);
+    
+
+    //Execution principale
+
+//Write Back
+    flag[WB] = exceptionHandler(execute(vpipeline[WB].ins,vpipeline[WB].step,vpipeline[WB].dico_entry,&(vpipeline[WB].tmp)));
+//Memory
+    exceptionHandler(execute(vpipeline[MEM].ins,vpipeline[MEM].step,vpipeline[MEM].dico_entry,&(vpipeline[MEM].tmp)));
+//Execute
+    flag[EX] = exceptionHandler(execute(vpipeline[EX].ins,vpipeline[EX].step,vpipeline[EX].dico_entry,&(vpipeline[EX].tmp)));
+//Decode
+    //Resolution des adresses registre ?
+    int dico_entry=-1;
+    exceptionHandler(decode(vpipeline[ID].ins,&dico_entry));
+//Fetch
+    exceptionHandler(fetch(&(vpipeline[IF].ins)));
+
+
+
+//Gestion du stall (partie 1)
+    if (stall==1) {
+        reg_mips[PC]-=4;    //If stall PC doesn't increase
+    }
+
+//Temporisation
+    if(clocktime!=0) {      //Si la clock est fixée
+        tick=clock()-tick;
+        if(verbose>0) {
+            printf("Time spent: %g us\t", (double)tick/CLOCKS_PER_SEC*1000);
+            printf("Waiting %g us\n", (double)(clocktime-tick/CLOCKS_PER_SEC*1000));
+        }
+        if((double)tick/CLOCKS_PER_SEC*1000<clocktime) DELAY((clocktime-tick/CLOCKS_PER_SEC*1000)*1); //On DELAY
+    }
+
+//Affichage
+    if(verbose>3) {
+        //disasm(reg_mips[PC]-4,1);
+        printf("PC: %X->%X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], vpipeline[IF].ins.value);
+        printf("Decoding: %8.8X  Dico: %d-> %s\n", vpipeline[ID].ins.value, dico_entry, dico_data[dico_entry].name);
+        printf("Executing: %s\n",dico_data[vpipeline[EX].dico_entry].name);
+        printf("MEM writing: %s\n", dico_data[vpipeline[MEM].dico_entry].name);
+        printf("REG writing: %s\n", dico_data[vpipeline[WB].dico_entry].name);
+        printf("\n");
+    }
+
+//Flush
+    if(flag[EX]==flush) {
+        if(verbose>4) {
+            INFO_MSG("Flush Instruction Fetch");
+        }
+        addNOP(&vpipeline[IF]);         //On remplace l'instruction fetched par NOP
+    }
+//Avancement du pipeline
+    pipecpy(&vpipeline[WB],vpipeline[MEM]);//WB becomes MEM
+    addNOP(&vpipeline[MEM]);                    //If stall not needed, will be overwrited
+    if(stall==0) {
+        pipecpy(&vpipeline[MEM],vpipeline[EX]); //MEM becomes EX
+        pipecpy(&vpipeline[EX],vpipeline[ID]);  //EX becomes ID
+
+        vpipeline[EX].tmp=0;                    //Init EX stage
+        vpipeline[EX].dico_entry=dico_entry;
+
+        pipecpy(&vpipeline[ID],vpipeline[IF]);  //ID becomes IF
+    }
+
+//Step
+    if (running==step_return && reg_mips[PC]==return_addr) {    //Lors d'un step, on attend d'arriver sur return_addr pour break
+        return 0;
+    }
+    if (running==stepinto) {        //stepinto break
+        running=stop;
+    }
+    if (running==step) {            //step passe le pipeline en mode step_return si EX est JAL ou JALR -> appel de procedure
+        if (strcmp(dico_data[vpipeline[EX].dico_entry].name,"JAL")==0 || strcmp(dico_data[vpipeline[EX].dico_entry].name,"JALR")==0) {
+            running=step_return; //will wait for return adress
+            return_addr=reg_mips[PC];
+            if (verbose==1||verbose>2) {
+                printf("RETURN ADRESS SET TO %d\n",return_addr);
+            }
+        }
+        else {
+            running=stop;       //Sinon il agit comme stepinto
+        }
+    }
+
+//Gestion fin de programme
+    if(reg_mips[PC]>=end+16) {
+        vpipeline[ID].ins.value=-1; //L'execution continue jusqu'a end+16, mais on fixe l'ID à -1 pour ne pas fetch illégalement -> EmptyPipe en sortie
+    }
+
+//Test de sortie
+    if(flag[WB]==quit) {
+        reg_mips[PC]=end+16;
+        return 0;
+    }
+    if(reg_mips[PC]<textStart||reg_mips[PC]>end+16) {//Should not happen if program is correct
+        WARNING_MSG("PC out of .text, halt");
+        return -1;
+    }
+    if (reg_mips[PC]==end+16) {//end of file
+        INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN");
+        return 0;
+    }
+    else if(present(reg_mips[PC],breaklist)!=NULL || flag[WB]==BreakPoint || running==stop) {//BreakPoint
+        printf("Break\n");
+        return 0;
+    }
+    else {//Execution
+        return running;
     }
 }

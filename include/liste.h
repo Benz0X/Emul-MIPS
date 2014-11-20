@@ -19,5 +19,5 @@ list insert(element e, list L);		//Insère e à sa place dans une liste triée
 int overlap(list L1, list L2);		//Test si au moins un élément est commun dans les deux listes
 list del(element e, list L);		//Supprime toutes les occurences d'un élément dans la liste
 void printList(list L);				//Affiche la liste
-
+void freeList(list L);
 #endif

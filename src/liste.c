@@ -70,8 +70,13 @@ list present(element e, list L) {
 }
 
 int overlap(list L1, list L2) {
-    if(empty(L2)||empty(L1)) return 0;
+    if(empty(L2)||empty(L1)) 
+        freeList(L1);
+        freeList(L2);
+        return 0;
     if(present(L1->val,L2)!=NULL) {
+        freeList(L1);
+        freeList(L2);
         return 1;
     } else {
         return overlap(pop(L1),L2);
@@ -84,4 +89,18 @@ void printList(list L) {
         printf("0x%8.8X \t",p->val);
     }
     puts("");
+}
+
+void freeList(list L)
+{
+    void * freed;
+    if (L==NULL)return;
+    while (L)
+    {
+        freed = L;
+        L = L->suiv;
+        free(freed);
+    }
+    //while(pop(L)){}
+    L=NULL;
 }

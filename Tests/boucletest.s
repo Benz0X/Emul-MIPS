@@ -3,7 +3,7 @@
 
 _start:
 .global _start
-addi $t1,$zero,12 # set $t1 a 12
+addi $t1,$zero,0xFFFF # set $t1 a 12
 add $t2,$zero,$zero # set $t2 Ã  zÃ©ro
 addi $t2,$t2,1 # incremente
 nop
