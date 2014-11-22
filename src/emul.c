@@ -23,7 +23,7 @@
 //init des registres RAJOUTER HI LOW PC
 int reg_mips[35];
 
-//init de la mémoire
+//init de la memoire
 mem memory=NULL;
 stab symtab;
 
@@ -33,8 +33,9 @@ dico_info* dico_data=NULL;
 
 
 
-// On fixe ici une adresse basse dans la mémoire virtuelle. Le premier segment
-// ira se loger à cette adresse.
+#define LIBC_MEM_END 0xff7ff000u
+#define PATH_TO_LIBC "include/libc/libc.so"
+
 // nombre max de sections que l'on extraira du fichier ELF
 #define NB_SECTIONS 4
 
@@ -44,7 +45,7 @@ dico_info* dico_data=NULL;
 #define DATA_SECTION_STR ".data"
 #define BSS_SECTION_STR ".bss"
 
-//nom du prefix à appliquer pour la section
+//nom du prefix a appliquer pour la section
 #define RELOC_PREFIX_STR ".rel"
 
 int is_in_symbols(char* name, stab symtab) {
@@ -55,13 +56,13 @@ int is_in_symbols(char* name, stab symtab) {
     return 0;
 }
 
-// Cette fonction calcule le nombre de segments à prevoir
+// Cette fonction calcule le nombre de segments a prevoir
 // Elle cherche dans les symboles si les sections predefinies
 // s'y trouve
 // parametres :
 //  symtab : la table des symboles
 //
-// retourne le nombre de sections trouvées
+// retourne le nombre de sections trouvees
 
 unsigned int get_nsegments(stab symtab,char* section_names[],int nb_sections) {
     unsigned int n=0;
@@ -133,28 +134,35 @@ int elf_load_section_in_memory(FILE* fp, mem memory, char* scn,unsigned int perm
 /*--------------------------------------------------------------------------  */
 /**
  * @param fp le fichier elf original
- * @param seg le segment à reloger
+ * @param seg le segment a reloger
  * @param mem l'ensemble des segments
- *
- * @brief Cette fonction effectue la relocation du segment passé en parametres
- * @brief l'ensemble des segments doit déjà avoir été chargé en memoire.
+ * @param endianness le boutisme du programme
+ * @param symtab la table des symbole du programme 
+ * @param symtab_libc la table des symbole de la libc (NULL si inutile)
+ * @param fp_libc le fichier elf de la libc (NULL si inutile)
+ * @brief Cette fonction effectue la relocation du segment passe en parametres
+ * @brief l'ensemble des segments doit deja avoir ete charge en memoire.
  *
  * VOUS DEVEZ COMPLETER CETTE FONCTION POUR METTRE EN OEUVRE LA RELOCATION !!
  */
-void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,stab symtab) {
+void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,stab* symtab,stab* symtab_libc,FILE* fp_libc) {
     byte *ehdr    = __elf_get_ehdr( fp );
     uint32_t  scnsz  = 0;
     Elf32_Rel *rel = NULL;
     char* reloc_name = malloc(strlen(seg.name)+strlen(RELOC_PREFIX_STR)+1);
     scntab section_tab;
+    scntab section_tab_libc;
 
     // on recompose le nom de la section
     memcpy(reloc_name,RELOC_PREFIX_STR,strlen(RELOC_PREFIX_STR)+1);
     strcat(reloc_name,seg.name);
 
-    // on récupere le tableau de relocation et la table des sections
+    // on recupere le tableau de relocation et la table des sections
     rel = (Elf32_Rel *)elf_extract_scn_by_name( ehdr, fp, reloc_name, &scnsz, NULL );
     elf_load_scntab(fp ,32, &section_tab);
+
+    if (symtab_libc!=NULL && fp_libc!=NULL)
+       elf_load_scntab(fp_libc ,32, &section_tab_libc);
 
 
     if (rel != NULL &&seg.content!=NULL && seg.size._32!=0) {
@@ -186,7 +194,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
                 WARNING_MSG("Unknown type : %d",type);
             }
             else {
-                printf("%08X  %08X  %-14s  %08X   %s\n",offset,info,MIPS32_REL[type],sym,symtab.sym[sym].name);
+                printf("%08X  %08X  %-14s  %08X   %s\n",offset,info,MIPS32_REL[type],sym,(*symtab).sym[sym].name);
                 i++;
             }
 
@@ -205,13 +213,13 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
             FLIP_ENDIANNESS(offset) ;
             sym=ELF32_R_SYM(info);
             type=ELF32_R_TYPE(info);
-            //segnum=seg_from_scnidx(symtab.sym[sym].scnidx,symtab,memory);
+            //segnum=seg_from_scnidx((*symtab).sym[sym].scnidx,(*symtab),memory);
             //if(segnum==-1){
             //    WARNING_MSG("Couldn't resolve scndix correspondance");
             //    break;
             //}
-            //S=memory->seg[segnum].start._32+symtab.sym[sym].addr._32;//a vérif
-            if(addr_from_symnb(sym, symtab, memory,&S)==-1){WARNING_MSG("Couldn't resolve scndix correspondance");break;}
+            //S=memory->seg[segnum].start._32+(*symtab).sym[sym].addr._32;//a verif
+            if(addr_from_symnb(sym, (*symtab), memory,&S)==-1){WARNING_MSG("Couldn't resolve scndix correspondance");break;}
             P=seg.start._32+offset;
             memRead(P,1,&A);
             //printf("Relocation type %s\n",MIPS32_REL[type] );
@@ -315,7 +323,7 @@ int memRead(uint32_t start_addr,int type, int* value) {             //Lit la mem
     if(type==0) { //type 0 pour byte
         if(j>0 && (start_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32)) {
             *value=memory->seg[j-1].content[start_addr-memory->seg[j-1].start._32];
-            // printf(" \nécriture\n");
+            // printf(" \necriture\n");
 
         }
         else {
@@ -414,7 +422,7 @@ int memWriteChecked(uint32_t start_addr,int type, int32_t value) {         // Ec
 
 
 
-void print_segment_raw_content(segment* seg) {      //Affiche un segment donné
+void print_segment_raw_content(segment* seg) {      //Affiche un segment donne
     int k;
     int word =0;
     if (seg!=NULL && seg->size._32>0) {
@@ -451,11 +459,11 @@ int loadELF (char* name,int nbparam,...) {
     unsigned int type_machine;
     unsigned int endianness;   //little ou big endian
     unsigned int bus_width;    // 32 bits ou 64bits
-    unsigned int next_segment_start = textStart; // compteur pour designer le début de la prochaine section
+    unsigned int next_segment_start = textStart; // compteur pour designer le debut de la prochaine section
 
     symtab=new_stab(0);
-
-    FILE * pf_elf;
+    stab symtab_libc= new_stab(0); // table des symboles de la libc
+    FILE * pf_elf, *pf_libc;
 
 
     if ((pf_elf = fopen(name,"r")) == NULL) {
@@ -468,41 +476,85 @@ int loadELF (char* name,int nbparam,...) {
         return -1;
     }
 
+
+    if ((pf_libc = fopen(PATH_TO_LIBC,"r")) == NULL) {
+        ERROR_MSG("cannot open file %s", PATH_TO_LIBC);
+    }
+
+    if (!assert_elf_file(pf_libc))
+        ERROR_MSG("file %s is not an ELF file", PATH_TO_LIBC);
+
     // recuperation des info de l'architecture
     elf_get_arch_info(pf_elf, &type_machine, &endianness, &bus_width);
     // et des symboles
     elf_load_symtab(pf_elf, bus_width, endianness, &symtab);
-
+    elf_load_symtab(pf_libc, bus_width, endianness, &symtab_libc);
 
     nsegments = get_nsegments(symtab,section_names,NB_SECTIONS);
-
+    nsegments += get_nsegments(symtab_libc,section_names,NB_SECTIONS);
     // allouer la memoire virtuelle
     memory=init_mem(nsegments);
 
-    // Ne pas oublier d'allouer les differentes sections
+    
+    next_segment_start = LIBC_MEM_END;
+    printf("\ndebut : %08x\n",next_segment_start);
     j=0;
+
+    // on alloue libc
     for (i=0; i<NB_SECTIONS; i++) {
-        if (is_in_symbols(section_names[i],symtab)) {
-            elf_load_section_in_memory(pf_elf,memory, section_names[i],segment_permissions[i],next_segment_start);
-            next_segment_start+= ((memory->seg[j].size._32+0x1000)>>12 )<<12; // on arrondit au 1k suppérieur
+        if (is_in_symbols(section_names[i],symtab_libc)) {
+            elf_load_section_in_memory(pf_libc,memory, section_names[i],segment_permissions[i],next_segment_start);
+            next_segment_start-= ((memory->seg[j].size._32+0x1000)>>12 )<<12; // on arrondit au 1k supp�rieur
+            memory->seg[j].start._32 = next_segment_start;
 //            print_segment_raw_content(&memory->seg[j]);
             j++;
         }
     }
 
-    for (i=0; i<nsegments; i++) {
-        reloc_segment(pf_elf, memory->seg[i], memory,endianness,symtab);
-
+    // on reloge libc
+    for (i=0; i<j; i++) {
+        //reloc_segment(pf_libc, memory->seg[i], memory,endianness,&symtab_libc,NULL,NULL);
     }
 
+    // on change le nom des differents segments de libc
+    for (i=0; i<j; i++) {
+        char seg_name [256]= {0};
+        strcpy(seg_name,"libc");
+        strcat(seg_name,memory->seg[i].name);
+        free(memory->seg[i].name);
+        memory->seg[i].name=strdup(seg_name);
+    }
+
+
+    // On va chercher les sections du fichier
+    int k =j;
+    next_segment_start = textStart;
+
+
+
+    
+    for (i=0; i<NB_SECTIONS; i++) {
+        if (is_in_symbols(section_names[i],symtab)) {
+            elf_load_section_in_memory(pf_elf,memory, section_names[i],segment_permissions[i],next_segment_start);
+            next_segment_start+= ((memory->seg[j].size._32+0x1000)>>12 )<<12; // on arrondit au 1k supperieur
+//            print_segment_raw_content(&memory->seg[j]);
+            j++;
+        }
+    }
+
+    // on reloge chaque section du fichier
+    for (i=k; i<j; i++) {
+        //reloc_segment(pf_elf, memory->seg[i], memory,endianness,&symtab,&symtab_libc,pf_libc);
+    }
     //TODO allouer la pile (et donc modifier le nb de segments)
 
     // printf("\n------ Fichier ELF \"%s\" : sections lues lors du chargement ------\n", name) ;
     // print_mem(memory);
     //stab32_print( symtab);
-
-    // on fait le ménage avant de partir
+    //stab32_print( symtab_libc);
+    // on fait le menage avant de partir
     //del_mem(memory);
+    //del_stab(symtab_libc);
     //del_stab(symtab);
 
     initprog();
@@ -511,6 +563,7 @@ int loadELF (char* name,int nbparam,...) {
 
     INFO_MSG("Loading file :'%s'",name);
     fclose(pf_elf);
+    fclose(pf_libc);
     //puts("");
     return 0;
 }
@@ -531,7 +584,7 @@ int dispmemPlage(uint32_t start_addr,uint32_t size) {           //Affiche une pl
 
 
 //    printf("j= %d i=%d, current_addr= %d ,start= %d, size = %d, diff=%d \n",j,i,current_addr,memory->seg[j-1].start._32,memory->seg[j-1].size._32,current_addr-memory->seg[j-1].start._32+memory->seg[j-1].size._32);
-        if(memRead(current_addr,0,&value)==0) { //on vérifie qu'il soit dans une plage mémoire valide
+        if(memRead(current_addr,0,&value)==0) { //on verifie qu'il soit dans une plage memoire valide
             printf("%2.2X ",value);
         }
         else printf("XX ");
