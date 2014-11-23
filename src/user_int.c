@@ -535,7 +535,7 @@ int decrypt(char input [])
             initprog();
         }
         int flag=running;
-        while(flag>0){
+        while(flag>0) {
             flag=pipeiter(flag);
         }
         //return pipeline(textEnd,running,1);

@@ -30,7 +30,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
 
     while (i<size) {
-        
+
         seg=get_seg_from_adress(current_addr,memory);
         //printf("%d %d\n",i,j );
         if( seg>=0 && (!strcmp(memory->seg[seg].name,".text")||!strcmp(memory->seg[seg].name,"libc.text"))) {
@@ -281,11 +281,11 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
 
 
-                    printf(" %8X",4*current_instr.j.target);
-                   
+                    printf(" 0x%4.8X",((current_addr & 0xF0000000) | 4*current_instr.j.target));
+
 
                     for (k = 1; k < symtab.size; ++k) {
-                        if(((4*current_instr.j.target-textStart)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)) {
+                        if((((current_addr & 0xF0000000) | 4*current_instr.j.target-textStart) == symtab.sym[k].addr._32) && (symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident)) {
                             printf(" <%s>",symtab.sym[k].name);
                             break;
                         }
@@ -295,13 +295,13 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         //To search label in other section than .text : (LW?)
                         /*
                         //find in which mem segment we are and get the section name
-                    for (k=0; k<memory->nseg; ++k)
-                    {
+                        for (k=0; k<memory->nseg; ++k)
+                        {
                         if((current_addr>memory->seg[k].start._32) && current_addr > memory->seg[k].start._32+memory->seg[k].size._32);
                         break;
-                    }
-                    //get the scnidx from the section if valid section
-                    if(k<memory->nseg-1){
+                        }
+                        //get the scnidx from the section if valid section
+                        if(k<memory->nseg-1){
                         int scni;
                         for (scni = 0; scni < symtab.size; ++scni)
                         {

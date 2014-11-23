@@ -863,49 +863,53 @@ int clean_stdin()
     return 1;
 }
 
-int seg_from_scnidx(int scnidx, stab symtab, mem memory){
+int seg_from_scnidx(int scnidx, stab symtab, mem memory) {
     int segnumber=-1;
     int i,j=-1;
-        while (j<=symtab.size||segnumber==-1){
-            j++;
-            for (i = 0; i < memory->nseg; ++i)
-            {
-                if(symtab.sym[j].scnidx==scnidx && strcmp(symtab.sym[j].name,memory->seg[i].name)==0){
-                    segnumber=i;
-                    break;
-                }
+    while (j<=symtab.size||segnumber==-1) {
+        j++;
+        for (i = 0; i < memory->nseg; ++i)
+        {
+            if(symtab.sym[j].scnidx==scnidx && strcmp(symtab.sym[j].name,memory->seg[i].name)==0) {
+                segnumber=i;
+                break;
             }
         }
+    }
     return segnumber;
 }
-int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr){
+int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
     int segnumber=-1;
     int i,j=-1;
     //printf(" segnumber=%d,j=%d,symtab.size=%d\n",segnumber,j,symtab.size );
-        while ((int)j<=(int)symtab.size && (int)segnumber<0){
-            j++;
-            for (i = 0; i < memory->nseg; ++i)
-            {
-                //printf("i=%d,j=%d\n",i,j );
-                //printf("%d==%d,%s==%s\n",symtab.sym[j].scnidx,symtab.sym[symnb].scnidx,symtab.sym[j].name,memory->seg[i].name);
-               if(symtab.sym[j].scnidx==symtab.sym[symnb].scnidx && strcmp(symtab.sym[j].name,memory->seg[i].name)==0){
-                    segnumber=i;
-                    //printf("solved !\n");
-                    break;
-                }
+    while ((int)j<=(int)symtab.size && (int)segnumber<0) {
+        j++;
+        for (i = 0; i < memory->nseg; ++i)
+        {
+            //printf("i=%d,j=%d\n",i,j );
+            //printf("%d==%d,%s==%s\n",symtab.sym[j].scnidx,symtab.sym[symnb].scnidx,symtab.sym[j].name,memory->seg[i].name);
+            if(symtab.sym[j].scnidx==symtab.sym[symnb].scnidx && strcmp(symtab.sym[j].name,memory->seg[i].name)==0) {
+                segnumber=i;
+                //printf("solved !\n");
+                break;
             }
         }
-        if (segnumber==-1){return -1;}
+    }
+    if (segnumber==-1) {
+        return -1;
+    }
 
-        *addr=memory->seg[segnumber].start._32+symtab.sym[symnb].addr._32;
+    *addr=memory->seg[segnumber].start._32+symtab.sym[symnb].addr._32;
     return 0;
 }
 
-int get_seg_from_adress(int addr,mem mem){
-int i,seg=-1;
-for (i = 0; i < memory->nseg; ++i)
-{
-    if (addr>=memory->seg[i].start._32 && addr<memory->seg[i].start._32+memory->seg[i].size._32){seg=i;}
-}
+int get_seg_from_adress(int addr,mem mem) {
+    int i,seg=-1;
+    for (i = 0; i < memory->nseg; ++i)
+    {
+        if (addr>=memory->seg[i].start._32 && addr<memory->seg[i].start._32+memory->seg[i].size._32) {
+            seg=i;
+        }
+    }
     return seg;
 }

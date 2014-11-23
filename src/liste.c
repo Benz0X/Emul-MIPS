@@ -33,7 +33,7 @@ list pop(list L) {
 list insert(element e, list L) {
 
     list k=L; //parcours de L
-    
+
     if(empty(k)||e<k->val) {
         return push(e,L);
     }
@@ -72,7 +72,7 @@ list present(element e, list L) {
 }
 
 int overlap(list L1, list L2) {
-    if(empty(L2)||empty(L1)) 
+    if(empty(L2)||empty(L1))
         return 0;
     if(present(L1->val,L2)!=NULL) {
         return 1;

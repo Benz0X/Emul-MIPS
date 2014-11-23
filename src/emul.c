@@ -138,7 +138,7 @@ int elf_load_section_in_memory(FILE* fp, mem memory, char* scn,unsigned int perm
  * @param seg le segment a reloger
  * @param mem l'ensemble des segments
  * @param endianness le boutisme du programme
- * @param symtab la table des symbole du programme 
+ * @param symtab la table des symbole du programme
  * @param symtab_libc la table des symbole de la libc (NULL si inutile)
  * @param fp_libc le fichier elf de la libc (NULL si inutile)
  * @brief Cette fonction effectue la relocation du segment passe en parametres
@@ -163,14 +163,14 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
     elf_load_scntab(fp ,32, &section_tab);
 
     if (symtab_libc!=NULL && fp_libc!=NULL)
-       elf_load_scntab(fp_libc ,32, &section_tab_libc);
+        elf_load_scntab(fp_libc ,32, &section_tab_libc);
 
 
     if (rel != NULL &&seg.content!=NULL && seg.size._32!=0) {
-
-        INFO_MSG("--------------Relocation de %s-------------------\n",seg.name) ;
-        INFO_MSG("Nombre de symboles a reloger: %ld\n",scnsz/sizeof(*rel)) ;
-
+        if(verbose>0) {
+            INFO_MSG("--------------Relocation de %s-------------------\n",seg.name) ;
+            INFO_MSG("Nombre de symboles a reloger: %ld\n",scnsz/sizeof(*rel)) ;
+        }
 
         //------------------------------------------------------
 
@@ -180,27 +180,27 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
         uint info;
         uint offset;
         //display :
+        if(verbose>0) {
+            //printf("scnsz=%d\n", scnsz);
+            //print_scntab(section_tab);
+            printf("Offset    Info      Type            Sym.Value  Sym.Name\n");
+            while(i<scnsz/sizeof(*rel)) {
+                info=rel[i].r_info;
+                offset=rel[i].r_offset;
+                FLIP_ENDIANNESS(info) ;
+                FLIP_ENDIANNESS(offset) ;
+                sym=ELF32_R_SYM(info);
+                type=ELF32_R_TYPE(info);
+                if (type>32) {
+                    WARNING_MSG("Unknown type : %d",type);
+                }
+                else {
+                    printf("%08X  %08X  %-14s  %08X   %s\n",offset,info,MIPS32_REL[type],sym,(*symtable).sym[sym].name);
+                    i++;
+                }
 
-        //printf("scnsz=%d\n", scnsz);
-        //print_scntab(section_tab);
-        printf("Offset    Info      Type            Sym.Value  Sym.Name\n");
-        while(i<scnsz/sizeof(*rel)) {
-            info=rel[i].r_info;
-            offset=rel[i].r_offset;
-            FLIP_ENDIANNESS(info) ;
-            FLIP_ENDIANNESS(offset) ;
-            sym=ELF32_R_SYM(info);
-            type=ELF32_R_TYPE(info);
-            if (type>32) {
-                WARNING_MSG("Unknown type : %d",type);
             }
-            else {
-                printf("%08X  %08X  %-14s  %08X   %s\n",offset,info,MIPS32_REL[type],sym,(*symtable).sym[sym].name);
-                i++;
-            }
-
         }
-
         i=0;
         //------------------------------------------------------
         //Reloc :
@@ -222,53 +222,62 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
             //}
             //S=memory->seg[segnum].start._32+(*symtable).sym[sym].addr._32;//a verif
             //printf("sym=%d, symbtable size=%d\n", sym,(*symtable).size);
-            if(addr_from_symnb(sym, (*symtable), memory,&S)==-1){WARNING_MSG("Couldn't resolve scndix correspondance");break;}
+            if(addr_from_symnb(sym, (*symtable), memory,&S)==-1) {
+                WARNING_MSG("Couldn't resolve scndix correspondance");
+                break;
+            }
             P=seg.start._32+offset;
             memRead(P,1,&A);
             //printf("Relocation type %s\n",MIPS32_REL[type] );
             switch (type) {
             case 2:
-            V=S+A;
+                V=S+A;
 
-            //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
-            memWrite(P,1,V);
+                //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
+                memWrite(P,1,V);
                 break;
             case 4:
-            V=(A&0xFC00000)|((((A<<2)|((P&0xF0000000)+S))>>2)&0x3FFFFFF);
+                V=(A&0xFC00000)|((((A<<2)|((P&0xF0000000)+S))>>2)&0x3FFFFFF);
 
-            //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
-            memWrite(P,1,V);
-                break;
-            case 5:;
-            uint nexttype=rel[i+1].r_info;
-            uint nextoffset=rel[i+1].r_offset;
-            FLIP_ENDIANNESS(nexttype);
-            FLIP_ENDIANNESS(nextoffset);
-            nexttype=ELF32_R_TYPE(nexttype);
-            if(nexttype!=6){WARNING_MSG("R_MIPS_HI16 not followed by R_MIIPS_LO16 : %s",MIPS32_REL[nexttype]);}
-            else{
-
-                int P2=seg.start._32+nextoffset,A2;
-                memRead(P2,1,&A2);
-                int AHL;
-                AHL=(A<<16)+(short)(A2);
-                //printf("A2=%X short A2=%X\n",A2, (short)A2 );
-                //printf("AHL : %X\n",AHL );
-                //printf("Total=%X AHL+S=%X, short=%X, diff=%X\n",((AHL+S-(short)AHL+S)>>16),AHL+S,(short)AHL+S,AHL+S-(short)AHL+S) ;
-                V=(A & 0xFFFF0000)|(((AHL+S-(short)AHL+S)>>16)&0xFFFF);
-
-                //printf("V= %X,S=%X,A=%X,A2=%X,P=%X,P2=%X, AHL=%X\n",V,S,A,A2,P,P2,AHL);
+                //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
                 memWrite(P,1,V);
-             }
                 break;
-            case 6:;
+            case 5:
+                ;
+                uint nexttype=rel[i+1].r_info;
+                uint nextoffset=rel[i+1].r_offset;
+                FLIP_ENDIANNESS(nexttype);
+                FLIP_ENDIANNESS(nextoffset);
+                nexttype=ELF32_R_TYPE(nexttype);
+                if(nexttype!=6) {
+                    WARNING_MSG("R_MIPS_HI16 not followed by R_MIIPS_LO16 : %s",MIPS32_REL[nexttype]);
+                }
+                else {
+
+                    int P2=seg.start._32+nextoffset,A2;
+                    memRead(P2,1,&A2);
+                    int AHL;
+                    AHL=(A<<16)+(short)(A2);
+                    //printf("A2=%X short A2=%X\n",A2, (short)A2 );
+                    //printf("AHL : %X\n",AHL );
+                    //printf("Total=%X AHL+S=%X, short=%X, diff=%X\n",((AHL+S-(short)AHL+S)>>16),AHL+S,(short)AHL+S,AHL+S-(short)AHL+S) ;
+                    V=(A & 0xFFFF0000)|(((AHL+S-(short)AHL+S)>>16)&0xFFFF);
+
+                    //printf("V= %X,S=%X,A=%X,A2=%X,P=%X,P2=%X, AHL=%X\n",V,S,A,A2,P,P2,AHL);
+                    memWrite(P,1,V);
+                }
+                break;
+            case 6:
+                ;
                 int previoustype=rel[i-1].r_info;
                 int previousoffset=rel[i-1].r_offset;
                 FLIP_ENDIANNESS(previoustype);
                 FLIP_ENDIANNESS(previousoffset);
                 previoustype=ELF32_R_TYPE(previoustype);
-                if(previoustype!=5){WARNING_MSG("R_MIPS_LO16 not preceded by R_MIPS_HI16 : %s",MIPS32_REL[previoustype]);}
-                else{
+                if(previoustype!=5) {
+                    WARNING_MSG("R_MIPS_LO16 not preceded by R_MIPS_HI16 : %s",MIPS32_REL[previoustype]);
+                }
+                else {
 
                     int32_t P2=seg.start._32+previousoffset,A2;
                     memRead(P2,1,&A2);
@@ -277,7 +286,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
 
                     //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
                     memWrite(P,1,V);
-                 }
+                }
                 break;
             default:
                 if (type>32) {
@@ -351,7 +360,7 @@ int memWrite(uint32_t start_addr,int type, int32_t value) {         // Ecrit val
         return -1;
     }
     int seg=get_seg_from_adress(start_addr,memory);
-   
+
 
     if(type==0) {
         if(seg>=0) {
@@ -383,7 +392,7 @@ int memWriteChecked(uint32_t start_addr,int type, int32_t value) {         // Ec
         return -1;
     }
     int seg=get_seg_from_adress(start_addr,memory);
-   
+
 
     if(type==0) {
         if(seg>=0) {
@@ -484,7 +493,7 @@ int loadELF (char* name,int nbparam,...) {
     // allouer la memoire virtuelle
     memory=init_mem(nsegments);
 
-    
+
     next_segment_start = LIBC_MEM_END;
     //printf("\ndebut : %08x\n",next_segment_start);
     j=0;
@@ -499,8 +508,9 @@ int loadELF (char* name,int nbparam,...) {
             j++;
         }
     }
-
-    // on reloge libc
+    if(verbose>0) {
+        INFO_MSG("--------------Relocation de %s-------------------\n",PATH_TO_LIBC);
+    }
     for (i=0; i<j; i++) {
         reloc_segment(pf_libc, memory->seg[i], memory,endianness,&symtab_libc,NULL,NULL);
     }
@@ -521,7 +531,7 @@ int loadELF (char* name,int nbparam,...) {
 
 
 
-    
+
     for (i=0; i<NB_SECTIONS; i++) {
         if (is_in_symbols(section_names[i],symtab)) {
             elf_load_section_in_memory(pf_elf,memory, section_names[i],segment_permissions[i],next_segment_start);
@@ -532,6 +542,9 @@ int loadELF (char* name,int nbparam,...) {
     }
 
     // on reloge chaque section du fichier
+    if(verbose>0) {
+        INFO_MSG("--------------Relocation de %s-------------------\n",name);
+    }
     for (i=k; i<j; i++) {
         reloc_segment(pf_elf, memory->seg[i], memory,endianness,&symtab,&symtab_libc,pf_libc);
     }
