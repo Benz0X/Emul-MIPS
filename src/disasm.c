@@ -281,7 +281,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
 
 
-                    printf(" %d",4*current_instr.j.target);
+                    printf(" %8.4X",4*current_instr.j.target);
                    
 
                     for (k = 1; k < symtab.size; ++k) {
