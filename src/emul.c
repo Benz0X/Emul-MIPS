@@ -145,7 +145,7 @@ int elf_load_section_in_memory(FILE* fp, mem memory, char* scn,unsigned int perm
  *
  * VOUS DEVEZ COMPLETER CETTE FONCTION POUR METTRE EN OEUVRE LA RELOCATION !!
  */
-void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,stab* symtab,stab* symtab_libc,FILE* fp_libc) {
+void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,stab* symtable,stab* symtab_libc,FILE* fp_libc) {
     byte *ehdr    = __elf_get_ehdr( fp );
     uint32_t  scnsz  = 0;
     Elf32_Rel *rel = NULL;
@@ -194,7 +194,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
                 WARNING_MSG("Unknown type : %d",type);
             }
             else {
-                printf("%08X  %08X  %-14s  %08X   %s\n",offset,info,MIPS32_REL[type],sym,(*symtab).sym[sym].name);
+                printf("%08X  %08X  %-14s  %08X   %s\n",offset,info,MIPS32_REL[type],sym,(*symtable).sym[sym].name);
                 i++;
             }
 
@@ -213,13 +213,15 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
             FLIP_ENDIANNESS(offset) ;
             sym=ELF32_R_SYM(info);
             type=ELF32_R_TYPE(info);
-            //segnum=seg_from_scnidx((*symtab).sym[sym].scnidx,(*symtab),memory);
+            //printf("Relocating symbol %d\n",i );
+            //segnum=seg_from_scnidx((*symtable).sym[sym].scnidx,(*symtable),memory);
             //if(segnum==-1){
             //    WARNING_MSG("Couldn't resolve scndix correspondance");
             //    break;
             //}
-            //S=memory->seg[segnum].start._32+(*symtab).sym[sym].addr._32;//a verif
-            if(addr_from_symnb(sym, (*symtab), memory,&S)==-1){WARNING_MSG("Couldn't resolve scndix correspondance");break;}
+            //S=memory->seg[segnum].start._32+(*symtable).sym[sym].addr._32;//a verif
+            //printf("sym=%d, symbtable size=%d\n", sym,(*symtable).size);
+            if(addr_from_symnb(sym, (*symtable), memory,&S)==-1){WARNING_MSG("Couldn't resolve scndix correspondance");break;}
             P=seg.start._32+offset;
             memRead(P,1,&A);
             //printf("Relocation type %s\n",MIPS32_REL[type] );
@@ -264,7 +266,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
                 FLIP_ENDIANNESS(previoustype);
                 FLIP_ENDIANNESS(previousoffset);
                 previoustype=ELF32_R_TYPE(previoustype);
-                if(previoustype!=5){WARNING_MSG("R_MIPS_LO16 not preceded by R_MIIPS_HI16 : %s",MIPS32_REL[previoustype]);}
+                if(previoustype!=5){WARNING_MSG("R_MIPS_LO16 not preceded by R_MIPS_HI16 : %s",MIPS32_REL[previoustype]);}
                 else{
 
                     int32_t P2=seg.start._32+previousoffset,A2;
@@ -483,7 +485,7 @@ int loadELF (char* name,int nbparam,...) {
 
     
     next_segment_start = LIBC_MEM_END;
-    printf("\ndebut : %08x\n",next_segment_start);
+    //printf("\ndebut : %08x\n",next_segment_start);
     j=0;
 
     // on alloue libc
@@ -499,7 +501,7 @@ int loadELF (char* name,int nbparam,...) {
 
     // on reloge libc
     for (i=0; i<j; i++) {
-        //reloc_segment(pf_libc, memory->seg[i], memory,endianness,&symtab_libc,NULL,NULL);
+        reloc_segment(pf_libc, memory->seg[i], memory,endianness,&symtab_libc,NULL,NULL);
     }
 
     // on change le nom des differents segments de libc
