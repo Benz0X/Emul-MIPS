@@ -234,7 +234,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
             memWrite(P,1,V);
                 break;
             case 4:
-            V=((A<<2)|((P&0xF0000000)+S))>>2;
+            V=(A&0xFC00000)|((((A<<2)|((P&0xF0000000)+S))>>2)&0x3FFFFFF);
 
             //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
             memWrite(P,1,V);
@@ -255,7 +255,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
                 //printf("A2=%X short A2=%X\n",A2, (short)A2 );
                 //printf("AHL : %X\n",AHL );
                 //printf("Total=%X AHL+S=%X, short=%X, diff=%X\n",((AHL+S-(short)AHL+S)>>16),AHL+S,(short)AHL+S,AHL+S-(short)AHL+S) ;
-                V=(A & 0xFFFF0000)|((AHL+S-(short)AHL+S)>>16);
+                V=(A & 0xFFFF0000)|(((AHL+S-(short)AHL+S)>>16)&0xFFFF);
 
                 //printf("V= %X,S=%X,A=%X,A2=%X,P=%X,P2=%X, AHL=%X\n",V,S,A,A2,P,P2,AHL);
                 memWrite(P,1,V);
@@ -273,7 +273,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
                     int32_t P2=seg.start._32+previousoffset,A2;
                     memRead(P2,1,&A2);
                     int32_t AHL=(A2<<16)+(short)(A);
-                    V=(A&0xFFFF0000)|(short)(AHL+S);
+                    V=(A&0xFFFF0000)|((short)(AHL+S)&0xFFFF);
 
                     //printf("V= %X,S=%X,A=%X,P=%X\n",V,S,A,P);
                     memWrite(P,1,V);
