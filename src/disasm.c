@@ -33,7 +33,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
         
         seg=get_seg_from_adress(current_addr,memory);
         //printf("%d %d\n",i,j );
-        if( seg>=0 && !strcmp(memory->seg[seg].name,".text")) {
+        if( seg>=0 && (!strcmp(memory->seg[seg].name,".text")||!strcmp(memory->seg[seg].name,"libc.text"))) {
 
             getInstr(current_addr,&current_instr);
             memcpy(&instr_value,&current_instr,4);

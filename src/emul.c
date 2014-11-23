@@ -557,7 +557,7 @@ int loadELF (char* name,int nbparam,...) {
             libcTextEnd=memory->seg[k].start._32+memory->seg[k].size._32;
         }
     }
-    if(verbose>4)printf("Bornes des segments rx : %8.8X-%8.8X et %8.8X-%8.8X\n",textStart,textEnd,libcTextStart,libcTextEnd );
+    if(verbose>4)INFO_MSG("Segments rx : %8.8X-%8.8X et %8.8X-%8.8X",textStart,textEnd,libcTextStart,libcTextEnd );
 
 
     //Initialisation de l'emulateur en vu d'un run
@@ -565,7 +565,7 @@ int loadELF (char* name,int nbparam,...) {
 
 
 
-    INFO_MSG("Loading file :'%s'",name);
+    INFO_MSG("File loaded :'%s'",name);
     fclose(pf_elf);
     fclose(pf_libc);
     //puts("");
