@@ -15,6 +15,10 @@ int nbinstr=0;                      //Nombre d'instruction du dictionnaire
 list breaklist;                     //Initialisation de la liste de points d'arret
 
 uint32_t textStart=DEFAULT_S_ADDR;  //Début du segment .text
+uint32_t textEnd=0;                //Limites des segments rx
+uint32_t libcTextStart=0;
+uint32_t libcTextEnd=0; 
+
 uint32_t return_addr;               //Utilisée pour break au bon moment de step
 short verbose=0;                    //Module l'affichage
 

@@ -34,7 +34,8 @@ dico_info* dico_data=NULL;
 
 
 #define LIBC_MEM_END 0xff7ff000u
-#define PATH_TO_LIBC "include/libc/libc.so"
+//#define PATH_TO_LIBC "include/libc/libc.so"
+#define PATH_TO_LIBC "Tests/relocation.o"
 
 // nombre max de sections que l'on extraira du fichier ELF
 #define NB_SECTIONS 4
@@ -545,6 +546,21 @@ int loadELF (char* name,int nbparam,...) {
     //del_stab(symtab_libc);
     //del_stab(symtab);
 
+    //Recuperation des bornes des segments rx
+    for (k = 0; k < memory->nseg; k++) {
+        if(strcmp(memory->seg[k].name,".text")==0) {
+            textStart=memory->seg[k].start._32;
+            textEnd=memory->seg[k].start._32+memory->seg[k].size._32;
+        }
+        if(strcmp(memory->seg[k].name,"libc.text")==0) {
+            libcTextStart=memory->seg[k].start._32;
+            libcTextEnd=memory->seg[k].start._32+memory->seg[k].size._32;
+        }
+    }
+    if(verbose>4)printf("Bornes des segments rx : %8.8X-%8.8X et %8.8X-%8.8X\n",textStart,textEnd,libcTextStart,libcTextEnd );
+
+
+    //Initialisation de l'emulateur en vu d'un run
     initprog();
 
 

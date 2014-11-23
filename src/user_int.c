@@ -526,27 +526,19 @@ int decrypt(char input [])
             WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
             return -1;
         }
-        //Recuperation de la plage .text
-        int k;
-        int end;
 
-        for (k = 0; k < memory->nseg; k++) {
-            if(strcmp(memory->seg[k].name,".text")==0) {
-                end=memory->seg[k].start._32+memory->seg[k].size._32;
-            }
-        }
 
         //Verification des depassements .text
-        if(reg_mips[PC]>=end+16 || reg_mips[PC]<textStart) {    //+16 pour finir le pipe
+        if((reg_mips[PC]>=textEnd+16 && reg_mips[PC]<libcTextStart) || reg_mips[PC]<textStart || reg_mips[PC]>=libcTextEnd+16) {    //+16 pour finir le pipe
             reg_mips[PC]=textStart;
             WARNING_MSG("Out of memory map, start adress set to default");
             initprog();
         }
         int flag=running;
         while(flag>0){
-            flag=pipeiter(end, flag,1);
+            flag=pipeiter(flag);
         }
-        //return pipeline(end,running,1);
+        //return pipeline(textEnd,running,1);
         return 0;
         break;
 
@@ -560,16 +552,12 @@ int decrypt(char input [])
             return -1;
         }
 
-        int textend,l;
-        for (l = 0; l < memory->nseg; l++) {
-            if(strcmp(memory->seg[l].name,".text")==0) {
-                textend=memory->seg[l].start._32+memory->seg[l].size._32;
-            }
-        }
+
 
         //Verification des depassements .text
-        if(reg_mips[PC]>=textend+16 || reg_mips[PC]<textStart) {       //+16 pour finir le pipe
+        if((reg_mips[PC]>=textEnd+16 && reg_mips[PC]<libcTextStart) || reg_mips[PC]<textStart || reg_mips[PC]>=libcTextEnd+16) {    //+16 pour finir le pipe
             reg_mips[PC]=textStart;
+            WARNING_MSG("Out of memory map, start adress set to default");
             initprog();
         }
 
@@ -580,7 +568,7 @@ int decrypt(char input [])
                     WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
                     return -1;
                 }
-                pipeline(textend,stepinto,1);
+                pipeline(textEnd,stepinto,1);
                 return 0;
 
             }
@@ -594,7 +582,7 @@ int decrypt(char input [])
             return -1;
         }
 
-        pipeline(textend,step,1);
+        pipeline(textEnd,step,1);
 
         return 0;
 

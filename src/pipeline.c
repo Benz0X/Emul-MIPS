@@ -300,7 +300,7 @@ int pipeline(uint32_t end, state running, int affichage) {
     }
 }
 
-int pipeiter(uint32_t end, state running, int affichage) {
+int pipeiter(state running) {
 //Initialisation des variables internes
     int flag[5];
     int stall=0;
@@ -418,20 +418,20 @@ int pipeiter(uint32_t end, state running, int affichage) {
     }
 
 //Gestion fin de programme
-    if(reg_mips[PC]>=end+16) {
+    if(reg_mips[PC]>=textEnd+16) {
         vpipeline[ID].ins.value=-1; //L'execution continue jusqu'a end+16, mais on fixe l'ID à -1 pour ne pas fetch illégalement -> EmptyPipe en sortie
     }
 
 //Test de sortie
     if(flag[WB]==quit) {
-        reg_mips[PC]=end+16;
+        reg_mips[PC]=textEnd+16;
         return 0;
     }
-    if(reg_mips[PC]<textStart||reg_mips[PC]>end+16) {//Should not happen if program is correct
+    if(reg_mips[PC]<textStart||reg_mips[PC]>textEnd+16) {//Should not happen if program is correct
         WARNING_MSG("PC out of .text, halt");
         return -1;
     }
-    if (reg_mips[PC]==end+16) {//end of file
+    if (reg_mips[PC]==textEnd+16) {//end of file
         INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN");
         return 0;
     }

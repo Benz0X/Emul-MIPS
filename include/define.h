@@ -91,19 +91,28 @@ typedef struct
 
 
 //Global datas :
+extern int scriptmode;                  //allow easy switch between interactive and script mode
+
 extern int32_t reg_mips[NBREG+3];       //All mips registers
 extern mem memory;                      //Virtual machine memory
 extern stab symtab;                     //loaded ELF symtab
-extern int scriptmode;                  //allow easy switch between interactive and script mode
+
+extern uint32_t textStart;              //Debut du segment .text
+extern uint32_t textEnd;                //Fin du segment .text
+extern uint32_t libcTextStart;          //Debut du segment libc.text
+extern uint32_t libcTextEnd;            //Fin du segment libc.text
+
 extern dico_info* dico_data;            //contain all info from the dictionnary
 extern int nbinstr;                     //contain the number of instruction in the dictionnary
+
 extern list breaklist;                  //Liste des points d'arrets
-extern int clocktime;                   //Vitesse d'execution : 0 pour max
-extern uint32_t textStart;              //Debut du segment text
-extern uint32_t return_addr;            //Allow step to get back after a function call
 extern short verbose;                   //Carry verbose value [0..5]
 
 extern pipeblock vpipeline[5];          //Virtual Pipeline
+extern uint32_t return_addr;            //Allow step to get back after a function call
+extern int clocktime;                   //Vitesse d'execution : 0 pour max
+
+
 
 
 #endif
