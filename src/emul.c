@@ -530,7 +530,7 @@ int loadELF (char* name,int nbparam,...) {
 
     // on reloge chaque section du fichier
     for (i=k; i<j; i++) {
-        //reloc_segment(pf_elf, memory->seg[i], memory,endianness,&symtab,&symtab_libc,pf_libc);
+        reloc_segment(pf_elf, memory->seg[i], memory,endianness,&symtab,&symtab_libc,pf_libc);
     }
     //TODO allouer la pile (et donc modifier le nb de segments)
 

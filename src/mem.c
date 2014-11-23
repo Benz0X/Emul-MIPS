@@ -40,7 +40,7 @@ mem  init_mem( uint32_t nseg ) {
     else {
         uint i;
 
-        vm->seg = calloc( nseg+3, sizeof( *(vm->seg) ) );
+        vm->seg = calloc( nseg+2, sizeof( *(vm->seg) ) );
         if ( NULL == vm->seg ) {
             WARNING_MSG( "Unable to allocate host memory for vmem segment" );
             free( vm );
@@ -58,6 +58,7 @@ mem  init_mem( uint32_t nseg ) {
             vm->seg[i].attr      = 0x0;
         }
 
+        /*
         //Definition de lib
         vm->seg[i].name=calloc(5, sizeof(int));
         strcpy(vm->seg[i].name,"[lib]");
@@ -65,24 +66,28 @@ mem  init_mem( uint32_t nseg ) {
         vm->seg[i].size._32  = 0x00002000;
         vm->seg[i].content   = calloc(1, vm->seg[i].size._64);
         vm->seg[i].attr      = 0x00002002; //32 bit RW
+        i++;
+        */
+
         //Definition de stack
-        vm->seg[i+1].name=calloc(7, sizeof(int));
-        strcpy(vm->seg[i+1].name,"[stack]");
-        vm->seg[i+1].start._64 = 0xFF7FF000;
-        vm->seg[i+1].size._64  = 0x00800000;
-        vm->seg[i+1].content   = calloc(1, vm->seg[i+1].size._64);
-        vm->seg[i+1].attr      = 0x00002002;
+        vm->seg[i].name=calloc(7, sizeof(int));
+        strcpy(vm->seg[i].name,"[stack]");
+        vm->seg[i].start._64 = 0xFF7FF000;
+        vm->seg[i].size._64  = 0x00800000;
+        vm->seg[i].content   = calloc(1, vm->seg[i].size._64);
+        vm->seg[i].attr      = 0x00002002;
+        i++;
         //Definition de vsyscall
-        vm->seg[i+2].name=calloc(10, sizeof(int));
-        strcpy(vm->seg[i+2].name,"[vsyscall]");
-        vm->seg[i+2].start._64 = 0xFFFFF000;
-        vm->seg[i+2].size._64  = 0x00000FFF;
-        vm->seg[i+2].content   = calloc(1, vm->seg[i+2].size._64);
-        vm->seg[i+2].attr      = 0x00002003;  //32 bits r-x
+        vm->seg[i].name=calloc(10, sizeof(int));
+        strcpy(vm->seg[i].name,"[vsyscall]");
+        vm->seg[i].start._64 = 0xFFFFF000;
+        vm->seg[i].size._64  = 0x00000FFF;
+        vm->seg[i].content   = calloc(1, vm->seg[i].size._64);
+        vm->seg[i].attr      = 0x00002003;  //32 bits r-x
+        i++;
 
 
-
-        vm->nseg = nseg+3;
+        vm->nseg = nseg+2;
     }
 
     return vm;
