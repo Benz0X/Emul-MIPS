@@ -16,8 +16,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
     instruction current_instr;
     uint32_t instr_value;
     int text_ident;
-    int j,k;
-
+    int seg,k;
 
     //get .text scnidx in order to show only .text label
     for (k = 1; k < symtab.size; ++k) {
@@ -31,13 +30,10 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
 
     while (i<size) {
-        j=0;
-        while(current_addr>=memory->seg[j].start._32 && j < memory->nseg)
-        {
-            j++;
-        }
+        
+        seg=get_seg_from_adress(current_addr,memory);
         //printf("%d %d\n",i,j );
-        if( j>0 && !strcmp(memory->seg[j-1].name,".text") && current_addr < memory->seg[j-1].start._32+memory->seg[j-1].size._32) {
+        if( seg>=0 && !strcmp(memory->seg[seg].name,".text")) {
 
             getInstr(current_addr,&current_instr);
             memcpy(&instr_value,&current_instr,4);
@@ -77,8 +73,8 @@ int disasm(uint32_t start_addr,uint32_t size) {
                 //affichage des étiquettes en début de ligne
                 for (k = 1; k < symtab.size; ++k)
                 {
-                    if(((current_addr-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident)) {
-                        //printf("curr-start= %d size : %d %s\n", current_addr-memory->seg[j-1].start._32,symtab.sym[k].size,symtab.sym[k].name);
+                    if(((current_addr-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident)) {
+                        //printf("curr-start= %d size : %d %s\n", current_addr-memory->seg[seg].start._32,symtab.sym[k].size,symtab.sym[k].name);
                         printf("%s: ",symtab.sym[k].name);
                         break;
                     }
@@ -218,7 +214,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         printf(" %s, %s, %d",regname1,regname2,4*current_instr.i.immediate);
 
                         for (k = 1; k < symtab.size; ++k) {
-                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)) {
                                 printf(" <%s>",symtab.sym[k].name);
                                 break;
                             }
@@ -248,7 +244,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         printf(" %s, %d",regname1,4*current_instr.i.immediate);
 
                         for (k = 1; k < symtab.size; ++k) {
-                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[j-1].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)) {
                                 printf(" <%s>",symtab.sym[k].name);
                                 break;
                             }

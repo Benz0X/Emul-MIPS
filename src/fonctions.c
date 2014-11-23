@@ -896,3 +896,12 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr){
         *addr=memory->seg[segnumber].start._32+symtab.sym[symnb].addr._32;
     return 0;
 }
+
+int get_seg_from_adress(int addr,mem mem){
+int i,seg=-1;
+for (i = 0; i < memory->nseg; ++i)
+{
+    if (addr>=memory->seg[i].start._32 && addr<memory->seg[i].start._32+memory->seg[i].size._32){seg=i;}
+}
+    return seg;
+}
