@@ -418,7 +418,7 @@ int pipeiter(state running) {
     }
 
 //Gestion fin de programme
-    if(reg_mips[PC]>=textEnd+16) {
+    if((reg_mips[PC]>=textEnd+16 && reg_mips[PC]<libcTextStart) || reg_mips[PC]<textStart || reg_mips[PC]>=libcTextEnd+16) {
         vpipeline[ID].ins.value=-1; //L'execution continue jusqu'a end+16, mais on fixe l'ID à -1 pour ne pas fetch illégalement -> EmptyPipe en sortie
     }
 
@@ -427,7 +427,7 @@ int pipeiter(state running) {
         reg_mips[PC]=textEnd+16;
         return 0;
     }
-    if(reg_mips[PC]<textStart||reg_mips[PC]>textEnd+16) {//Should not happen if program is correct
+    if((reg_mips[PC]>=textEnd+16 && reg_mips[PC]<libcTextStart) || reg_mips[PC]<textStart || reg_mips[PC]>=libcTextEnd+16) {//Should not happen if program is correct
         WARNING_MSG("PC out of .text, halt");
         return -1;
     }
