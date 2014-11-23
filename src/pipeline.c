@@ -320,18 +320,21 @@ int pipeiter(uint32_t end, state running, int affichage) {
     }
 
 //Test RegStall
-   
-    if(overlap(listWritedReg(vpipeline[MEM].ins,vpipeline[MEM].dico_entry),listReadedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry))==1) {
+    list L1=listWritedReg(vpipeline[MEM].ins,vpipeline[MEM].dico_entry);
+    list L2=listReadedReg(vpipeline[EX].ins,vpipeline[EX].dico_entry);
+    if(overlap(L1,L2)==1) {
         //Si les registres écrits par MEM et lus par EX coincident
         if(verbose>4) {
             INFO_MSG("Stall");
         }
         stall=1;    //Alors un stall est necéssaire
     }
+    freeList(L1);
+    freeList(L2);   //Liberation memoire
     
     
 
-    //Execution principale
+        //Execution principale
 
 //Write Back
     flag[WB] = exceptionHandler(execute(vpipeline[WB].ins,vpipeline[WB].step,vpipeline[WB].dico_entry,&(vpipeline[WB].tmp)));
