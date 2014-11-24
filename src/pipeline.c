@@ -427,13 +427,13 @@ int pipeiter(state running) {
         reg_mips[PC]=textEnd+16;
         return 0;
     }
+    if ((reg_mips[PC]==textEnd+16) || (reg_mips[PC]==libcTextEnd+16)) {//end of file
+        INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN");
+        return 0;
+    }
     if((reg_mips[PC]>=textEnd+16 && reg_mips[PC]<libcTextStart) || reg_mips[PC]<textStart || reg_mips[PC]>=libcTextEnd+16) {//Should not happen if program is correct
         WARNING_MSG("PC out of .text, halt");
         return -1;
-    }
-    if (reg_mips[PC]==textEnd+16) {//end of file
-        INFO_MSG("END OF PROGRAM, NEXT STEP WILL START IT AGAIN");
-        return 0;
     }
     else if(present(reg_mips[PC],breaklist)!=NULL || flag[WB]==BreakPoint || running==stop) {//BreakPoint
         printf("Break\n");

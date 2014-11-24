@@ -19,6 +19,7 @@
 
 int decrypt(char input [])
 {
+    int flag=running;
     int i;                      //compteur
     int n=1;                    //indice du mot
     char* word;                 //buffer du mot
@@ -534,7 +535,7 @@ int decrypt(char input [])
             WARNING_MSG("Out of memory map, start adress set to default");
             initprog();
         }
-        int flag=running;
+        flag=running;
         while(flag>0) {
             flag=pipeiter(flag);
         }
@@ -568,7 +569,11 @@ int decrypt(char input [])
                     WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
                     return -1;
                 }
-                pipeline(textEnd,stepinto,1);
+                flag=stepinto;
+                while(flag>0) {
+                    flag=pipeiter(flag);
+                }
+                //pipeline(textEnd,stepinto,1);
                 return 0;
 
             }
@@ -581,8 +586,11 @@ int decrypt(char input [])
             WARNING_MSG("Too much argument, syntax is 'step' or 'step into'");
             return -1;
         }
-
-        pipeline(textEnd,step,1);
+        flag=step;
+        while(flag>0) {
+            flag=pipeiter(flag);
+        }
+        //pipeline(textEnd,step,1);
 
         return 0;
 
@@ -700,7 +708,7 @@ int decrypt(char input [])
             }
         }
 
-        INFO_MSG("verbose [integer v] : \nv=0 : no output\nv=1 : Warnings output\nv=2 : instruction output\nv=3 : Warnings and instruction output \nv=4 : add pipeline content output\nv=5 : add deep pipeline output (flush and stalls)");
+        INFO_MSG("verbose [integer v] : \nv=0 : no output\nv>0 : minimal output (relocation info...)\nv=1 : Warnings output\nv=2 : instruction output\nv=3 : Warnings and instruction output \nv=4 : add pipeline content output\nv=5 : add deep pipeline output (flush and stalls)");
         return -1;
         break;
 
