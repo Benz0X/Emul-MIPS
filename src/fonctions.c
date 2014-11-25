@@ -896,6 +896,7 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
         }
     }
     if (segnumber==-1) {
+        printf("search in libc\n");
         j=-1;
         while ((int)j<=(int)libcsymtab.size && (int)segnumber<0) {
             j++;
@@ -903,7 +904,7 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
             {
                 //printf("i=%d,j=%d\n",i,j );
                 //printf("%d==%d,%s==%s\n",symtab.sym[j].scnidx,symtab.sym[symnb].scnidx,symtab.sym[j].name,memory->seg[i].name);
-                if(libcsymtab.sym[j].scnidx==libcsymtab.sym[symnb].scnidx && strcmp(libcsymtab.sym[j].name,memory->seg[i].name)==0) {
+                if(libcsymtab.sym[j].scnidx==symtab.sym[symnb].scnidx && strcmp(libcsymtab.sym[j].name,memory->seg[i].name)==0) {
                     segnumber=i;
                     //printf("solved !\n");
                     break;
@@ -914,9 +915,12 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
         if (segnumber==-1) {
             return -1;
         }
+        printf("segnumber %d\n",segnumber);
         *addr=memory->seg[segnumber].start._32+libcsymtab.sym[symnb].addr._32;
         return 0;
     }
+    printf("segnumber %d\n",segnumber);
+
     *addr=memory->seg[segnumber].start._32+symtab.sym[symnb].addr._32;
     return 0;
 }
