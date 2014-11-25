@@ -260,8 +260,8 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
                     AHL=(A<<16)+(short)(A2);
                     //printf("A2=%X short A2=%X\n",A2, (short)A2 );
                     //printf("AHL : %X\n",AHL );
-                    //printf("Total=%X AHL+S=%X, short=%X, diff=%X\n",((AHL+S-(short)AHL+S)>>16),AHL+S,(short)AHL+S,AHL+S-(short)AHL+S) ;
-                    V=(A & 0xFFFF0000)|(((AHL+S-(short)AHL+S)>>16)&0xFFFF);
+                    printf("Total=%X AHL+S=%X, (AHL+S)&0xFFFF=%X, diff=%X\n",((AHL+S-(short)(AHL+S))>>16),AHL+S,(AHL+S)&0xFFFF,AHL+S-(short)AHL+S) ;
+                    V=(A & 0xFFFF0000)|(  ((AHL+S-(short)(AHL+S))>>16)   &0xFFFF);
 
                     //printf("V= %X,S=%X,A=%X,A2=%X,P=%X,P2=%X, AHL=%X\n",V,S,A,A2,P,P2,AHL);
                     memWrite(P,1,V);

@@ -38,7 +38,7 @@ int32_t sign_extend(int16_t A) {
     if (A >= 0) {
         return (int32_t) A;
     } else {
-        return (0xFFFF0000+A);
+        return (0xFFFF0000|A);
     }
 }
 
@@ -453,7 +453,7 @@ int LW(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
-        if(verbose>1) printf("LW: put %d in %d \n",(uint32_t)*tmp,ins.i.rt );
+        if(verbose>1) printf("LW: put %d in %X \n",(uint32_t)*tmp,ins.i.rt );
         writeRegindex(ins.i.rt,(uint32_t)*tmp);
         break;
     }
@@ -562,7 +562,7 @@ int SB(instruction ins, int pipestep, int* tmp) {
         break;
 
     case MEM:
-        if(verbose>1) printf("SB: store %d at %d \n",*tmp,reg_mips[ins.i.rt]);
+        if(verbose>1) printf("SB: store %d at %X \n",reg_mips[ins.i.rt],*tmp);
         if(memWrite(*tmp,0,reg_mips[ins.i.rt])!=0) {
             return memFail;
         }
@@ -576,10 +576,11 @@ int SW(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
         *tmp=reg_mips[ins.i.rs]+sign_extend(ins.i.immediate); //GPR[base]+sign_extend(offset)
+        printf("tmp=%X, ins.i.rs=%X imm=%X\n",*tmp,reg_mips[ins.i.rs],sign_extend(ins.i.immediate) );
         break;
 
     case MEM:
-        if(verbose>1) printf("SW: store %d at %d \n",*tmp,reg_mips[ins.i.rt]);
+        if(verbose>1) printf("SW: store %d at %X \n",reg_mips[ins.i.rt],*tmp);
         if(memWrite(*tmp,1,reg_mips[ins.i.rt])!=0) {
             return memFail;
         }

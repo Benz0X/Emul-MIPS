@@ -1,2 +1,4 @@
-load Tests/boucletest.o
-run
+load Tests/relocation.o
+verbose 3
+run 0xff7fe000
+debug
