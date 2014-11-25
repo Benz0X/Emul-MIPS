@@ -1,4 +1,4 @@
-load Tests/relocation.o
-verbose 3
-run 0xff7fe000
+load Tests/programmes/hello.o
+disasm 0x3000+3000
+#disasm 0xff7fe000+3000
 debug

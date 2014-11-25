@@ -611,16 +611,6 @@ int decrypt(char input [])
                 WARNING_MSG("No program loaded");
                 return -1;
             }
-            //Recuperation de la plage .text
-            int k;
-            int end;
-
-            for (k = 0; k < memory->nseg; k++) {
-                if(strcmp(memory->seg[k].name,".text")==0) {
-                    end=memory->seg[k].start._32+memory->seg[k].size._32;
-                }
-            }
-
 
             if(strcmp(word,"list")==0) {
                 printf("Breakpoints list :\n");
@@ -637,7 +627,7 @@ int decrypt(char input [])
                             uint32_t adress=strtol(word,NULL,0);
 
 
-                            if(adress>=textStart && adress<end) { //                             Test de seg
+                            if((adress>=textStart && adress<textEnd) || (adress>=libcTextStart && adress<libcTextEnd)) { //                             Test de seg
                                 breaklist=del(adress,breaklist);    //suppression du breakpoint
                             } else {
                                 WARNING_MSG("Adress %8.8X can't be breakpoint, segment not allowed",adress);
@@ -658,7 +648,7 @@ int decrypt(char input [])
 
                         uint32_t adress=strtol(word,NULL,0);
                         adress-=adress % 4;
-                        if(adress>=textStart && adress<end) { //                             Test de seg .text
+                        if((adress>=textStart && adress<textEnd) || (adress>=libcTextStart && adress<libcTextEnd)) { //                             Test de seg .text
                             if(empty(present(adress,breaklist))) breaklist=insert(adress,breaklist); //Si le point n'existe pas, on le rajoute
                         } else {
                             WARNING_MSG("Adress 0x%8.8X can't be breakpoint, segment not allowed",adress);

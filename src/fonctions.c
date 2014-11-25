@@ -896,9 +896,27 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
         }
     }
     if (segnumber==-1) {
-        return -1;
-    }
+        j=-1;
+        while ((int)j<=(int)libcsymtab.size && (int)segnumber<0) {
+            j++;
+            for (i = 0; i < memory->nseg; ++i)
+            {
+                //printf("i=%d,j=%d\n",i,j );
+                //printf("%d==%d,%s==%s\n",symtab.sym[j].scnidx,symtab.sym[symnb].scnidx,symtab.sym[j].name,memory->seg[i].name);
+                if(libcsymtab.sym[j].scnidx==libcsymtab.sym[symnb].scnidx && strcmp(libcsymtab.sym[j].name,memory->seg[i].name)==0) {
+                    segnumber=i;
+                    //printf("solved !\n");
+                    break;
+                }
+            }
 
+        }
+        if (segnumber==-1) {
+            return -1;
+        }
+        *addr=memory->seg[segnumber].start._32+libcsymtab.sym[symnb].addr._32;
+        return 0;
+    }
     *addr=memory->seg[segnumber].start._32+symtab.sym[symnb].addr._32;
     return 0;
 }

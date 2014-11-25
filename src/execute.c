@@ -770,7 +770,14 @@ int SUBU(instruction ins, int pipestep, int* tmp) {
 int SYSCALL(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case WB:
+        ;
+        int opcode=ins.value>>6;
+        if (verbose >1) {
+            printf("SysCall : opcode %X\n",opcode );
+        }
+        if (opcode!=0) reg_mips[2]=opcode;//v0
         return SysCall;
+
         break;
     }
     return OK;

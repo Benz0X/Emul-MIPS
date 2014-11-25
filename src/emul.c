@@ -26,6 +26,7 @@ int reg_mips[35];
 //init de la memoire
 mem memory=NULL;
 stab symtab;
+stab libcsymtab;
 
 //init du dictionnaire
 dico_info* dico_data=NULL;
@@ -34,8 +35,7 @@ dico_info* dico_data=NULL;
 
 
 #define LIBC_MEM_END 0xff7ff000u
-//#define PATH_TO_LIBC "include/libc/libc.so"
-#define PATH_TO_LIBC "Tests/relocation.o"
+#define PATH_TO_LIBC "include/libc/libc.so"
 
 // nombre max de sections que l'on extraira du fichier ELF
 #define NB_SECTIONS 4
@@ -223,9 +223,9 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
             //S=memory->seg[segnum].start._32+(*symtable).sym[sym].addr._32;//a verif
             //printf("sym=%d, symbtable size=%d\n", sym,(*symtable).size);
             if(addr_from_symnb(sym, (*symtable), memory,&S)==-1) {
-                WARNING_MSG("Couldn't resolve scndix correspondance");
-                break;
+                WARNING_MSG("Trying to resolve scndix correspondance in libcsymtab");
             }
+
             P=seg.start._32+offset;
             memRead(P,1,&A);
             //printf("Relocation type %s\n",MIPS32_REL[type] );
@@ -260,7 +260,7 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
                     AHL=(A<<16)+(short)(A2);
                     //printf("A2=%X short A2=%X\n",A2, (short)A2 );
                     //printf("AHL : %X\n",AHL );
-                    printf("Total=%X AHL+S=%X, (AHL+S)&0xFFFF=%X, diff=%X\n",((AHL+S-(short)(AHL+S))>>16),AHL+S,(AHL+S)&0xFFFF,AHL+S-(short)AHL+S) ;
+                    //printf("Total=%X AHL+S=%X, (AHL+S)&0xFFFF=%X, diff=%X\n",((AHL+S-(short)(AHL+S))>>16),AHL+S,(AHL+S)&0xFFFF,AHL+S-(short)AHL+S) ;
                     V=(A & 0xFFFF0000)|(  ((AHL+S-(short)(AHL+S))>>16)   &0xFFFF);
 
                     //printf("V= %X,S=%X,A=%X,A2=%X,P=%X,P2=%X, AHL=%X\n",V,S,A,A2,P,P2,AHL);
@@ -487,6 +487,8 @@ int loadELF (char* name,int nbparam,...) {
     // et des symboles
     elf_load_symtab(pf_elf, bus_width, endianness, &symtab);
     elf_load_symtab(pf_libc, bus_width, endianness, &symtab_libc);
+    elf_load_symtab(pf_libc, bus_width, endianness, &libcsymtab);
+
 
     nsegments = get_nsegments(symtab,section_names,NB_SECTIONS);
     nsegments += get_nsegments(symtab_libc,section_names,NB_SECTIONS);

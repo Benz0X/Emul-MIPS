@@ -15,13 +15,19 @@ int disasm(uint32_t start_addr,uint32_t size) {
     uint32_t current_addr=start_addr;
     instruction current_instr;
     uint32_t instr_value;
-    int text_ident;
+    int text_ident,libctext_ident;
     int seg,k;
 
     //get .text scnidx in order to show only .text label
     for (k = 1; k < symtab.size; ++k) {
         if(!strcmp(symtab.sym[k].name,".text")) {
             text_ident=symtab.sym[k].scnidx;
+            break;
+        }
+    }
+    for (k = 1; k < libcsymtab.size; ++k) {
+        if(!strcmp(libcsymtab.sym[k].name,".text")) {
+            libctext_ident=libcsymtab.sym[k].scnidx;
             break;
         }
     }
@@ -70,16 +76,24 @@ int disasm(uint32_t start_addr,uint32_t size) {
                 //dico_data[dico_entry].exec(current_instr);
 
 
-                //affichage des étiquettes en début de ligne
+                //affichage des étiquettes en début de ligne dans .text
                 for (k = 1; k < symtab.size; ++k)
                 {
-                    if(((current_addr-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident)) {
+                    if(((current_addr-memory->seg[seg].start._32)==symtab.sym[k].addr._32) && (symtab.sym[k].type != section) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,".text")==0) && ((symtab.sym[k].scnidx == text_ident) ) ) {
                         //printf("curr-start= %d size : %d %s\n", current_addr-memory->seg[seg].start._32,symtab.sym[k].size,symtab.sym[k].name);
                         printf("%s: ",symtab.sym[k].name);
                         break;
                     }
                 }
-
+                //affichage des étiquettes en début de ligne dans libc.text
+                for (k = 1; k < libcsymtab.size; ++k)
+                {
+                    //printf("libcsymtab scnidx=%d, libc.textident=%d\n",libcsymtab.sym[k].scnidx,libctext_ident);
+                    if(((current_addr-memory->seg[seg].start._32)==libcsymtab.sym[k].addr._32) && (libcsymtab.sym[k].type != section) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,"libc.text")==0) && ((libcsymtab.sym[k].scnidx == libctext_ident)) ) {
+                        printf("%s: ",libcsymtab.sym[k].name);
+                        break;
+                    }
+                }
 
                 printf("%s",dico_data[dico_entry].name );
             }
@@ -214,8 +228,14 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         printf(" %s, %s, %d",regname1,regname2,4*current_instr.i.immediate);
 
                         for (k = 1; k < symtab.size; ++k) {
-                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,".text")==0)) {
                                 printf(" <%s>",symtab.sym[k].name);
+                                break;
+                            }
+                        }
+                        for (k = 1; k < libcsymtab.size; ++k) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==libcsymtab.sym[k].addr._32)&&(libcsymtab.sym[k].type != section)&& (libcsymtab.sym[k].scnidx == libctext_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,"libc.text")==0)) {
+                                printf(" <%s>",libcsymtab.sym[k].name);
                                 break;
                             }
                         }
@@ -244,8 +264,14 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         printf(" %s, %d",regname1,4*current_instr.i.immediate);
 
                         for (k = 1; k < symtab.size; ++k) {
-                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident)) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,".text")==0) ) {
                                 printf(" <%s>",symtab.sym[k].name);
+                                break;
+                            }
+                        }
+                        for (k = 1; k < libcsymtab.size; ++k) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==libcsymtab.sym[k].addr._32)&&(libcsymtab.sym[k].type != section)&& (libcsymtab.sym[k].scnidx == text_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,"libc.text")==0) ) {
+                                printf(" <%s>",libcsymtab.sym[k].name);
                                 break;
                             }
                         }
@@ -282,51 +308,52 @@ int disasm(uint32_t start_addr,uint32_t size) {
 
 
                     printf(" 0x%4.8X",((current_addr & 0xF0000000) | 4*current_instr.j.target));
-
-
+                    int32_t temp=((current_addr & 0xF0000000) | 4*current_instr.j.target);
                     for (k = 1; k < symtab.size; ++k) {
-                        if((((current_addr & 0xF0000000) | 4*current_instr.j.target-textStart) == symtab.sym[k].addr._32) && (symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident)) {
+                        if(((temp-textStart) == symtab.sym[k].addr._32) && (symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,".text")==0) ) {
                             printf(" <%s>",symtab.sym[k].name);
                             break;
                         }
+                    }
 
-
-
-                        //To search label in other section than .text : (LW?)
-                        /*
-                        //find in which mem segment we are and get the section name
-                        for (k=0; k<memory->nseg; ++k)
-                        {
-                        if((current_addr>memory->seg[k].start._32) && current_addr > memory->seg[k].start._32+memory->seg[k].size._32);
-                        break;
-                        }
-                        //get the scnidx from the section if valid section
-                        if(k<memory->nseg-1){
-                        int scni;
-                        for (scni = 0; scni < symtab.size; ++scni)
-                        {
-                            if(strcmp(memory->seg[k].name,symtab.sym[scni].name)==0){
-                                scni=symtab.sym[scni].scnidx;
-                                break;
-                            }
-                        }
-                        //print the label
-                        int counter;
-                        for (counter = 1; counter < symtab.size; ++counter) {
-                        if(((4*current_instr.j.target-memory->seg[k].start._32)==symtab.sym[counter].addr._32) && (symtab.sym[counter].scnidx == scni)) {
-                            printf(" <%s>",symtab.sym[counter].name);
+                    for (k = 1; k < libcsymtab.size; ++k) {
+                        //printf("\nsymb adress : %d, total=%X,addr=%X",libcsymtab.sym[k].addr._32,((current_addr & 0xF0000000) | 4*current_instr.j.target-libcTextStart),((current_addr & 0xF0000000) | 4*current_instr.j.target));
+                        //printf("addr %X\n",libcTextStart);
+                        if(((temp - libcTextStart) == libcsymtab.sym[k].addr._32) && (libcsymtab.sym[k].type != section) && (libcsymtab.sym[k].scnidx == text_ident)&& ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,"libc.text")==0)) {
+                            printf(" <%s>",libcsymtab.sym[k].name);
                             break;
                         }
+                    }
 
+
+                    //To search label in other section than .text : (LW?)
+                    /*
+                    //find in which mem segment we are and get the section name
+                    for (k=0; k<memory->nseg; ++k)
+                    {
+                    if((current_addr>memory->seg[k].start._32) && current_addr > memory->seg[k].start._32+memory->seg[k].size._32);
+                    break;
+                    }
+                    //get the scnidx from the section if valid section
+                    if(k<memory->nseg-1){
+                    int scni;
+                    for (scni = 0; scni < symtab.size; ++scni)
+                    {
+                        if(strcmp(memory->seg[k].name,symtab.sym[scni].name)==0){
+                            scni=symtab.sym[scni].scnidx;
+                            break;
                         }
-                        */
-
-
-
-
-
+                    }
+                    //print the label
+                    int counter;
+                    for (counter = 1; counter < symtab.size; ++counter) {
+                    if(((4*current_instr.j.target-memory->seg[k].start._32)==symtab.sym[counter].addr._32) && (symtab.sym[counter].scnidx == scni)) {
+                        printf(" <%s>",symtab.sym[counter].name);
+                        break;
+                    }
 
                     }
+                    */
                 }
                 else {
                     WARNING_MSG("Unknown J command");

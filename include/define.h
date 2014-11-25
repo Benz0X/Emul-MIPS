@@ -96,6 +96,7 @@ extern int scriptmode;                  //allow easy switch between interactive 
 extern int32_t reg_mips[NBREG+3];       //All mips registers
 extern mem memory;                      //Virtual machine memory
 extern stab symtab;                     //loaded ELF symtab
+extern stab libcsymtab;
 
 extern uint32_t textStart;              //Debut du segment .text
 extern uint32_t textEnd;                //Fin du segment .text
