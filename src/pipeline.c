@@ -67,6 +67,10 @@ int exceptionHandler(exception number) {
             INFO_MSG("Syscall : %d",reg_mips[2]);
         }
         switch (reg_mips[2]) { //v0
+        case 0:
+            INFO_MSG("Exit called by program");
+            return quit;
+            break;
         case 1:
             printf("%d\n",reg_mips[4]); //a0
             break;
