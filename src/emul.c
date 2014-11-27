@@ -436,9 +436,9 @@ void print_segment_raw_content(segment* seg) {      //Affiche un segment donne
 
 int loadELF (char* name,int mode,uint32_t addr) {
     if(mode==1) {
-        printf("loading at adress :");
+        //printf("loading at adress :");
         textStart = addr;
-        printf("%X\n", textStart);
+        //printf("%X\n", textStart);
     }
     else {
         textStart=DEFAULT_S_ADDR;

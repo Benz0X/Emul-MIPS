@@ -94,7 +94,7 @@ void printList(list L) {
 
 list freeList(list L)
 {
-    printList(L);
+    //printList(L);
     void * freed;
     if (L==NULL)return NULL;
     while (L)
