@@ -364,8 +364,8 @@ int JALR(instruction ins, int pipestep, int* tmp) {     //NOTE : RD SHOULDN'T BE
         break;
 
     case MEM:
-        if(verbose>1) printf("JALR to %X\n",((reg_mips[PC] & 0xF0000000) | 4*reg_mips[ins.r.rs]));
-        reg_mips[PC]= ((reg_mips[PC] & 0xF0000000) | 4*reg_mips[ins.r.rs]);    //-8 ?
+        if(verbose>1) printf("JALR to %X\n",(reg_mips[ins.r.rs]));
+        reg_mips[PC]= (reg_mips[ins.r.rs]);    //-8 ?
         break;
     }
 
@@ -453,7 +453,7 @@ int LW(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
-        if(verbose>1) printf("LW: put %d in %X \n",(uint32_t)*tmp,ins.i.rt );
+        if(verbose>1) printf("LW: put %d in %d \n",(uint32_t)*tmp,ins.i.rt );
         writeRegindex(ins.i.rt,(uint32_t)*tmp);
         break;
     }
