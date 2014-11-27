@@ -434,12 +434,11 @@ void print_segment_raw_content(segment* seg) {      //Affiche un segment donne
 }
 
 
-int loadELF (char* name,int nbparam,...) {
-    va_list ap;
-    va_start(ap, nbparam);
-    if(nbparam>1) {
-        va_arg(ap, uint32_t); //dirty
-        textStart = va_arg(ap, uint32_t);
+int loadELF (char* name,int mode,uint32_t addr) {
+    if(mode==1) {
+        printf("loading at adress :");
+        textStart = addr;
+        printf("%X\n", textStart);
     }
     else {
         textStart=DEFAULT_S_ADDR;
@@ -448,7 +447,6 @@ int loadELF (char* name,int nbparam,...) {
         textStart = textStart+0x1000-textStart%0x1000;
     }
 
-    va_end(ap);
 
     char* section_names[NB_SECTIONS]= {TEXT_SECTION_STR,RODATA_SECTION_STR,DATA_SECTION_STR,BSS_SECTION_STR};
     unsigned int segment_permissions[NB_SECTIONS]= {R_X,R__,RW_,RW_};
@@ -572,7 +570,7 @@ int loadELF (char* name,int nbparam,...) {
             libcTextEnd=memory->seg[k].start._32+memory->seg[k].size._32;
         }
     }
-    if(verbose>4)INFO_MSG("Segments rx : %8.8X-%8.8X et %8.8X-%8.8X",textStart,textEnd,libcTextStart,libcTextEnd );
+    if(verbose>4)INFO_MSG("Segments R_X : %8.8X-%8.8X et %8.8X-%8.8X",textStart,textEnd,libcTextStart,libcTextEnd );
 
 
     //Initialisation de l'emulateur en vu d'un run

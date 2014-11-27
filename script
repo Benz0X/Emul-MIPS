@@ -1,4 +1,2 @@
-load Tests/programmes/hello.o
-disasm 0x3000+3000
-#disasm 0xff7fe000+3000
+load Tests/programmes/hello.o 0xff7e0000
 debug

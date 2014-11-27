@@ -882,44 +882,46 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
     int segnumber=-1;
     int i,j=-1;
     //printf(" segnumber=%d,j=%d,symtab.size=%d\n",segnumber,j,symtab.size );
-    while ((int)j<=(int)symtab.size && (int)segnumber<0) {
-        j++;
-        for (i = 0; i < memory->nseg; ++i)
-        {
-            //printf("i=%d,j=%d\n",i,j );
-            //printf("%d==%d,%s==%s\n",symtab.sym[j].scnidx,symtab.sym[symnb].scnidx,symtab.sym[j].name,memory->seg[i].name);
-            if(symtab.sym[j].scnidx==symtab.sym[symnb].scnidx && strcmp(symtab.sym[j].name,memory->seg[i].name)==0) {
-                segnumber=i;
-                //printf("solved !\n");
-                break;
-            }
-        }
-    }
-    if (segnumber==-1) {
-        printf("search in libc\n");
-        j=-1;
-        while ((int)j<=(int)libcsymtab.size && (int)segnumber<0) {
+    if(symtab.sym[symnb].scnidx!=0){
+        while ((int)j<=(int)symtab.size && (int)segnumber<0) {
             j++;
             for (i = 0; i < memory->nseg; ++i)
             {
                 //printf("i=%d,j=%d\n",i,j );
                 //printf("%d==%d,%s==%s\n",symtab.sym[j].scnidx,symtab.sym[symnb].scnidx,symtab.sym[j].name,memory->seg[i].name);
-                if(libcsymtab.sym[j].scnidx==symtab.sym[symnb].scnidx && strcmp(libcsymtab.sym[j].name,memory->seg[i].name)==0) {
+                if(symtab.sym[j].scnidx==symtab.sym[symnb].scnidx && strcmp(symtab.sym[j].name,memory->seg[i].name)==0) {
                     segnumber=i;
                     //printf("solved !\n");
                     break;
                 }
             }
+        }
+    }
+    else{
+        printf("search in libc\n");
+        j=-1;
+        while ((int)j<=(int)libcsymtab.size && (int)segnumber<0) {
+            j++;
+            //for (i = 0; i < memory->nseg; ++i)
+            //{
+                //printf("i=%d,j=%d\n",i,j );
+                //printf("%d==%d,%s==%s\n",symtab.sym[j].scnidx,symtab.sym[symnb].scnidx,symtab.sym[j].name,memory->seg[i].name);
+                if(strcmp(libcsymtab.sym[j].name,symtab.sym[symnb].name)==0) {
+                    //get the memory segment
+                    segnumber=0;//dirty, it's libc.text
+                    break;
+                }
+            //}
 
         }
         if (segnumber==-1) {
             return -1;
         }
-        printf("segnumber %d\n",segnumber);
-        *addr=memory->seg[segnumber].start._32+libcsymtab.sym[symnb].addr._32;
+        //printf("segnumber %d\n",segnumber);
+        *addr=memory->seg[segnumber].start._32+libcsymtab.sym[j].addr._32;
         return 0;
     }
-    printf("segnumber %d\n",segnumber);
+    //printf("segnumber %d\n",segnumber);
 
     *addr=memory->seg[segnumber].start._32+symtab.sym[symnb].addr._32;
     return 0;

@@ -576,7 +576,7 @@ int SW(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
         *tmp=reg_mips[ins.i.rs]+sign_extend(ins.i.immediate); //GPR[base]+sign_extend(offset)
-        printf("tmp=%X, ins.i.rs=%X imm=%X\n",*tmp,reg_mips[ins.i.rs],sign_extend(ins.i.immediate) );
+        //printf("tmp=%X, ins.i.rs=%X imm=%X\n",*tmp,reg_mips[ins.i.rs],sign_extend(ins.i.immediate) );
         break;
 
     case MEM:

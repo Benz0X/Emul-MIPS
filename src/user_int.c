@@ -38,7 +38,7 @@ int decrypt(char input [])
             strcpy(filename,word);
             if(!nextword(&word,input,&n)) { //Si il n'y a pas d'autre argument, on loadElf
                 //INFO_MSG("Chargement du fichier '%s'",filename); Déplacé dans loadELF
-                return loadELF(filename,1);
+                return loadELF(filename,0,0);
             } else {
                 if(isHexa(word)==0) {
                     WARNING_MSG("Adress must be hexadecimal");
@@ -46,7 +46,7 @@ int decrypt(char input [])
                 } else {        //Sinon si l'arguement suivant est une adresse hexa, on charge à cette adresse.
                     textStart = strtol(word,NULL,16);
                     INFO_MSG("Loading file '%s' at '0x%8.8X'(closest 1 ko multiple adress)",filename,textStart);
-                    return loadELF(filename,textStart,2);
+                    return loadELF(filename,1,textStart);
                 }
             }
         }
@@ -82,6 +82,14 @@ int decrypt(char input [])
                         }
                         INFO_MSG("Displaying symtab");
                         stab32_print(symtab);
+                        return 0;
+                    }else if(strcmp(word,"libsymtab")==0) {
+                        if(memory==NULL) {
+                            WARNING_MSG("No memory loaded");
+                            return -1;
+                        }
+                        INFO_MSG("Displaying libsymtab");
+                        stab32_print(libcsymtab);
                         return 0;
                     } else if(what_type(word)>1) {  //il faudrait vérifier qu'il est <0 et prendre en compte le décimal pour
                         //coller au cahier des charges mais faudrait utiliser un uint64

@@ -46,7 +46,7 @@ int mainTest(int argc, char *argv[])    //This main is only for tests purpose wh
     }
 
     readDico(DICONAME); //diconame dans define.h
-    loadELF("Tests/programmes/test.o",1);
+    loadELF("Tests/programmes/test.o",0,0);
     /*
         WARNING_MSG("print mem");
         print_mem(memory);
