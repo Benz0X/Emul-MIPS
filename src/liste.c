@@ -33,12 +33,15 @@ list pop(list L) {
 list insert(element e, list L) {
 
     list k=L; //parcours de L
+    
+    list p=(list) calloc(1,sizeof(*p)); //nouveau maillon
+    if (p==NULL){free(p); return NULL;}
 
     if(empty(k)||e<k->val) {
         return push(e,L);
     }
-    list p=(list) calloc(1,sizeof(*p)); //nouveau maillon
-    if (p==NULL) return NULL;
+    
+
 
     for(k=L; !empty(k->suiv)&&(e>k->suiv->val); k=k->suiv);
     p->val=e;
@@ -91,6 +94,7 @@ void printList(list L) {
 
 list freeList(list L)
 {
+    printList(L);
     void * freed;
     if (L==NULL)return NULL;
     while (L)

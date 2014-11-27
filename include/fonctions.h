@@ -28,6 +28,8 @@ void initprog();											//Initialise les registres et le pipeline en début d
 int pipecpy(pipeblock* A, pipeblock B);						//Copy a pipeblock in another
 int addNOP(pipeblock * block);								//Replace the instruction in a pipeblock with a addNOP
 int isBranch(int dico_entry);								//return 0 if dico_entry is a branch, else 1 or -1
+int isBeqBne(int dico_entry);								//return 0 if dico entry is BNE or BEQ (two arguments branch)
+
 list listWritedReg(instruction ins, int dico_entry);		//extract writed register from an instruction
 list listReadedReg(instruction ins, int dico_entry);		//extract read registers from an instruction
 

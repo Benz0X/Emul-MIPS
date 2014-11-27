@@ -783,6 +783,10 @@ int isBranch(int dico_entry) {
     return (strcmp(dico_data[dico_entry].name,"BEQ")*strcmp(dico_data[dico_entry].name,"BGEZ")*strcmp(dico_data[dico_entry].name,"BGTZ")*strcmp(dico_data[dico_entry].name,"BLEZ")*strcmp(dico_data[dico_entry].name,"BLTZ")*strcmp(dico_data[dico_entry].name,"BNE"));
 }
 
+int isBeqBne(int dico_entry) {
+    return (strcmp(dico_data[dico_entry].name,"BEQ")*strcmp(dico_data[dico_entry].name,"BNE"));
+}
+
 list listReadedReg(instruction ins, int dico_entry) {
     list L=NULL;
     if(ins.value==-1) {
@@ -799,16 +803,16 @@ list listReadedReg(instruction ins, int dico_entry) {
         break;
 
     case 1: //I type (il faut separer les branchs, qui n'ont pas le meme comportement)
-        if(isBranch(dico_entry)==0) { //Si c'est une branch on lit les deux
-            if(ins.r.rs!=0) {
-                L=insert(ins.r.rs,L);
+        if(isBeqBne(dico_entry)==0) { //Si c'est une branch on lit les deux
+            if(ins.i.rs!=0) {
+                L=insert(ins.i.rs,L);
             }
-            if(ins.r.rt!=0) {
-                L=insert(ins.r.rt,L);
+            if(ins.i.rt!=0) {
+                L=insert(ins.i.rt,L);
             }
         } else {                     //Sinon uniquement rs
-            if(ins.r.rs!=0) {
-                L=insert(ins.r.rs,L);
+            if(ins.i.rs!=0) {
+                L=insert(ins.i.rs,L);
             }
         }
 
@@ -836,8 +840,8 @@ list listWritedReg(instruction ins, int dico_entry) {
 
     case 1: //I type (il faut separer les branchs, qui n'ont pas le meme comportement)
         if(isBranch(dico_entry)!=0) { //Si ce n'est pas une branch, on write rt
-            if(ins.r.rt!=0) {
-                L=insert(ins.r.rt,L);
+            if(ins.i.rt!=0) {
+                L=insert(ins.i.rt,L);
             }
         }
         break;

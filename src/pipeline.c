@@ -333,7 +333,9 @@ int pipeiter(state running) {
         }
         stall=1;    //Alors un stall est necéssaire
     }
+    printf("free L1 : ");
     freeList(L1);
+    printf("free L2 : ");
     freeList(L2);   //Liberation memoire
 
 
