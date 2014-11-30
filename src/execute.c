@@ -775,7 +775,7 @@ int SYSCALL(instruction ins, int pipestep, int* tmp) {
         if (verbose >1) {
             printf("SysCall : opcode %X\n",opcode );
         }
-        if (opcode!=0) reg_mips[2]=opcode;//v0
+        if (/*opcode!=0*/ SYSCALL_LIBC) reg_mips[2]=opcode;//v0
         return SysCall;
 
         break;

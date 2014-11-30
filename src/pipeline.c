@@ -71,8 +71,15 @@ int exceptionHandler(exception number) {
             INFO_MSG("Exit called by program");
             return quit;
             break;
-        case 1:
-            printf("%d\n",reg_mips[4]); //a0
+        
+            case 1://putchar
+            putchar(reg_mips[4]);
+            fflush(stdout);
+        //case 1:                                   //disp integer
+            //printf("%d\n",reg_mips[4]); //a0
+            break;
+            case 2:
+            reg_mips[4]=getchar();
             break;
         case 4:
             ;
@@ -365,7 +372,7 @@ int pipeiter(state running) {
 //Temporisation
     if(clocktime!=0) {      //Si la clock est fixée
         tick=clock()-tick;
-        if(verbose>0) {
+        if(verbose>4) {
             printf("Time spent: %g us\t", (double)tick/CLOCKS_PER_SEC*1000);
             printf("Waiting %g us\n", (double)(clocktime-tick/CLOCKS_PER_SEC*1000));
         }

@@ -325,6 +325,7 @@ int memRead(uint32_t start_addr,int type, int* value) {             //Lit la mem
         WARNING_MSG("No memory loaded");
         return -1;
     }
+    //if(start_addr>=0x4000 && start_addr<0x5000){printf("LECTURE DE RODATA\n");}
     int seg=get_seg_from_adress(start_addr,memory);
 //printf("%d, current addr = 0x%X, start addr = 0x%X, size = %d",j,start_addr,memory->seg[j-1].start._32,memory->seg[j-1].size._32);
     if(type==0) { //type 0 pour byte
@@ -347,6 +348,7 @@ int memRead(uint32_t start_addr,int type, int* value) {             //Lit la mem
             memcpy(value,&temp,4);
         }
         else {
+      //      printf("FAIL, %X \n", start_addr);
             return -1;
         }
     }

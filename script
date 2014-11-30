@@ -1,3 +1,2 @@
-load Tests/programmes/hello.o 0xff7e0000
-run
+load Tests/programmes/test_printf.o
 debug

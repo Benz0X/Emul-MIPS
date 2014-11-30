@@ -902,7 +902,7 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
         }
     }
     else{
-        if(verbose>0) printf("Trying to get symbol in libc");
+        if(verbose>0) printf("Trying to get symbol in libc\n");
         j=-1;
         while ((int)j<=(int)libcsymtab.size && (int)segnumber<0) {
             j++;

@@ -7,6 +7,9 @@
 
 
 //Defines :
+
+#define SYSCALL_LIBC 1                  //1 for LIBC, 0 for doc
+
 #define INPUT_SIZE 1024                 //Maximum size of an input string
 #define PROMPT_STRING "EmulMips : > "
 #define DEFAULT_S_ADDR 0x3000
