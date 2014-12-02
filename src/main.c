@@ -1,12 +1,30 @@
 #include "define.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include "fonctions.h"
 #include "liste.h"
 #include "common/notify.h"
 #include "emul.h"
 #include "user_int.h"
 #include "elf/syms.h"
+#include <SDL/SDL.h>
+#include <SDL_ttf.h>
+#include <SDL_image.h>
+#include <SDL_draw.h>
+#include <SDL_phelma.h>
+
+#include "textedition.h"
+
+
+#include "affichage.h"
+
+
+
+
+
+
 
 //Declaration des variables globales
 int scriptmode;                     //0 for interactive mode, 1 for script mode
@@ -28,87 +46,11 @@ pipeblock vpipeline[5];             //Structure de pipeline : 5 block -> IF, ID,
 
 
 
-
-
-
-
-
-
-
-
-int mainTest(int argc, char *argv[])    //This main is only for tests purpose when we need it
+int mainold(int argc, char *argv[])
 {
 
-    int i;
+    readDico(DICONAME);
 
-    for (i=0; i < NBREG+3; ++i)
-    {
-        reg_mips[i]=-i;             //Initialisation des registres pour debug avant load
-    }
-
-    readDico(DICONAME); //diconame dans define.h
-    loadELF("Tests/programmes/test.o",0,0);
-    /*
-        WARNING_MSG("print mem");
-        print_mem(memory);
-        WARNING_MSG("stab32_print");*/
-    stab32_print(symtab);
-    //WARNING_MSG("sym32_print");
-    //sym32_print(symtab);*/
-    /*for (i = 0; i < nbinstr; ++i)
-    {
-        printf("%s %X\n",dico_data[i].name,dico_data[i].mask );
-    }*/
-    /*
-    instruction current_instr;
-    getInstr(0x3000,&current_instr);
-    printf("R type : %X %X %X %X %X %X\nI type : %X %X %X %X\n",current_instr.r.opcode,current_instr.r.rs,current_instr.r.rt,current_instr.r.rd,current_instr.r.sa,current_instr.r.function,current_instr.i.opcode,current_instr.i.rs,current_instr.i.rt,current_instr.i.immediate );
-    getInstr(0x3008,&current_instr);
-    printf("R type : %X %X %X %X %X %X\nI type : %X %X %X %X\n",current_instr.r.opcode,current_instr.r.rs,current_instr.r.rt,current_instr.r.rd,current_instr.r.sa,current_instr.r.function,current_instr.i.opcode,current_instr.i.rs,current_instr.i.rt,current_instr.i.immediate );
-    */
-    /*for (i = 0; i < 10; ++i)
-    {
-        printf("%s %X %X %d %d %s \n ",dico_data[i].name,dico_data[i].mask,dico_data[i].instr,dico_data[i].type,dico_data[i].nb_arg,dico_data[i].argname[0]);
-    }
-    */
-
-
-
-    /*
-    //test stuff
-        int i;
-
-        for (i=0; i < 32; ++i)
-        {
-            reg_mips[i]=-i;
-        }
-                char  string[200];
-                int regwrite;
-                int index; //test reg
-        while(1){
-            scanf("%s",string);
-            readReg(string, &i);
-            printf("input : %s reg value :%d \n Write ?\n", string,i);
-
-            scanf("%s %d",string, &regwrite);
-
-            index=writeReg(string,regwrite);
-            printf("input: %s reg value: %d\n  index : %d Read ?\n",string,reg_mips[index],index);
-        }
-    */
-
-    /*
-    //Tests liste
-      liste L=NULL;
-      ajout_tete((element)4,L);
-      ajout_tete((element)5,L);
-      //ajout_tete(6,L);
-      //ajout_tete(10,L);
-      visualiser(L);
-      //ajout_tri(7,L);
-      //visualiser(L);
-
-    */
 
     FILE *script_file = NULL;
     scriptmode=0;                       //Mode interactif par defaut
@@ -134,7 +76,7 @@ int mainTest(int argc, char *argv[])    //This main is only for tests purpose wh
 
     while(1)                            //Boucle infinie de l'interpreteur
     {
-        char input[INPUT_SIZE];             //Buffer
+        char input[INPUT_SIZE];         //Input buffer
         int res=-1;                     //Resultat d'execution
         char normalized_input[INPUT_SIZE];
         input[0]='\0';
@@ -153,18 +95,20 @@ int mainTest(int argc, char *argv[])    //This main is only for tests purpose wh
             }
             else
             {
-                //printf("execution en mode interactif, entrez une commande \n");
-                getFromUser(input);                 //En mode interactif, on lit stdin
+                getFromUser(input);                 //Read stdin
             }
             string_standardise(input,normalized_input);     //On normalise l'entree - echappement, commentaires, etc
-            string_standardise(normalized_input,input);
+            string_standardise(normalized_input,input);     //Deux fois pour enlever les lignes avec uniquement des ' ' a cause des '\t' qui deviennent ' '.
+            //TODO : il est probablement possible de faire plus malin
         } while (input[0]=='\0'); //Jusqu'à une fin de chaine.
 
         //printf("'%s'\n",normalized_input );
-        res=decrypt(input);               //On execute la commande : cf user_int.c
+        res=decrypt(input);                                 //On execute la commande : cf user_int.c
 
 
-        switch(res) {   //
+
+
+        switch(res) {
         case 0:
             break;
         case 2:
@@ -188,7 +132,7 @@ int mainTest(int argc, char *argv[])    //This main is only for tests purpose wh
 
         if( scriptmode==1 && feof(script_file) ) {
             /* mode fichier, fin de fichier => sortie propre du programme */
-            DEBUG_MSG("FIN DE FICHIER");
+            DEBUG_MSG("END OF FILE");
             fclose( script_file );
             exit(0);
         }
@@ -196,7 +140,6 @@ int mainTest(int argc, char *argv[])    //This main is only for tests purpose wh
     }
     return 0;
 }
-
 
 
 

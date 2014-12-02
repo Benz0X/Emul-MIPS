@@ -395,14 +395,15 @@ int LB(instruction ins, int pipestep, int* tmp) {
         break;
 
     case MEM:
-        if(memRead(*tmp,0,tmp)!=0) {
+
+        if(memRead(*tmp,0,&vpipeline[MEM].tmp2)!=0) {
             return memFail;
         }
         break;
 
     case WB:
-        if(verbose>1) printf("LB: put %d in %d \n",sign_extend(*tmp),ins.i.rt );
-        writeRegindex(ins.i.rt,sign_extend(*tmp));
+        if(verbose>1) printf("LB: put %d in %d \n",sign_extend(vpipeline[WB].tmp2),ins.i.rt );
+        writeRegindex(ins.i.rt,sign_extend(vpipeline[WB].tmp2));
         break;
     }
 
@@ -416,14 +417,14 @@ int LBU(instruction ins, int pipestep, int* tmp) {
         break;
 
     case MEM:
-        if(memRead(*tmp,0,tmp)!=0) {
+        if(memRead(*tmp,0,&vpipeline[MEM].tmp2)!=0) {
             return memFail;
         }
         break;
 
     case WB:
-        if(verbose>1) printf("LBU: put %d in %d \n",(uint32_t)*tmp,ins.i.rt );
-        writeRegindex(ins.i.rt,(uint32_t)*tmp);
+        if(verbose>1) printf("LBU: put %d in %d \n",(uint32_t)vpipeline[WB].tmp2,ins.i.rt );
+        writeRegindex(ins.i.rt,(uint32_t)vpipeline[WB].tmp2);
         break;
     }
 
@@ -444,17 +445,19 @@ int LW(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
         *tmp=reg_mips[ins.i.rs]+sign_extend(ins.i.immediate); //GPR[base]+sign_extend(offset)
+        //printf("address : %X\n",*tmp );
         break;
 
     case MEM:
-        if(memRead(*tmp,1,tmp)!=0) {
+        if(memRead(*tmp,1,&vpipeline[MEM].tmp2)!=0) {
             return memFail;
         }
+        //printf("memread %X, tmp=%d \n",*tmp,temp);
         break;
 
     case WB:
-        if(verbose>1) printf("LW: put %d in %d \n",(uint32_t)*tmp,ins.i.rt );
-        writeRegindex(ins.i.rt,(uint32_t)*tmp);
+        if(verbose>1) printf("LW: put %d in %d \n",(uint32_t)vpipeline[MEM].tmp2,ins.i.rt );
+        writeRegindex(ins.i.rt,(uint32_t)vpipeline[WB].tmp2);
         break;
     }
 

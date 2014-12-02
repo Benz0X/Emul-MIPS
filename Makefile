@@ -1,5 +1,7 @@
 TARGET=projet
 
+
+
 # noms des executables utilisés durant la compilation/edition des liens
 CC=`which gcc`
 LD=`which gcc`
@@ -7,16 +9,25 @@ RM=`which rm` -f
 
 #options de compilation/edition des liens
 INCLUDE=-I$(INCDIR)
-CFLAGS=-Wall $(INCLUDE)
-LFLAGS=-lreadline -lm -lcurses
-CFLAGS_DBG=$(CFLAGS) -g -c -DVERBOSE
+
+SDL=-LSDL/lib -lSDLmain -lSDL -lSDL2 -lSDL_draw -lSDL_ttf
+SDL_PHELMA=-L$(SDLDIR)/lib -lSDLmain -lSDL -lSDL_ttf -lSDL_image -lSDL_phelma -lSDL_draw
+
+
+CFLAGS=-Wall $(INCLUDE) 
+LFLAGS_PHELMA=-lreadline -lm -lcurses $(SDL_PHELMA)
+LFLAGS_HOME=-lreadline -lm -lcurses $(SDL)
+CFLAGS_DBG=$(CFLAGS) -g -c -DVERBOSE -I$(SDLDIR)/include/SDL -I$(SDLDIR)/include
 CFLAGS_RLS=$(CFLAGS)
+
+
 
 
 # definition des repertoires de source/destination
 SRCDIR=src
 INCDIR=include
 DOCDIR=doc
+SDLDIR=/users/prog1a/C/librairie/2011
 
 # les fichiers dont on peut se débarasser
 GARBAGE=*~ $(SRCDIR)/*~ $(INCDIR)/*~ $(TESTDIR)/*~ $(SRCDIR)/*.orig $(INCDIR)/*.orig
@@ -42,10 +53,14 @@ all :
 	@echo "make tarball => produce archive .tar.gz in ../ directory"
 
 debug   : $(OBJ_DBG)
-	$(LD) $^ $(LFLAGS) -o $(TARGET)
+	$(LD) $^ $(LFLAGS_PHELMA) -o $(TARGET)
+
+debug2   : $(OBJ_DBG)
+	$(LD) $^ $(LFLAGS_HOME) -o $(TARGET)
 
 release : $(OBJ_RLS)
 	$(LD) $^ $(LFLAGS) -o $(TARGET)
+
 
 %.rls.o : %.c
 	$(CC) $< $(CFLAGS_RLS) -c -o $(basename $<).rls.o
