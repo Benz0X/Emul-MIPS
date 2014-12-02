@@ -734,6 +734,7 @@ int getInstr(uint32_t adress, instruction* instr_ptr) {
 void initprog() {
     INFO_MSG("Program initialisation");
 //Initialisation des Pipeblocks
+    nbcycle=0;
     vpipeline[IF].ins.value=-1;
     vpipeline[IF].dico_entry=-1;
     vpipeline[IF].step=IF;

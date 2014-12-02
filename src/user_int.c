@@ -170,8 +170,16 @@ int decrypt(char input [])
                 printf("\n");
                 return 0; //Affichage registre terminé
 
-            } else {
-                WARNING_MSG("First argument of 'disp' must be : \tmem    or reg");
+            } else if(strcmp(word,"clockcycle")==0) {
+                if (nextword(&word,input,&n)){
+                    WARNING_MSG("Too much arguments");
+                    return -1;
+                }
+                printf("Number of cycles since start of program : %d\n",nbcycle);
+                return 0;
+
+             }else {
+                WARNING_MSG("First argument of 'disp' must be : \tmem    or reg or clockcycle");
                 return -1;
             }
 

@@ -173,6 +173,7 @@ int execute(instruction insEX, pipestep EX, int dico_entry, int* tmp) {
 
 
 int pipeline(uint32_t end, state running, int affichage) {
+    nbcycle ++;
 //Initialisation des variables internes
     int flag[5];
     int stall=0;
@@ -312,6 +313,7 @@ int pipeline(uint32_t end, state running, int affichage) {
 }
 
 int pipeiter(state running) {
+    nbcycle ++;
 //Initialisation des variables internes
     int flag[5];
     int stall=0;
