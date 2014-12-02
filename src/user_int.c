@@ -12,6 +12,7 @@
 #include "common/bits.h"
 #include "pipeline.h"
 #include <ctype.h>
+#include "affichage.h"
 
 
 
@@ -718,6 +719,16 @@ int decrypt(char input [])
         return -1;
         break;
 
+
+    case WINDOW:         //Permet de regler la clock du MIPS
+        if(nextword(&word,input,&n) && isDecimal(word)) {
+        WARNING_MSG("Too much arguments");
+        return -1;}
+
+        affichage();
+        return 0;
+
+        break;
 
     case UNKNOWN:
         WARNING_MSG("Unknown command : %s",word);

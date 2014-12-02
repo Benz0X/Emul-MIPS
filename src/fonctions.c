@@ -60,6 +60,8 @@ command getCommand(char word[]) {
         return CLOCK;
     if (!strcmp(word,"verbose"))
         return VERB;
+    if (!strcmp(word,"window"))
+        return WINDOW;
     return UNKNOWN;
 }
 

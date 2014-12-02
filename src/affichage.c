@@ -265,6 +265,7 @@ It is common for the mouse cursor to change its shape when it hovers over a text
 	TE_DeleteTextEdition(&memoryte);
 	TE_DeleteTextEdition(&disasmte);
 
+	SDL_FreeSurface(title);
 	SDL_FreeSurface(ecran);
 	
 	TTF_Quit();

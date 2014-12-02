@@ -74,6 +74,7 @@ typedef enum {                          //Commandes de l'interpreteur
     BREAK,
     CLOCK,
     VERB,
+    WINDOW,
     UNKNOWN
 } command ;
 
