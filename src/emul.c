@@ -34,7 +34,7 @@ dico_info* dico_data=NULL;
 
 
 
-#define LIBC_MEM_END 0xff7ff000u
+#define LIBC_MEM_END 0xF000
 #define PATH_TO_LIBC "include/libc/libc.so"
 
 // nombre max de sections que l'on extraira du fichier ELF

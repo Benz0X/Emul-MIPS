@@ -40,6 +40,7 @@ list insert(element e, list L) {
     if (p==NULL){printf("NULL\n"); return NULL;}
 
     if(empty(k)||e<k->val) {
+        free(p);
         return push(e,L);
     }
     
