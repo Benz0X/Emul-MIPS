@@ -3,8 +3,13 @@
 #include <stdlib.h>
 
 #include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL_ttf.h>
+#include <SDL_image.h>
+#include <SDL_draw.h>
+#include <SDL_phelma.h>
+
 #include "textedition.h"
+
 
 #include "affichage.h"
 #include "common/notify.h"

@@ -115,7 +115,7 @@ extern short verbose;                   //Carry verbose value [0..5]
 extern pipeblock vpipeline[5];          //Virtual Pipeline
 extern uint32_t return_addr;            //Allow step to get back after a function call
 extern int clocktime;                   //Vitesse d'execution : 0 pour max
-
+extern uint nbcycle;                    //permet de compter le nombre de cycle d'un prog
 
 
 

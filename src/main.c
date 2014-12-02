@@ -21,6 +21,7 @@ uint32_t libcTextEnd=0;
 
 uint32_t return_addr;               //Utilisée pour break au bon moment de step
 short verbose=0;                    //Module l'affichage
+uint nbcycle=0;
 
 pipeblock vpipeline[5];             //Structure de pipeline : 5 block -> IF, ID, EX, MEM, WB
 

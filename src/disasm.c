@@ -49,6 +49,12 @@ int disasm(uint32_t start_addr,uint32_t size) {
             } else {
                 printf("\n\t");
             }
+            //affichage de PC
+            if(current_addr==reg_mips[PC]) {
+                printf("-> ");
+            } else {
+                printf("   ");
+            }
 
             //Afficahge de l'adresse
             printf("%X :: %8.8X	",current_addr,instr_value);
@@ -315,7 +321,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                             break;
                         }
                     }
-
+                    //affichage des étiquettes dans la libc
                     for (k = 1; k < libcsymtab.size; ++k) {
                         //printf("\nsymb adress : %d, total=%X,addr=%X",libcsymtab.sym[k].addr._32,((current_addr & 0xF0000000) | 4*current_instr.j.target-libcTextStart),((current_addr & 0xF0000000) | 4*current_instr.j.target));
                         //printf("addr %X\n",libcTextStart);
@@ -325,35 +331,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         }
                     }
 
-
-                    //To search label in other section than .text : (LW?)
-                    /*
-                    //find in which mem segment we are and get the section name
-                    for (k=0; k<memory->nseg; ++k)
-                    {
-                    if((current_addr>memory->seg[k].start._32) && current_addr > memory->seg[k].start._32+memory->seg[k].size._32);
-                    break;
-                    }
-                    //get the scnidx from the section if valid section
-                    if(k<memory->nseg-1){
-                    int scni;
-                    for (scni = 0; scni < symtab.size; ++scni)
-                    {
-                        if(strcmp(memory->seg[k].name,symtab.sym[scni].name)==0){
-                            scni=symtab.sym[scni].scnidx;
-                            break;
-                        }
-                    }
-                    //print the label
-                    int counter;
-                    for (counter = 1; counter < symtab.size; ++counter) {
-                    if(((4*current_instr.j.target-memory->seg[k].start._32)==symtab.sym[counter].addr._32) && (symtab.sym[counter].scnidx == scni)) {
-                        printf(" <%s>",symtab.sym[counter].name);
-                        break;
-                    }
-
-                    }
-                    */
+                    
                 }
                 else {
                     WARNING_MSG("Unknown J command");
