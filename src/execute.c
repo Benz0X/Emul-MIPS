@@ -715,7 +715,7 @@ int SLTIU(instruction ins, int pipestep, int* tmp) {
 int SLTU(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
-        if((uint32_t)reg_mips[ins.r.rs]>(uint32_t)reg_mips[ins.r.rt]) {
+        if((uint32_t)reg_mips[ins.r.rs]<(uint32_t)reg_mips[ins.r.rt]) {
             *tmp=1;
         }
         else {
