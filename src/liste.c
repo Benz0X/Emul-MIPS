@@ -16,7 +16,7 @@ list push(element e, list L) {
     if (p==NULL) return NULL;
     p->val=e;
     p->suiv=L;
-    //printf("allocated %p \n",p);
+    //printf("allocated push %p \n",p);
     return p;
 }
 
@@ -24,6 +24,7 @@ list pop(list L) {
     if (!empty(L)) {
         list p;
         p=L->suiv;
+        //printf("freed pop %p\n",L);
         free(L);
         return p;
     }
@@ -35,7 +36,8 @@ list insert(element e, list L) {
     list k=L; //parcours de L
     
     list p=(list) calloc(1,sizeof(*p)); //nouveau maillon
-    if (p==NULL){free(p); return NULL;}
+    //printf("allocated insert %p\n",p);
+    if (p==NULL){printf("NULL\n"); return NULL;}
 
     if(empty(k)||e<k->val) {
         return push(e,L);
@@ -47,7 +49,8 @@ list insert(element e, list L) {
     p->val=e;
     p->suiv=k->suiv;
     k->suiv=p;
-    free(p);
+    //printf("freed insert %p\n",p);
+    //free(p);
     return L;
 }
 
@@ -58,6 +61,7 @@ list del(element e, list L) {
 
     if(L->val==e) {
         p =L->suiv;
+        //printf("freed del %p\n",L);
         free(L);
         p=del(e,p);
         return p;
@@ -101,6 +105,7 @@ list freeList(list L)
     {
         freed = L;
         L = L->suiv;
+        //printf("freed freelist%p\n",freed);
         free(freed);
         //printf("freed %p\n",freed );
     }
