@@ -12,6 +12,9 @@
 
 
 #include "affichage.h"
+#include "define.h"
+#include "fonctions.h"
+#include "user_int.h"
 #include "common/notify.h"
 
 
@@ -25,41 +28,16 @@ int UpdateRect(SDL_Rect* rect, int x, int y, int w, int h){
 
 int affichage(){
 
-
-	char* string = "\
-Français (complet)\n\
-\n\
-En informatique, une zone de texte ou un champ de saisie (en anglais text box) est un élément de base des interfaces graphiques (un widget ou contrôle) qui permet de proposer à l'utilisateur d'entrer du texte, par exemple pour qu'il soit ensuite utilisé par un programme, ou envoyé à un site web dans le cas d'un formulaires de page Web.\n\
-Graphiquement une zone de texte ressemble à un rectangle de taille quelconque à l'intérieur duquel se trouve le texte saisi par l'utilisateur. Les bordures de la zone de texte sont en général bien mises en évidence par un effet de relief.\n\
-\n\
-On peut distinguer deux types de zones de texte :\n\
-    les zones de texte dans lesquelles on ne peut rentrer qu'une seule ligne de texte. Il s'agit par exemple des champs de recherche comme celui d'un moteur de recherche.\n\
-    les zones de texte dans lesquelles on peut rentrer un texte complet avec éventuellement des retours à la ligne. Celles-ci sont généralement équipées de barres de défilement lorsqu'elles ne sont pas assez grandes pour afficher tout le texte. Certaines d'entre elles, utilisées conjointement avec d'autres widgets,\n\
-    permettent même de mettre en forme le texte saisi, c'est-à-dire de le souligner, le mettre en gras, etc.\n\
-\n\
-Habituellement lorsque l'utilisateur passe le pointeur de sa souris au-dessus d'une zone de texte, celui-ci change de forme (il se transforme en une sorte de I majuscule) pour indiquer à l'utilisateur qu'il peut cliquer pour que la zone de texte obtienne le focus.\n\
-Si l'utilisateur effectue cette dernière opération, un curseur se met à clignoter pour lui indiquer l'endroit où le texte qu'il va éventuellement taper au clavier sera inséré.\n\
-\n\
-Les zones de texte sont le plus souvent vides lorsque l'utilisateur les découvre. Toutefois leur contenu peut être modifié par le programme. Cela peut permettre par exemple de remplir une zone de texte prévue pour permettre à l'utilisateur de répondre à une question dont la réponse est souvent la même.\n\
-Ceci lui évitera ainsi de la remplir et donc de gagner du temps.\n\
-Les zones de texte peuvent également être verrouillées en écriture pour empêcher les utilisateurs d'y écrire quoi que ce soit ou de modifier une réponse. Cette possibilité permet d'indiquer à l'utilisateur que sous certaines conditions, non remplies en l'occurrence, il pourrait modifier le texte du champs.\n\
-En général, il est possible d'effectuer des opérations de copier-coller dans les zones de texte.\n\
-\n\
-\n\
-English (short)\n\
-\n\
-A text box, text field or text entry box is a kind of widget used when building a graphical user interface (GUI). A text box's purpose is to allow the user to input text information to be used by the program.\n\
-User-interface guidelines recommend a single-line text box when only one line of input is required, and a multi-line text box only if more than one line of input may be required. Non-editable text boxes can serve the purpose of simply displaying text.\n\
-\n\
-A typical text box is a rectangle of any size, possibly with a border that separates the text box from the rest of the interface. Text boxes may contain zero, one, or two scrollbars. Text boxes usually display a text cursor (commonly a blinking vertical line), indicating the current region of text being edited.\n\
-It is common for the mouse cursor to change its shape when it hovers over a text box.";
-
 //////Init
 	if(SDL_Init (SDL_INIT_VIDEO)==-1){
 		WARNING_MSG("Impossible d'initialiser la SDL : %s\n",SDL_GetError());
 		return -1;
 	}
 	if(TTF_Init() == -1){
+	    WARNING_MSG("Impossible d'initialiser TTF_Init : %s\n", TTF_GetError());
+	    return -1;
+	}
+	if(TE_Init() == -1){
 	    WARNING_MSG("Impossible d'initialiser TTF_Init : %s\n", TTF_GetError());
 	    return -1;
 	}
@@ -72,7 +50,7 @@ It is common for the mouse cursor to change its shape when it hovers over a text
 	int WINDOW_W =DEFAULT_WINDOW_W;
 
 	ecran= SDL_SetVideoMode(WINDOW_W, WINDOW_H, 32, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE); //|SDL_RESIZABLE
-	
+	int test= SDL_EnableKeyRepeat(0*SDL_DEFAULT_REPEAT_DELAY/100, SDL_DEFAULT_REPEAT_INTERVAL/100);
 	if(ecran ==NULL){
 		WARNING_MSG("Impossible d'initialiser la fenetre graphique : %s",SDL_GetError());
 		return -1;
@@ -83,15 +61,19 @@ It is common for the mouse cursor to change its shape when it hovers over a text
 	int boucle = 1;
 	int layout = 0;
 	uint32_t tick;
-    TTF_Font *font; font=TTF_OpenFont("default.ttf", 12);
-    TTF_Font *titlefont; titlefont=TTF_OpenFont("default.ttf", 16);
-    TTF_SetFontStyle(titlefont, TTF_STYLE_BOLD|TTF_STYLE_UNDERLINE);
+    TTF_Font *font; font=TTF_OpenFont("UbuntuMono-R.ttf", 14);
+    TTF_Font *titlefont; titlefont=TTF_OpenFont("test.otf", 18);
+    TTF_SetFontStyle(titlefont, TTF_STYLE_BOLD/*|TTF_STYLE_UNDERLINE*/);
+    char input[INPUT_SIZE];
+    char normalized_input[INPUT_SIZE];
+    int res = 0;
 //////////    
 
 //////Colors
 	uint32_t white=SDL_MapRGB(ecran->format, 255,255,255);
 	uint32_t black=SDL_MapRGB(ecran->format, 0,0,0);
 	uint32_t grey=SDL_MapRGB(ecran->format, 70,70,70);
+	uint32_t softgrey=SDL_MapRGB(ecran->format, 150,150,150);
 
 	uint32_t red=SDL_MapRGB(ecran->format, 255,0,0);
 	uint32_t green=SDL_MapRGB(ecran->format, 0,255,0);
@@ -105,6 +87,9 @@ It is common for the mouse cursor to change its shape when it hovers over a text
 	//Layout
 	SDL_Rect box;
 
+	SDL_Rect pipelinetitle;
+	SDL_Rect pipelinetext;
+
 	SDL_Rect registertitle;
 	SDL_Rect registertext;
 	
@@ -114,60 +99,90 @@ It is common for the mouse cursor to change its shape when it hovers over a text
 	SDL_Rect disasmtitle;
 	SDL_Rect disasmtext;
 
+	SDL_Rect consoletitle;
+	SDL_Rect consoletext;
+
 	//Titles
 	SDL_Surface* title;
 
 	//TextEditions
+	TextEdition pipelinete;{ 
+		memset(&pipelinete, 0, sizeof(TextEdition));
+		pipelinete.blitStyle = TE_BLITSTYLE_BLENDED;
+	    pipelinete.colorBG = (SDL_Color){15,15,15,0};
+	    pipelinete.colorFGSelect = fontwhite;
+	}
 	TextEdition registerte;{ 
 		memset(&registerte, 0, sizeof(TextEdition));
 		registerte.blitStyle = TE_BLITSTYLE_BLENDED;
 	    registerte.colorBG = (SDL_Color){15,15,15,0};
+	    registerte.colorFGSelect = fontwhite;
 	}
 	TextEdition memoryte;{ 
 		memset(&memoryte, 0, sizeof(TextEdition));
 		memoryte.blitStyle = TE_BLITSTYLE_BLENDED;
 	    memoryte.colorBG = (SDL_Color){15,15,15,0};
+	    memoryte.colorFGSelect = fontwhite;
 	}
 	TextEdition disasmte;{ 
 		memset(&disasmte, 0, sizeof(TextEdition));
 		disasmte.blitStyle = TE_BLITSTYLE_BLENDED;
 	    disasmte.colorBG = (SDL_Color){15,15,15,0};
+	    disasmte.colorFGSelect = fontwhite;
+	} 
+	TextEdition consolete;{ 
+		memset(&consolete, 0, sizeof(TextEdition));
+		consolete.blitStyle = TE_BLITSTYLE_BLENDED;
+	    consolete.colorBG = (SDL_Color){15,15,15,0};
+	    consolete.colorFGSelect = fontwhite;
 	}  
 ///////////
 
 
-
-	//SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY/100, SDL_DEFAULT_REPEAT_INTERVAL/100);
+    
     while (boucle)
     {
     	tick = SDL_GetTicks();
 
     	if (layout==0){	//Initialisation or after a resize
     		//Layout
-		    UpdateRect(&box, WINDOW_W/100,WINDOW_H/100,WINDOW_W-WINDOW_W/50,WINDOW_H-WINDOW_H/50);
-			UpdateRect(&registertitle, box.x,box.y,box.w/2,TITLE_H);
-			UpdateRect(&registertext, box.x,box.y+TITLE_H,box.w/2,box.h/2-TITLE_H);
-			UpdateRect(&memorytitle, box.x,box.y+box.h/2,box.w/2,TITLE_H);
-			UpdateRect(&memorytext, box.x,memorytitle.y+TITLE_H,box.w/2,box.h/2-TITLE_H);
-			UpdateRect(&disasmtitle, box.x+box.w/2,box.y,box.w/2,TITLE_H);
-			UpdateRect(&disasmtext, box.x+box.w/2,box.y+TITLE_H,box.w/2,box.h-TITLE_H);
+		    UpdateRect(&box, OFFSET,30,WINDOW_W-2*OFFSET,WINDOW_H-30-OFFSET-TITLE_H-CONSOLE_H);
+
+		    UpdateRect(&pipelinetitle, box.x,box.y,box.w,TITLE_H);
+			UpdateRect(&pipelinetext, box.x,box.y+TITLE_H,box.w,(box.h*15/100)-TITLE_H);
+
+			UpdateRect(&registertitle, box.x,pipelinetext.y+pipelinetext.h+(box.h*1/100),box.w/2,TITLE_H);
+			UpdateRect(&registertext, box.x,registertitle.y+registertitle.h,box.w/2,(box.h*41/100)-TITLE_H);
+
+			UpdateRect(&memorytitle, box.x,registertext.y+registertext.h,box.w/2,TITLE_H);
+			UpdateRect(&memorytext, box.x,memorytitle.y+TITLE_H,box.w/2,(box.h*41/100)-TITLE_H);
+
+			UpdateRect(&disasmtitle, box.x+box.w/2,pipelinetext.y+pipelinetext.h+(box.h*1/100),box.w/2,TITLE_H);
+			UpdateRect(&disasmtext, box.x+box.w/2,disasmtitle.y+disasmtitle.h,box.w/2,(box.h*82/100)-TITLE_H-1);
+
+			UpdateRect(&consoletitle, box.x,WINDOW_H-TITLE_H-CONSOLE_H-5,box.w,TITLE_H);
+			UpdateRect(&consoletext, box.x,WINDOW_H-CONSOLE_H-5,box.w,CONSOLE_H);
 
 			//printf("box : %d, %d, %d, %d\n", box.x, box.y, box.w, box.h);
 			//printf("disasmtext : %d, %d, %d, %d\n", disasmtext.x, disasmtext.y, disasmtext.w, disasmtext.h);
 
-			//Title Rendering
-			/*
-*/
+
 
 			//Text Rendering
-   			TE_NewTextEdition(&registerte, 1000, registertext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY | TE_STYLE_AUTOJUMP );
-   			TE_SetEditionText(&registerte,string);
+			TE_NewTextEdition(&pipelinete, 1024, pipelinetext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY | TE_STYLE_AUTOJUMP );
+   			TE_SetEditionText(&pipelinete,"pipeline");
 
-   			TE_NewTextEdition(&memoryte, 5000, memorytext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_VSCROLL | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY | TE_STYLE_AUTOJUMP );
-   			TE_SetEditionText(&memoryte,string);   
+   			TE_NewTextEdition(&registerte, 1024, registertext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY | TE_STYLE_AUTOJUMP );
+   			TE_SetEditionText(&registerte,"register");
+
+   			TE_NewTextEdition(&memoryte, 4096, memorytext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_VSCROLL | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY | TE_STYLE_AUTOJUMP );
+   			TE_SetEditionText(&memoryte,"memory");   
   
-   			TE_NewTextEdition(&disasmte, 5000, disasmtext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_HSCROLL | TE_STYLE_VSCROLL | TE_STYLE_BLITRGBA /*| TE_STYLE_JUSTDISPLAY* | TE_STYLE_READONLY */| TE_STYLE_AUTOJUMP );
-   			TE_SetEditionText(&disasmte,string);   
+   			TE_NewTextEdition(&disasmte, 4096, disasmtext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_HSCROLL | TE_STYLE_VSCROLL | TE_STYLE_BLITRGBA /*| TE_STYLE_JUSTDISPLAY* | TE_STYLE_READONLY */| TE_STYLE_AUTOJUMP );
+   			TE_SetEditionText(&disasmte,"disasm");   
+
+   			TE_NewTextEdition(&consolete, 1024, consoletext, font, fontblack, TE_STYLE_HSCROLL | TE_STYLE_BLITRGBA );
+   			TE_SetEditionText(&consolete,"console");  
 
     		layout=1;
     	}
@@ -182,7 +197,7 @@ It is common for the mouse cursor to change its shape when it hovers over a text
 	        {
 	            case SDL_QUIT:
 	                boucle = 0;
-	                printf("QUIT\n");
+	                INFO_MSG("Window Closed");
 	            break;
 
 	            case SDL_KEYDOWN:
@@ -190,6 +205,22 @@ It is common for the mouse cursor to change its shape when it hovers over a text
 	            		case SDLK_ESCAPE:
 	            			boucle=0;
 	            			printf("QUIT\n");
+	            		break;
+
+	            		case SDLK_UP:
+	            			//printf("TEST\n");
+	            		break;
+
+	            		case SDLK_RETURN:
+	            		case SDLK_KP_ENTER:
+	            			strcpy(input,consolete.text);
+	            			TE_SetEditionText(&consolete,"");  
+
+
+	            			INFO_MSG("Console entry : %s", input);
+	            			string_standardise(input,normalized_input);     //On normalise l'entree - echappement, commentaires, etc
+           					string_standardise(normalized_input,input);
+           					res=decrypt(input);
 	            		break;
 
 	            		default:
@@ -216,31 +247,68 @@ It is common for the mouse cursor to change its shape when it hovers over a text
 	    }
 
 ///////////////Main
-        SDL_FillRect (ecran, NULL, grey);
+	    //Background
+        SDL_FillRect (ecran, NULL, softgrey);
+		
 
-		//Affichage du layout
-        SDL_FillRect (ecran, &registertitle, red);
+		//Rectangles
+		SDL_FillRect (ecran, &pipelinetitle, white);
+        SDL_FillRect (ecran, &pipelinetext, white);
+		SDL_FillRect (ecran, &registertitle, white);
         SDL_FillRect (ecran, &registertext, white);
-        SDL_FillRect (ecran, &memorytitle, red);
+        SDL_FillRect (ecran, &memorytitle, white);
         SDL_FillRect (ecran, &memorytext, white);
-        SDL_FillRect (ecran, &disasmtitle, red);
+        SDL_FillRect (ecran, &disasmtitle, white);
         SDL_FillRect (ecran, &disasmtext, white);
+        SDL_FillRect (ecran, &consoletitle, white);
+        SDL_FillRect (ecran, &consoletext, white);
 
-		title = TTF_RenderText_Blended(titlefont, "Registers : ", fontblack);
+                
+
+        //Lines
+		Draw_Rect (ecran, pipelinetitle.x, pipelinetitle.y, pipelinetitle.w-1, pipelinetitle.h-1, black);
+        Draw_Rect (ecran, pipelinetext.x, pipelinetext.y, pipelinetext.w-1, pipelinetext.h-1, black);
+		Draw_Rect (ecran, registertitle.x, registertitle.y, registertitle.w-1, registertitle.h-1, black);
+        Draw_Rect (ecran, registertext.x,registertext.y,registertext.w-1,registertext.h-1, black);
+        Draw_Rect (ecran, memorytitle.x, memorytitle.y, memorytitle.w-1, memorytitle.h-1, black);
+        Draw_Rect (ecran, memorytext.x,memorytext.y,memorytext.w-1,memorytext.h-1, black);
+        Draw_Rect (ecran, disasmtitle.x, disasmtitle.y, disasmtitle.w-1, disasmtitle.h-1, black);
+        Draw_Rect (ecran, disasmtext.x,disasmtext.y,disasmtext.w-1,disasmtext.h-1, black);
+        Draw_Rect (ecran, consoletitle.x, consoletitle.y, consoletitle.w-1, consoletitle.h-1, black);
+        Draw_Rect (ecran, consoletext.x,consoletext.y,consoletext.w-1,consoletext.h-1, black);
+
+        //Fill back blanks
+        Draw_Rect(ecran, pipelinetitle.x+1, pipelinetitle.y+pipelinetitle.h-2 ,pipelinetitle.w-3,2,white);
+        Draw_Rect(ecran, registertitle.x+1, registertitle.y+registertitle.h-2 ,registertitle.w-3,2,white);
+        Draw_Rect(ecran, disasmtitle.x+1, disasmtitle.y+disasmtitle.h-2 ,disasmtitle.w-3,2,white);
+        Draw_Rect(ecran, memorytitle.x+1, memorytitle.y+memorytitle.h-2 ,memorytitle.w-3,2,white);
+        Draw_Rect(ecran, consoletitle.x+1, consoletitle.y+consoletitle.h-2 ,consoletitle.w-3,2,white);
+
+        //Titles
+		title = TTF_RenderText_Blended(titlefont, " Pipeline State : ", fontblack);
+		SDL_BlitSurface(title, NULL, ecran, &pipelinetitle);
+		title = TTF_RenderText_Blended(titlefont, " Registers : ", fontblack);
 		SDL_BlitSurface(title, NULL, ecran, &registertitle);
-		title = TTF_RenderText_Blended(titlefont, "Memory : ", fontblack);
+		title = TTF_RenderText_Blended(titlefont, " Memory : ", fontblack);
 		SDL_BlitSurface(title, NULL, ecran, &memorytitle);
-		title = TTF_RenderText_Blended(titlefont, "Main program : ", fontblack);
+		title = TTF_RenderText_Blended(titlefont, " Main program : ", fontblack);
 		SDL_BlitSurface(title, NULL, ecran, &disasmtitle);
+		title = TTF_RenderText_Blended(titlefont, " Console : ", fontblack);
+		SDL_BlitSurface(title, NULL, ecran, &consoletitle);
 
-
-
+		//TextEdition
+        TE_HoldTextEdition(&pipelinete, event);
+        TE_DisplayTextEdition(&pipelinete);
         TE_HoldTextEdition(&registerte, event);
         TE_DisplayTextEdition(&registerte);
         TE_HoldTextEdition(&memoryte, event);
         TE_DisplayTextEdition(&memoryte);
         TE_HoldTextEdition(&disasmte, event);
         TE_DisplayTextEdition(&disasmte);
+        TE_HoldTextEdition(&registerte, event);
+        TE_DisplayTextEdition(&registerte);
+        TE_HoldTextEdition(&consolete, event);
+        TE_DisplayTextEdition(&consolete);
 ///////////////////
 
 
@@ -268,7 +336,8 @@ It is common for the mouse cursor to change its shape when it hovers over a text
 	SDL_FreeSurface(title);
 	SDL_FreeSurface(ecran);
 	
+	TE_Quit();
 	TTF_Quit();
 	SDL_Quit();
-	return 0;
+	return res;
 }
