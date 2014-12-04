@@ -456,7 +456,7 @@ int LW(instruction ins, int pipestep, int* tmp) {
         break;
 
     case WB:
-        if(verbose>1) printf("LW: put %d in %d \n",(uint32_t)vpipeline[MEM].tmp2,ins.i.rt );
+        if(verbose>1) printf("LW: put %d in %d \n",(uint32_t)vpipeline[WB].tmp2,ins.i.rt );
         writeRegindex(ins.i.rt,(uint32_t)vpipeline[WB].tmp2);
         break;
     }
