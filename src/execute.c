@@ -531,7 +531,7 @@ int OR(instruction ins, int pipestep, int* tmp) {
 int ORI(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
-        *tmp=(uint32_t)ins.i.immediate + reg_mips[ins.i.rs];//cast for zero extend
+        *tmp=(uint32_t)ins.i.immediate | reg_mips[ins.i.rs];//cast for zero extend
         break;
 
     case WB:
@@ -610,6 +610,7 @@ int SLL(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
         *tmp=reg_mips[ins.r.rt] << ins.r.sa;
+        //printf("%d shifted L by %d = %d\n",reg_mips[ins.r.rt],ins.r.sa,*tmp );
         break;
 
     case WB:
@@ -628,7 +629,7 @@ int SRA(instruction ins, int pipestep, int* tmp) {
             *tmp=(reg_mips[ins.r.rt] >> ins.r.sa)|0x80000000;
         }
         else *tmp=reg_mips[ins.r.rt] >> ins.r.sa;
-
+        //printf("%d shifted A by %d = %d\n",reg_mips[ins.r.rt],ins.r.sa,*tmp );
         break;
 
     case WB:
@@ -659,7 +660,7 @@ int SRL(instruction ins, int pipestep, int* tmp) {
 int SLT(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
-        if(reg_mips[ins.r.rs]>reg_mips[ins.r.rt]) {
+        if(reg_mips[ins.r.rs]<reg_mips[ins.r.rt]) {
             *tmp=1;
         }
         else {
@@ -757,7 +758,7 @@ int SUB(instruction ins, int pipestep, int* tmp) {
 int SUBU(instruction ins, int pipestep, int* tmp) {
     switch (pipestep) {
     case EX:
-        *tmp=reg_mips[ins.r.rt] - reg_mips[ins.r.rs];
+        *tmp=reg_mips[ins.r.rs] - reg_mips[ins.r.rt];
         break;
 
     case WB:
