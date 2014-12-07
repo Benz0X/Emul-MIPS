@@ -72,15 +72,17 @@ int exceptionHandler(exception number) {
             return quit;
             break;
         
-            case 1://putchar
+        case 1://putchar
             putchar(reg_mips[4]);
             fflush(stdout);
         //case 1:                                   //disp integer
             //printf("%d\n",reg_mips[4]); //a0
             break;
-            case 2:
+
+        case 2:
             reg_mips[4]=getchar();
             break;
+
         case 4:
             ;
             int i=0,c;

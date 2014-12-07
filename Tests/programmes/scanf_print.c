@@ -3,10 +3,8 @@
 
 int main(int argc, char const *argv[])
 {
-	int tab[20];
+	char tab[20];
 	scanf("%s",tab);
-	printf("%s",tab);
-	printf("%s",tab);
-	printf("%s",tab);
+	printf("%s\n",tab);
 	return 0;
 }

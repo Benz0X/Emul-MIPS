@@ -322,6 +322,11 @@ int affichage(){
 		title = TTF_RenderText_Blended(titlefont, " Console : ", fontblack);
 		SDL_BlitSurface(title, NULL, ecran, &consoletitle);
 
+		//Buttons
+		Button (ecran, 5,  5,  20, 20, event, 0);
+		Button (ecran, 30,  5,  20, 20, event, 1);
+		Button (ecran, 55,  5,  20, 20, event, 2);
+
 		//TextEdition
         TE_HoldTextEdition(&pipelinete, event);
         TE_DisplayTextEdition(&pipelinete);
@@ -393,6 +398,70 @@ int affichage(){
 
 //Fonctions
 
+int Button (SDL_Surface* ecran, int x, int y, int w, int h, SDL_Event event, int fn ){
+//Colors
+	uint32_t color=SDL_MapRGB(ecran->format, 200,200,200);
+	uint32_t hovercolor=SDL_MapRGB(ecran->format, 80,80,80);
+	uint32_t clickedcolor=SDL_MapRGB(ecran->format, 50,50,50);
+
+	uint32_t white=SDL_MapRGB(ecran->format, 255,255,255);
+	uint32_t black=SDL_MapRGB(ecran->format, 0,0,0);
+	SDL_Color fontblack=(SDL_Color){0,0,0,0};
+///////
+
+
+	Draw_FillRect (ecran, x,y,w,h, color);
+	Draw_Rect (ecran, x,y,w,h, white);
+	Draw_Rect (ecran, x,y,w-1,h-1, black);
+
+	//SDL_Surface* title;
+	//title = TTF_RenderText_Blended(titlefont, " Text ", fontblack);
+	//SDL_BlitSurface(title, NULL, ecran, {x,y,w,h});
+
+
+//Button
+	int posx, posy;
+	char input[10];
+	switch(event.type)
+    {
+        case SDL_MOUSEMOTION:
+        	posx = event.motion.x;
+        	posy = event.motion.y;
+
+        	if(posx > x && posx < x+w && posy > y && posy < y+h){
+        		Draw_FillRect (ecran, x+1,y+1,w-2,h-2, hovercolor);
+
+        		if(SDL_GetMouseState(&posx, &posy)&SDL_BUTTON(SDL_BUTTON_LEFT)){
+		        	Draw_FillRect (ecran, x+1,y+1,w-2,h-2, clickedcolor);
+		        	switch (fn){
+		        		case 0:
+		        			strcpy(input,"run");
+		        			printf("run\n");
+		        		break;
+
+		        		case 1:
+		        			strcpy(input,"step");
+		        			printf("step\n");
+		        		break;
+
+		        		case 2:
+		        			strcpy(input,"step into");
+		        		break;
+		        	}
+		        	decrypt(input);	
+        		}
+        	}
+        break;
+    }
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -440,6 +509,7 @@ int stringMemory(char* string) {
     uint32_t current_addr;
     int value;
 
+
     for (k = 0; k < memory->nseg; k++) {
 
         if(memory->seg[k].name[0]!='l' && memory->seg[k].name[0]!='[' ) {	//Affichage de libc.seg et de [seg] désactivé 
@@ -480,7 +550,7 @@ int stringMemory(char* string) {
 
 int stringPipeline(char* string){
 	if(memory==NULL) {
-    	sprintf(string,"No memory loaded");
+    	sprintf(string,"  No memory loaded");
         return -1;
     }
 
@@ -500,7 +570,7 @@ int stringPipeline(char* string){
 	sprintf(tmp,"  Temporary Values :                \t              %d\t                  \t %d\t                \t%d\n\n",vpipeline[EX].tmp,vpipeline[MEM].tmp,vpipeline[WB].tmp);
 	strcat(string,tmp);
 
-	sprintf(tmp,"  Clock Count : %d\n", nbcycle);
+	sprintf(tmp,"  Clock Count : %d      Clock time : %d\n", nbcycle, clocktime);
 	strcat(string,tmp);
 
     //printf("PC: %X->%X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], vpipeline[IF].ins.value);
