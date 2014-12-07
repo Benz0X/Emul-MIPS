@@ -611,6 +611,7 @@ int TE_HoldTextEdition(TextEdition *te, SDL_Event event)
 
 static int HoldKeyPressing(TextEdition *te, SDL_Event event)
 {
+    
     char c, done=1;
     int ctrl, num;
     Uint8 *keyState = SDL_GetKeyState(&num);

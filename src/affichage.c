@@ -18,13 +18,7 @@
 #include "common/notify.h"
 
 
-int UpdateRect(SDL_Rect* rect, int x, int y, int w, int h){
-	(*rect).x = x;
-	(*rect).y = y;
-	(*rect).w = w;
-	(*rect).h = h;
-	return 0;
-}
+
 
 int affichage(){
 
@@ -50,7 +44,6 @@ int affichage(){
 	int WINDOW_W =DEFAULT_WINDOW_W;
 
 	ecran= SDL_SetVideoMode(WINDOW_W, WINDOW_H, 32, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE); //|SDL_RESIZABLE
-	int test= SDL_EnableKeyRepeat(0*SDL_DEFAULT_REPEAT_DELAY/100, SDL_DEFAULT_REPEAT_INTERVAL/100);
 	if(ecran ==NULL){
 		WARNING_MSG("Impossible d'initialiser la fenetre graphique : %s",SDL_GetError());
 		return -1;
@@ -67,6 +60,11 @@ int affichage(){
     char input[INPUT_SIZE];
     char normalized_input[INPUT_SIZE];
     int res = 0;
+
+	char string_pipeline [32768];
+    char string_registers [32768];
+    char string_disasm [32768];
+    char string_memory [32768];
 //////////    
 
 //////Colors
@@ -139,12 +137,14 @@ int affichage(){
 ///////////
 
 
-    
+    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
     while (boucle)
     {
     	tick = SDL_GetTicks();
 
     	if (layout==0){	//Initialisation or after a resize
+
+
     		//Layout
 		    UpdateRect(&box, OFFSET,30,WINDOW_W-2*OFFSET,WINDOW_H-30-OFFSET-TITLE_H-CONSOLE_H);
 
@@ -169,20 +169,22 @@ int affichage(){
 
 
 			//Text Rendering
-			TE_NewTextEdition(&pipelinete, 1024, pipelinetext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY | TE_STYLE_AUTOJUMP );
-   			TE_SetEditionText(&pipelinete,"pipeline");
-
-   			TE_NewTextEdition(&registerte, 1024, registertext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY | TE_STYLE_AUTOJUMP );
-   			TE_SetEditionText(&registerte,"register");
-
-   			TE_NewTextEdition(&memoryte, 4096, memorytext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_VSCROLL | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY | TE_STYLE_AUTOJUMP );
-   			TE_SetEditionText(&memoryte,"memory");   
-  
-   			TE_NewTextEdition(&disasmte, 4096, disasmtext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_HSCROLL | TE_STYLE_VSCROLL | TE_STYLE_BLITRGBA /*| TE_STYLE_JUSTDISPLAY* | TE_STYLE_READONLY */| TE_STYLE_AUTOJUMP );
-   			TE_SetEditionText(&disasmte,"disasm");   
-
+			TE_NewTextEdition(&pipelinete, 32768, pipelinetext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY /*| TE_STYLE_AUTOJUMP*/ );
+   			TE_NewTextEdition(&registerte, 32768, registertext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY | TE_STYLE_AUTOJUMP );
+   			TE_NewTextEdition(&memoryte, 32768, memorytext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_VSCROLL | TE_STYLE_BLITRGBA  | TE_STYLE_READONLY );
+   			TE_NewTextEdition(&disasmte, 32768, disasmtext, font, fontblack, TE_STYLE_MULTILINE | TE_STYLE_HSCROLL | TE_STYLE_VSCROLL | TE_STYLE_BLITRGBA /*| TE_STYLE_JUSTDISPLAY* | TE_STYLE_READONLY */);
    			TE_NewTextEdition(&consolete, 1024, consoletext, font, fontblack, TE_STYLE_HSCROLL | TE_STYLE_BLITRGBA );
-   			TE_SetEditionText(&consolete,"console");  
+
+       		stringPipeline (string_pipeline);
+			stringRegisters (string_registers);
+			stringDisasm (textStart,textEnd-textStart+1,string_disasm);
+			stringMemory (string_memory);
+
+			TE_SetEditionText(&pipelinete,string_pipeline);
+			TE_SetEditionText(&registerte,string_registers);
+			TE_SetEditionText(&disasmte,string_disasm);
+			TE_SetEditionText(&memoryte,string_memory);
+
 
     		layout=1;
     	}
@@ -192,7 +194,8 @@ int affichage(){
 
 		//IO Event handler
 		SDL_Event event;
-	    while(SDL_PollEvent(&event)){
+
+	    while(SDL_WaitEvent(&event)){
 	        switch(event.type)
 	        {
 	            case SDL_QUIT:
@@ -217,10 +220,22 @@ int affichage(){
 	            			TE_SetEditionText(&consolete,"");  
 
 
-	            			INFO_MSG("Console entry : %s", input);
+	            			//Envoi de la commande
 	            			string_standardise(input,normalized_input);     //On normalise l'entree - echappement, commentaires, etc
            					string_standardise(normalized_input,input);
-           					res=decrypt(input);
+           					
+           					if(strcmp(input,"")!=0) res=decrypt(input); 	//Anti-Sigsegv
+
+           					//Mise à jour de l'affichage
+           					stringPipeline (string_pipeline);
+           					stringRegisters (string_registers);
+           					stringDisasm (textStart,textEnd-textStart+1,string_disasm);
+           					stringMemory (string_memory);
+
+           					TE_SetEditionText(&pipelinete,string_pipeline);
+           					TE_SetEditionText(&registerte,string_registers);
+           					TE_SetEditionText(&disasmte,string_disasm);
+           					TE_SetEditionText(&memoryte,string_memory);
 	            		break;
 
 	            		default:
@@ -232,18 +247,21 @@ int affichage(){
 	            	//printf("W: %d\tH: %d\n",event.resize.w,event.resize.h);
 	            	WINDOW_W=event.resize.w;
 	            	WINDOW_H=event.resize.h;
-	            	ecran= SDL_SetVideoMode(WINDOW_W, WINDOW_H, 32, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE); //|SDL_RESIZABLE
 
-	            	//Redefinition du layout
-	            	layout=0;
-	            	SDL_Flip(ecran);
+	            	if(WINDOW_W>MIN_WINDOW_W || WINDOW_H>MIN_WINDOW_H){	//Taille minimale
+	            		//Redefinition du layout
+		           
+		            	ecran= SDL_SetVideoMode(WINDOW_W, WINDOW_H, 32, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_RESIZABLE); //|SDL_RESIZABLE
+		            	layout=0;
+
+		            }
 	            break;
 
 	            default:
 	            	//printf("Unhandled Event : %d\n",event.type);
 	            break;
 	        }
-
+	        break;
 	    }
 
 ///////////////Main
@@ -263,19 +281,27 @@ int affichage(){
         SDL_FillRect (ecran, &consoletitle, white);
         SDL_FillRect (ecran, &consoletext, white);
 
-                
-
+               
         //Lines
 		Draw_Rect (ecran, pipelinetitle.x, pipelinetitle.y, pipelinetitle.w-1, pipelinetitle.h-1, black);
         Draw_Rect (ecran, pipelinetext.x, pipelinetext.y, pipelinetext.w-1, pipelinetext.h-1, black);
+        Draw_Line (ecran, pipelinetext.x, pipelinetext.y+3*15, pipelinetext.x+pipelinetext.w-2,pipelinetext.y+3*15, grey);	//STAGE Separation line (horizontal)
+
 		Draw_Rect (ecran, registertitle.x, registertitle.y, registertitle.w-1, registertitle.h-1, black);
         Draw_Rect (ecran, registertext.x,registertext.y,registertext.w-1,registertext.h-1, black);
-        Draw_Rect (ecran, memorytitle.x, memorytitle.y, memorytitle.w-1, memorytitle.h-1, black);
-        Draw_Rect (ecran, memorytext.x,memorytext.y,memorytext.w-1,memorytext.h-1, black);
-        Draw_Rect (ecran, disasmtitle.x, disasmtitle.y, disasmtitle.w-1, disasmtitle.h-1, black);
-        Draw_Rect (ecran, disasmtext.x,disasmtext.y,disasmtext.w-1,disasmtext.h-1, black);
+
         Draw_Rect (ecran, consoletitle.x, consoletitle.y, consoletitle.w-1, consoletitle.h-1, black);
         Draw_Rect (ecran, consoletext.x,consoletext.y,consoletext.w-1,consoletext.h-1, black);
+
+        Draw_Rect (ecran, memorytitle.x, memorytitle.y, memorytitle.w-1, memorytitle.h-1, black);
+        Draw_Rect (ecran, memorytext.x,memorytext.y,memorytext.w-1,memorytext.h-1, black);
+        Draw_Line (ecran, memorytext.x+82,memorytext.y,memorytext.x+82,memorytext.y+memorytext.h-2, grey);	//ADDRESS Separation line
+
+        Draw_Rect (ecran, disasmtitle.x, disasmtitle.y, disasmtitle.w-1, disasmtitle.h-1, black);
+        Draw_Rect (ecran, disasmtext.x,disasmtext.y,disasmtext.w-1,disasmtext.h-1, black);
+        Draw_Line (ecran, disasmtext.x+20,disasmtext.y,disasmtext.x+20,disasmtext.y+disasmtext.h-2, grey);	//Break Separation line
+        Draw_Line (ecran, disasmtext.x+50,disasmtext.y,disasmtext.x+50,disasmtext.y+disasmtext.h-2, grey);	//PC Separation line
+        Draw_Line (ecran, disasmtext.x+90,disasmtext.y,disasmtext.x+90,disasmtext.y+disasmtext.h-2, grey);	//ADDRESS Separation line
 
         //Fill back blanks
         Draw_Rect(ecran, pipelinetitle.x+1, pipelinetitle.y+pipelinetitle.h-2 ,pipelinetitle.w-3,2,white);
@@ -320,6 +346,12 @@ int affichage(){
 		//printf("FPS : %lf\n", (double)1000/(SDL_GetTicks()-tick) );
 ///////////////////
 
+
+		if (res==2){
+			break;	//Sortie du programme
+		}
+
+
 		//Mise a jour
 		SDL_Flip(ecran);
     }
@@ -329,9 +361,11 @@ int affichage(){
     TTF_CloseFont(font);
     TTF_CloseFont(titlefont);
 
+    TE_DeleteTextEdition(&pipelinete);
 	TE_DeleteTextEdition(&registerte);
 	TE_DeleteTextEdition(&memoryte);
 	TE_DeleteTextEdition(&disasmte);
+	TE_DeleteTextEdition(&consolete);
 
 	SDL_FreeSurface(title);
 	SDL_FreeSurface(ecran);
@@ -340,4 +374,520 @@ int affichage(){
 	TTF_Quit();
 	SDL_Quit();
 	return res;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Fonctions
+
+
+
+
+int UpdateRect(SDL_Rect* rect, int x, int y, int w, int h){
+	(*rect).x = x;
+	(*rect).y = y;
+	(*rect).w = w;
+	(*rect).h = h;
+	return 0;
+}
+
+int stringRegisters(char* string){
+	int i;
+	char name[INPUT_SIZE];
+	char tmp[50];
+	sprintf(string,"");	//Remise à 0
+
+    for(i=0; i<NBREG+2; i++) {         
+        parseReg(i,name);               //Recuperation du nom complet
+        if(i%4==0) {
+            strcat(string, "\n");   //Affichage 4 par ligne
+        }
+        sprintf(tmp, "%5s: %-5d ",name,reg_mips[i]);   //Affichage du registre
+        strcat(string,tmp);
+    }
+    parseReg(PC,name);
+    sprintf(tmp, "%5s: 0x%X ",name,reg_mips[PC]);   //Affichage du PC en hexa
+    strcat(string,tmp);
+    return 0;
+}
+
+int stringMemory(char* string) {    
+	char tmp[128];
+	sprintf(string,"");	//Remise à 0
+
+    if(memory==NULL) {
+    	sprintf(string,"            No memory loaded");
+        WARNING_MSG("No memory loaded");
+        return -1;
+    }
+
+    int k;
+    uint32_t start_addr, size;
+    uint32_t i=0;
+    uint32_t current_addr;
+    int value;
+
+    for (k = 0; k < memory->nseg; k++) {
+
+        if(memory->seg[k].name[0]!='l' && memory->seg[k].name[0]!='[' ) {	//Affichage de libc.seg et de [seg] désactivé 
+        	start_addr = memory->seg[k].start._32;
+        	size = memory->seg[k].size._32;
+
+        	sprintf(tmp,"\n\n  %s", memory->seg[k].name);
+        	strcat(string,tmp);
+        	current_addr=start_addr;	
+        	i=0;
+
+        	while (i<size) {	//Affichage du segment
+			    if (i%16==0) {
+			        sprintf(tmp,"\n 0x%8.8X  ",current_addr);
+			        strcat(string,tmp);
+			    }
+
+			    if(memRead(current_addr,0,&value)==0) { //on verifie qu'il soit dans une plage memoire valide
+			        sprintf(tmp,"%2.2X ",value);
+			   		strcat(string,tmp);
+			    }
+			    else strcat(string,"   ");
+			    	
+			    current_addr++;
+			    i++;
+			}
+
+
+        }
+    }
+
+
+
+
+
+    return 0;
+}
+
+int stringPipeline(char* string){
+	if(memory==NULL) {
+    	sprintf(string,"No memory loaded");
+        return -1;
+    }
+
+	char tmp[128];
+	sprintf(string,"");	//Remise à 0
+
+	//Affichage des differents blocks
+	sprintf(string,"  Stage Fetch\t          Stage Decode\t          Stage Execute\t          Stage Memory\t          Stage Write Back\n");
+
+	sprintf(tmp,"  %8.8X\t             %8.8X\t              %8.8X\t               %8.8X\t              %8.8X\n",vpipeline[IF].ins.value,vpipeline[ID].ins.value,vpipeline[EX].ins.value,vpipeline[MEM].ins.value,vpipeline[WB].ins.value);
+	strcat(string,tmp);
+
+	sprintf(tmp,"          \t           ->Decoding\t              %s\t                    \t %s\t                \t%s\n\n",dico_data[vpipeline[EX].dico_entry].name,dico_data[vpipeline[MEM].dico_entry].name,dico_data[vpipeline[WB].dico_entry].name);
+	strcat(string,tmp);
+
+
+	sprintf(tmp,"  Temporary Values :                \t              %d\t                  \t %d\t                \t%d\n\n",vpipeline[EX].tmp,vpipeline[MEM].tmp,vpipeline[WB].tmp);
+	strcat(string,tmp);
+
+	sprintf(tmp,"  Clock Count : %d\n", nbcycle);
+	strcat(string,tmp);
+
+    //printf("PC: %X->%X\t Fetched: %8.8X\n",reg_mips[PC]-4, reg_mips[PC], vpipeline[IF].ins.value);
+    //printf("Decoding: %8.8X  Dico: %d-> %s\n", vpipeline[ID].ins.value, dico_entry, dico_data[dico_entry].name);
+    //printf("Executing: %s\n",dico_data[vpipeline[EX].dico_entry].name);
+    //printf("MEM writing: %s\n", dico_data[vpipeline[MEM].dico_entry].name);
+    //printf("REG writing: %s\n", dico_data[vpipeline[WB].dico_entry].name);
+    printf("\n");
+}
+
+int stringDisasm(uint32_t start_addr,uint32_t size, char* string) {
+	char tmp[128];
+	sprintf(string,"");	//Remise à 0
+
+
+    if(memory==NULL) {
+    	sprintf(string,"             No memory loaded");
+        return -1;
+    }
+    if (start_addr%4!=0) WARNING_MSG("%X mod 4 != 0, read instruction may not be alligned with real instruction",start_addr);
+    uint32_t i=0;
+    uint32_t current_addr=start_addr;
+    instruction current_instr;
+    uint32_t instr_value;
+    int text_ident,libctext_ident;
+    int seg,k;
+
+    //get .text scnidx in order to show only .text label
+    for (k = 1; k < symtab.size; ++k) {
+        if(!strcmp(symtab.sym[k].name,".text")) {
+            text_ident=symtab.sym[k].scnidx;
+            break;
+        }
+    }
+    for (k = 1; k < libcsymtab.size; ++k) {
+        if(!strcmp(libcsymtab.sym[k].name,".text")) {
+            libctext_ident=libcsymtab.sym[k].scnidx;
+            break;
+        }
+    }
+
+    while (i<size) {
+
+        seg=get_seg_from_adress(current_addr,memory);
+        //printf("%d %d\n",i,j );
+        if( seg>=0 && (!strcmp(memory->seg[seg].name,".text")||!strcmp(memory->seg[seg].name,"libc.text"))) {
+
+            getInstr(current_addr,&current_instr);
+            memcpy(&instr_value,&current_instr,4);
+            //Affichage des breakpoints
+            if(present(current_addr,breaklist)!=NULL) {
+                sprintf(tmp,"\n X  ");
+                strcat(string,tmp);
+            } else {
+                sprintf(tmp,"\n    ");
+            	strcat(string,tmp);
+            }
+            //affichage de PC
+            if(current_addr==reg_mips[PC]) {
+                sprintf(tmp,"-> ");
+                strcat(string,tmp);
+            } else {
+                sprintf(tmp,"   ");
+                strcat(string,tmp);
+            }
+
+            //Afficahge de l'adresse
+            sprintf(tmp,"\t%X  %8.8X     ",current_addr,instr_value);
+            strcat(string,tmp);
+
+
+            int dico_entry=0;
+            /*for (dico_entry = 0; dico_entry < 15; ++dico_entry)
+            {
+            printf("instr value : %X, mask : %X, comb : %X instr : %X\n",instr_value,dico_data[dico_entry].mask,instr_value & dico_data[dico_entry].mask,dico_data[dico_entry].instr );
+
+            }*/
+            while((instr_value & dico_data[dico_entry].mask)!= dico_data[dico_entry].instr) {
+                dico_entry++;
+            }
+            if (dico_entry>=nbinstr)
+            {
+                WARNING_MSG("invalid instruction at adress %X",current_addr);
+                printf("\n");
+                return -1;
+            }
+            else {
+
+
+                //décommenter si on veut exécuter en disasemblant
+                //dico_data[dico_entry].exec(current_instr);
+
+
+                //affichage des étiquettes en début de ligne dans .text
+                for (k = 1; k < symtab.size; ++k)
+                {
+                    if(((current_addr-memory->seg[seg].start._32)==symtab.sym[k].addr._32) && (symtab.sym[k].type != section) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,".text")==0) && ((symtab.sym[k].scnidx == text_ident) ) ) {
+                        //printf("curr-start= %d size : %d %s\n", current_addr-memory->seg[seg].start._32,symtab.sym[k].size,symtab.sym[k].name);
+                        sprintf(tmp,"%s: ",symtab.sym[k].name);
+                        strcat(string,tmp);
+                        break;
+                    }
+                }
+                //affichage des étiquettes en début de ligne dans libc.text
+                for (k = 1; k < libcsymtab.size; ++k)
+                {
+                    //printf("libcsymtab scnidx=%d, libc.textident=%d\n",libcsymtab.sym[k].scnidx,libctext_ident);
+                    if(((current_addr-memory->seg[seg].start._32)==libcsymtab.sym[k].addr._32) && (libcsymtab.sym[k].type != section) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,"libc.text")==0) && ((libcsymtab.sym[k].scnidx == libctext_ident)) ) {
+                        sprintf(tmp,"%s: ",libcsymtab.sym[k].name);
+                        strcat(string,tmp);
+                        break;
+                    }
+                }
+
+                sprintf(tmp,"%s",dico_data[dico_entry].name );
+                strcat(string,tmp);
+            }
+            switch (dico_data[dico_entry].type) {
+
+            case 0: 									//R TYPE
+
+                switch (dico_data[dico_entry].nb_arg) {
+                case 3:
+                    //3 ARGS
+                    //printf("%s, %s, %s\n",dico_data[dico_entry].argname[0],dico_data[dico_entry].argname[1],dico_data[dico_entry].argname[2]);
+                    // RS RT RD
+                    if(!strcmp("RS",dico_data[dico_entry].argname[0]) && !strcmp("RT",dico_data[dico_entry].argname[1]) && !strcmp("RD",dico_data[dico_entry].argname[2])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rd,regname1);
+                        char regname2[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rs,regname2);
+                        char regname3[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rt,regname3);
+
+                        sprintf(tmp," %s, %s, %s",regname1,regname2,regname3);
+                        strcat(string,tmp);
+                        //dico_data[dico_entry].exec(current_instr);
+
+                    }
+                    //RT RD SA
+                    else if(!strcmp("RT",dico_data[dico_entry].argname[0]) && !strcmp("RD",dico_data[dico_entry].argname[1]) && !strcmp("SA",dico_data[dico_entry].argname[2])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rd,regname1);
+                        char regname2[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rt,regname2);
+                        char regname3[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.sa,regname3);
+
+                        sprintf(tmp," %s, %s, %s",regname1,regname2,regname3);
+                        strcat(string,tmp);
+
+                    }
+                    else {
+                        WARNING_MSG("Unknown arg 1-3 for R command");
+                        printf("\n");
+                        return -1;
+                    }
+                    break;
+                case 2: 	//2 arg
+                    // RS RT
+                    if(!strcmp("RS",dico_data[dico_entry].argname[0]) && !strcmp("RT",dico_data[dico_entry].argname[1])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rs,regname1);
+                        char regname2[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rt,regname2);
+
+                        sprintf(tmp," %s, %s",regname1,regname2);
+                        strcat(string,tmp);
+
+                    }
+                    else if(!strcmp("RD",dico_data[dico_entry].argname[0]) && !strcmp("RS",dico_data[dico_entry].argname[1])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rd,regname1);
+                        char regname2[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rs,regname2);
+
+                        sprintf(tmp," %s, %s",regname1,regname2);
+                        strcat(string,tmp);
+
+                    }
+                    else if(!strcmp("RT",dico_data[dico_entry].argname[0]) && !strcmp("RD",dico_data[dico_entry].argname[1])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rd,regname1);
+                        char regname2[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rt,regname2);
+
+                        sprintf(tmp," %s, %s",regname1,regname2);
+                        strcat(string,tmp);
+
+                    }
+                    else {
+                        WARNING_MSG("Unknown arg 1 or 2 for R command");
+                        printf("\n");
+                        return -1;
+                    }
+
+                    break;
+
+                case 1:
+                    if(!strcmp("RS",dico_data[dico_entry].argname[0])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rs,regname1);
+                        sprintf(tmp," %s",regname1);
+                        strcat(string,tmp);
+                    }
+                    else if(!strcmp("RD",dico_data[dico_entry].argname[0])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.r.rd,regname1);
+                        sprintf(tmp," %s",regname1);
+                        strcat(string,tmp);
+                    }
+                    else {
+                        WARNING_MSG("Unknown arg for R command");
+                        printf("\n");
+                        return -1;
+                    }
+
+                    break;
+
+                case 0:
+
+                    break;
+
+                default:
+                    WARNING_MSG("Unknown R command");
+                    printf("\n");
+                    return -1;
+                    break;
+                }
+                break;
+
+
+            case 1:
+                //i type
+                switch (dico_data[dico_entry].nb_arg) {
+                case 3:
+                    //3arg
+                    if(!strcmp("RS",dico_data[dico_entry].argname[0]) && !strcmp("RT",dico_data[dico_entry].argname[1]) && !strcmp("IM",dico_data[dico_entry].argname[2])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.i.rt,regname1);
+                        char regname2[MAX_NAME_SIZE];
+                        parseReg(current_instr.i.rs,regname2);
+
+                        sprintf(tmp," %s, %s, %d",regname1,regname2,current_instr.i.immediate);
+                        strcat(string,tmp);
+
+                    }
+                    else if(!strcmp("RS",dico_data[dico_entry].argname[0]) && !strcmp("RT",dico_data[dico_entry].argname[1]) && !strcmp("OFFSET",dico_data[dico_entry].argname[2])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.i.rs,regname1);
+                        char regname2[MAX_NAME_SIZE];
+                        parseReg(current_instr.i.rt,regname2);
+
+                        sprintf(tmp," %s, %s, %d",regname1,regname2,4*current_instr.i.immediate);
+                        strcat(string,tmp);
+
+                        for (k = 1; k < symtab.size; ++k) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,".text")==0)) {
+                                sprintf(tmp," <%s>",symtab.sym[k].name);
+                                strcat(string,tmp);
+                                break;
+                            }
+                        }
+                        for (k = 1; k < libcsymtab.size; ++k) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==libcsymtab.sym[k].addr._32)&&(libcsymtab.sym[k].type != section)&& (libcsymtab.sym[k].scnidx == libctext_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,"libc.text")==0)) {
+                                sprintf(tmp," <%s>",libcsymtab.sym[k].name);
+                                strcat(string,tmp);
+                                break;
+                            }
+                        }
+                    }
+                    else if(!strcmp("BASE",dico_data[dico_entry].argname[0]) && !strcmp("RT",dico_data[dico_entry].argname[1]) && !strcmp("OFFSET",dico_data[dico_entry].argname[2])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.i.rt,regname1);
+                        char regname2[MAX_NAME_SIZE];
+                        parseReg(current_instr.i.rs,regname2);
+                        //BASE est a l'addresse de rs
+                        sprintf(tmp," %s, %d(%s)",regname1,current_instr.i.immediate,regname2);
+                        strcat(string,tmp);
+
+                    }
+                    else {
+                        WARNING_MSG("Unknown arg 1-3 for I command : %s %s %s", dico_data[dico_entry].argname[0],dico_data[dico_entry].argname[1],dico_data[dico_entry].argname[2]);
+                        printf("\n");
+                        return -1;
+                    }
+
+                    break;
+                case 2:
+                    if(!strcmp("RS",dico_data[dico_entry].argname[0]) && !strcmp("OFFSET",dico_data[dico_entry].argname[1])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.i.rs,regname1);
+
+                        sprintf(tmp," %s, %d",regname1,4*current_instr.i.immediate);
+                        strcat(string,tmp);
+
+                        for (k = 1; k < symtab.size; ++k) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==symtab.sym[k].addr._32)&&(symtab.sym[k].type != section)&& (symtab.sym[k].scnidx == text_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,".text")==0) ) {
+                                sprintf(tmp," <%s>",symtab.sym[k].name);
+                                strcat(string,tmp);
+                                break;
+                            }
+                        }
+                        for (k = 1; k < libcsymtab.size; ++k) {
+                            if(((current_addr+ 4 + 4*current_instr.i.immediate-memory->seg[seg].start._32)==libcsymtab.sym[k].addr._32)&&(libcsymtab.sym[k].type != section)&& (libcsymtab.sym[k].scnidx == text_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,"libc.text")==0) ) {
+                                sprintf(tmp," <%s>",libcsymtab.sym[k].name);
+                                strcat(string,tmp);
+                                break;
+                            }
+                        }
+
+                    }
+                    else if(!strcmp("RT",dico_data[dico_entry].argname[0]) && !strcmp("IM",dico_data[dico_entry].argname[1])) {
+                        char regname1[MAX_NAME_SIZE];
+                        parseReg(current_instr.i.rt,regname1);
+
+                        sprintf(tmp," %s, %d",regname1,current_instr.i.immediate);
+                        strcat(string,tmp);
+
+                    }
+                    else {
+                        WARNING_MSG("Unknown arg 1 or 2 for I command");
+                        printf("\n");
+                        return -1;
+                    }
+
+                    break;
+                default:
+                    WARNING_MSG("Wrong arg number for I command");
+                    printf("\n");
+                    return -1;
+                    break;
+
+
+                }
+                break;
+
+            case 2:
+                //type J
+                if(!strcmp("TARGET",dico_data[dico_entry].argname[0])) {
+
+
+
+                    sprintf(tmp," 0x%4.8X",((current_addr & 0xF0000000) | 4*current_instr.j.target));
+                    strcat(string,tmp);
+                    int32_t temp=((current_addr & 0xF0000000) | 4*current_instr.j.target);
+                    for (k = 1; k < symtab.size; ++k) {
+                        if(((temp-textStart) == symtab.sym[k].addr._32) && (symtab.sym[k].type != section) && (symtab.sym[k].scnidx == text_ident) && ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,".text")==0) ) {
+                            sprintf(tmp," <%s>",symtab.sym[k].name);
+                            strcat(string,tmp);
+                            break;
+                        }
+                    }
+                    //affichage des étiquettes dans la libc
+                    for (k = 1; k < libcsymtab.size; ++k) {
+                        //printf("\nsymb adress : %d, total=%X,addr=%X",libcsymtab.sym[k].addr._32,((current_addr & 0xF0000000) | 4*current_instr.j.target-libcTextStart),((current_addr & 0xF0000000) | 4*current_instr.j.target));
+                        //printf("addr %X\n",libcTextStart);
+                        if(((temp - libcTextStart) == libcsymtab.sym[k].addr._32) && (libcsymtab.sym[k].type != section) && (libcsymtab.sym[k].scnidx == text_ident)&& ( strcmp(memory->seg[get_seg_from_adress(current_addr,memory)].name,"libc.text")==0)) {
+                            sprintf(tmp," <%s>",libcsymtab.sym[k].name);
+                            strcat(string,tmp);
+                            break;
+                        }
+                    }
+
+                    
+                }
+                else {
+                    WARNING_MSG("Unknown J command");
+                    printf("\n");
+                    return -1;
+                }
+
+                break;
+
+            default:
+
+                WARNING_MSG("Unknown type");
+                printf("\n");
+                return -1;
+                break;
+
+            }
+        }
+        current_addr+=4;
+        i+=4;
+    }
+    sprintf(tmp,"\n");
+    strcat(string,tmp);
+    return 0;
 }

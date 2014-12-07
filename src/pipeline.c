@@ -213,7 +213,7 @@ int pipeline(uint32_t end, state running, int affichage) {
 //Decode
     //Resolution des adresses registre ?
     int dico_entry=-1;
-    exceptionHandler(decode(vpipeline[ID].ins,&dico_entry));
+    exceptionHandler(decode(vpipeline[ID].ins,&vpipeline[ID].dico_entry));
 //Fetch
     exceptionHandler(fetch(&(vpipeline[IF].ins)));
 

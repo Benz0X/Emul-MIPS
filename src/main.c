@@ -145,7 +145,6 @@ int mainold(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-
     readDico(DICONAME);
 
 

@@ -720,13 +720,13 @@ int decrypt(char input [])
         break;
 
 
-    case WINDOW:         //Permet de regler la clock du MIPS
+    case WINDOW:
         if(nextword(&word,input,&n) && isDecimal(word)) {
-        WARNING_MSG("Too much arguments");
-        return -1;}
+            WARNING_MSG("Too much arguments");
+            return -1;
+        }
 
-        affichage();
-        return 0;
+        return affichage();
 
         break;
 

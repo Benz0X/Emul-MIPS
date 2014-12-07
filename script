@@ -1,2 +1,5 @@
 load Tests/programmes/test_printf.o
+break add 0x300C
+run
+window
 debug
