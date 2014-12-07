@@ -1,7 +1,9 @@
 #ifndef _affichage_h
 #define _affichage_h
 
-#define MAX_FPS 60
+#include <SDL/SDL.h>
+
+#define MAX_FPS 100
 #define DEFAULT_WINDOW_W 800
 #define DEFAULT_WINDOW_H 600
 #define MIN_WINDOW_W 640
@@ -14,6 +16,8 @@
 
 int affichage();
 
+
+int FilterEvents(const SDL_Event *event) ;
 //int UpdateRect(SDL_Rect* rect, int x, int y, int w, int h);
 
 int stringPipeline(char* string);

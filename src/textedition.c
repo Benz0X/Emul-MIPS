@@ -552,7 +552,7 @@ static int SetVSBFromOffset(TextEdition *te)
     {
         if (te->VScrollBar)
             SDL_FreeSurface(te->VScrollBar);
-        te->VScrollBar = NULL;
+            te->VScrollBar = NULL;
         return 0;
     }
 }

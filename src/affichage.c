@@ -135,10 +135,11 @@ int affichage(){
 	    consolete.colorFGSelect = fontwhite;
 	}  
 ///////////
-
+	int i;
 
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
-    while (boucle)
+  	SDL_SetEventFilter(FilterEvents);
+  	while (boucle)
     {
     	tick = SDL_GetTicks();
 
@@ -257,9 +258,9 @@ int affichage(){
 		            }
 	            break;
 
-	            default:
+	            //default:
 	            	//printf("Unhandled Event : %d\n",event.type);
-	            break;
+	            //break;
 	        }
 	        break;
 	    }
@@ -397,6 +398,15 @@ int affichage(){
 
 
 //Fonctions
+int FilterEvents(const SDL_Event *event) {
+	int x,y;
+    if ( event->type == SDL_MOUSEMOTION && !(SDL_GetMouseState(&x, &y)&SDL_BUTTON(SDL_BUTTON_LEFT)) ) {
+        return(0);    /* Drop it, we've handled it */
+    }
+    return(1);
+}
+
+
 
 int Button (SDL_Surface* ecran, int x, int y, int w, int h, SDL_Event event, int fn ){
 //Colors
