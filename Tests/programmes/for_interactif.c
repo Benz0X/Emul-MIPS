@@ -7,13 +7,12 @@ int main(int argc, char const *argv[])
 	int note=0,tot=0,i=0,j;
 	int moyenne;
 	printf("Entrez des notes (moins de 10,<0 pour terminer) :\n");
-	while(note>=0){
+	for (i=0;i<9;i++){
 		scanf("%d",&note);
 		if (note>0){
 			printf("Vous avez entré %d\n",note );
 			tabnotes[i]=note;
 			tot=tot+note;
-			i++;
 		}
 	}
 	moyenne=tot/(i);
