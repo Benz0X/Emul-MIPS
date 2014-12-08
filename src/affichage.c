@@ -100,8 +100,10 @@ int affichage(){
 	SDL_Rect consoletitle;
 	SDL_Rect consoletext;
 
-	//Titles
+			//Titles
 	SDL_Surface* title;
+	SDL_Rect titlerect;
+
 
 	//TextEditions
 	TextEdition pipelinete;{ 
@@ -239,6 +241,21 @@ int affichage(){
            					TE_SetEditionText(&memoryte,string_memory);
 	            		break;
 
+	            		case SDLK_F1:
+	            			strcpy(input,"run");
+	            			decrypt(input);
+	            		break;
+
+	            		case SDLK_F2:
+	            			strcpy(input,"step");
+	            			decrypt(input);
+	            		break;
+
+	            		case SDLK_F3:
+	            			strcpy(input,"step into");
+	            			decrypt(input);
+	            		break;
+
 	            		default:
 	            		break;
 	            	}
@@ -312,21 +329,41 @@ int affichage(){
         Draw_Rect(ecran, consoletitle.x+1, consoletitle.y+consoletitle.h-2 ,consoletitle.w-3,2,white);
 
         //Titles
+        /*
+		RenderText (ecran, pipelinetitle.x,pipelinetitle.y,pipelinetitle.w,pipelinetitle.h, " Pipeline State : ", titlefont, fontblack);
+        RenderText (ecran, registertitle.x,registertitle.y,registertitle.w,registertitle.h, " Registers : ", titlefont, fontblack);
+        RenderText (ecran, memorytitle.x,memorytitle.y,memorytitle.w,memorytitle.h, " Memory : ", titlefont, fontblack);
+        RenderText (ecran, disasmtitle.x,disasmtitle.y,disasmtitle.w,disasmtitle.h, " Main Program : ", titlefont, fontblack);
+        RenderText (ecran, consoletitle.x,consoletitle.y,consoletitle.w,consoletitle.h, " Console : ", titlefont, fontblack);
+        */
+
 		title = TTF_RenderText_Blended(titlefont, " Pipeline State : ", fontblack);
 		SDL_BlitSurface(title, NULL, ecran, &pipelinetitle);
+		SDL_FreeSurface(title);
 		title = TTF_RenderText_Blended(titlefont, " Registers : ", fontblack);
 		SDL_BlitSurface(title, NULL, ecran, &registertitle);
+		SDL_FreeSurface(title);
 		title = TTF_RenderText_Blended(titlefont, " Memory : ", fontblack);
 		SDL_BlitSurface(title, NULL, ecran, &memorytitle);
+		SDL_FreeSurface(title);
 		title = TTF_RenderText_Blended(titlefont, " Main program : ", fontblack);
 		SDL_BlitSurface(title, NULL, ecran, &disasmtitle);
+		SDL_FreeSurface(title);
 		title = TTF_RenderText_Blended(titlefont, " Console : ", fontblack);
 		SDL_BlitSurface(title, NULL, ecran, &consoletitle);
+		SDL_FreeSurface(title);
 
 		//Buttons
-		Button (ecran, 5,  5,  20, 20, event, 0);
-		Button (ecran, 30,  5,  20, 20, event, 1);
-		Button (ecran, 55,  5,  20, 20, event, 2);
+		Button (ecran, 5,  5,  65, 20, event, 0);
+        RenderText (ecran, 8,7,60,20, " F1 Run ", font, fontblack);
+
+		Button (ecran, 75,  5,  65, 20, event, 1);
+		RenderText (ecran, 75,7,60,20, " F2 Step ", font, fontblack);
+
+		Button (ecran, 150,  5,  65, 20, event, 2);
+		RenderText (ecran, 150,7,65,20, " F3 Into ", font, fontblack);
+
+
 
 		//TextEdition
         TE_HoldTextEdition(&pipelinete, event);
@@ -373,7 +410,6 @@ int affichage(){
 	TE_DeleteTextEdition(&disasmte);
 	TE_DeleteTextEdition(&consolete);
 
-	SDL_FreeSurface(title);
 	SDL_FreeSurface(ecran);
 	
 	TE_Quit();
@@ -390,7 +426,17 @@ int affichage(){
 
 
 
+int RenderText (SDL_Surface* ecran, int x,int y,int w,int h, char* string, TTF_Font* font, SDL_Color fontcolor){
+	SDL_Surface* title;
+	SDL_Rect titlerect;
 
+	UpdateRect(&titlerect, x,y,w,h);
+	title = TTF_RenderText_Blended(font, string, fontcolor);
+	SDL_BlitSurface(title, NULL, ecran, &titlerect);
+	SDL_FreeSurface(title);
+
+	return 0;
+}
 
 
 
@@ -446,12 +492,10 @@ int Button (SDL_Surface* ecran, int x, int y, int w, int h, SDL_Event event, int
 		        	switch (fn){
 		        		case 0:
 		        			strcpy(input,"run");
-		        			printf("run\n");
 		        		break;
 
 		        		case 1:
 		        			strcpy(input,"step");
-		        			printf("step\n");
 		        		break;
 
 		        		case 2:
