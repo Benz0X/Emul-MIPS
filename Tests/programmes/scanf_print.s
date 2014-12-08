@@ -10,18 +10,18 @@ $LC0:
 	.globl	main
 	.ent	main
 main:
-	.frame	$fp,104,$31		# vars= 80, regs= 2/0, args= 16, gp= 0
+	.frame	$fp,48,$31		# vars= 24, regs= 2/0, args= 16, gp= 0
 	.mask	0xc0000000,-4
 	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
 	
-	addiu	$sp,$sp,-104
-	sw	$31,100($sp)
-	sw	$fp,96($sp)
+	addiu	$sp,$sp,-48
+	sw	$31,44($sp)
+	sw	$fp,40($sp)
 	move	$fp,$sp
-	sw	$4,104($fp)
-	sw	$5,108($fp)
+	sw	$4,48($fp)
+	sw	$5,52($fp)
 	lui	$2,%hi($LC0)
 	addiu	$4,$2,%lo($LC0)
 	addiu	$2,$fp,16
@@ -29,32 +29,16 @@ main:
 	jal	scanf
 	nop
 
-	lui	$2,%hi($LC0)
-	addiu	$4,$2,%lo($LC0)
 	addiu	$2,$fp,16
-	move	$5,$2
-	jal	printf
-	nop
-
-	lui	$2,%hi($LC0)
-	addiu	$4,$2,%lo($LC0)
-	addiu	$2,$fp,16
-	move	$5,$2
-	jal	printf
-	nop
-
-	lui	$2,%hi($LC0)
-	addiu	$4,$2,%lo($LC0)
-	addiu	$2,$fp,16
-	move	$5,$2
-	jal	printf
+	move	$4,$2
+	jal	puts
 	nop
 
 	move	$2,$0
 	move	$sp,$fp
-	lw	$31,100($sp)
-	lw	$fp,96($sp)
-	addiu	$sp,$sp,104
+	lw	$31,44($sp)
+	lw	$fp,40($sp)
+	addiu	$sp,$sp,48
 	j	$31
 	nop
 
