@@ -331,7 +331,7 @@ int disasm(uint32_t start_addr,uint32_t size) {
                         }
                     }
 
-                    
+
                 }
                 else {
                     WARNING_MSG("Unknown J command");

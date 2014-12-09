@@ -34,16 +34,19 @@ list pop(list L) {
 list insert(element e, list L) {
 
     list k=L; //parcours de L
-    
+
     list p=(list) calloc(1,sizeof(*p)); //nouveau maillon
     //printf("allocated insert %p\n",p);
-    if (p==NULL){printf("NULL\n"); return NULL;}
+    if (p==NULL) {
+        printf("NULL\n");
+        return NULL;
+    }
 
     if(empty(k)||e<k->val) {
         free(p);
         return push(e,L);
     }
-    
+
 
 
     for(k=L; !empty(k->suiv)&&(e>k->suiv->val); k=k->suiv);

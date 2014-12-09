@@ -84,7 +84,7 @@ int decrypt(char input [])
                         INFO_MSG("Displaying symtab");
                         stab32_print(symtab);
                         return 0;
-                    }else if(strcmp(word,"libsymtab")==0) {
+                    } else if(strcmp(word,"libsymtab")==0) {
                         if(memory==NULL) {
                             WARNING_MSG("No memory loaded");
                             return -1;
@@ -172,14 +172,14 @@ int decrypt(char input [])
                 return 0; //Affichage registre terminé
 
             } else if(strcmp(word,"clockcycle")==0) {
-                if (nextword(&word,input,&n)){
+                if (nextword(&word,input,&n)) {
                     WARNING_MSG("Too much arguments");
                     return -1;
                 }
                 printf("Number of cycles since start of program : %d\n",nbcycle);
                 return 0;
 
-             }else {
+            } else {
                 WARNING_MSG("First argument of 'disp' must be : \tmem    or reg or clockcycle");
                 return -1;
             }
@@ -587,10 +587,7 @@ int decrypt(char input [])
                     return -1;
                 }
                 flag=stepinto;
-                while(flag>0) {
-                    flag=pipeiter(flag);
-                }
-                //pipeline(textEnd,stepinto,1);
+                while(flag>0) flag=pipeiter(flag);
                 return 0;
 
             }
@@ -604,16 +601,9 @@ int decrypt(char input [])
             return -1;
         }
         flag=step;
-        while(flag>0) {
-            flag=pipeiter(flag);
-        }
-        //pipeline(textEnd,step,1);
+        while(flag>0) flag=pipeiter(flag);
 
         return 0;
-
-
-
-
         break;
 
 

@@ -348,7 +348,7 @@ int memRead(uint32_t start_addr,int type, int* value) {             //Lit la mem
             memcpy(value,&temp,4);
         }
         else {
-      //      printf("FAIL, %X \n", start_addr);
+            //      printf("FAIL, %X \n", start_addr);
             return -1;
         }
     }
@@ -511,7 +511,7 @@ int loadELF (char* name,int mode,uint32_t addr) {
         }
     }
     if(verbose>0) {
-        INFO_MSG("--------------Relocation de %s-------------------\n",PATH_TO_LIBC);
+        INFO_MSG("--------------Relocation de %s-------------------",PATH_TO_LIBC);
     }
     for (i=0; i<j; i++) {
         reloc_segment(pf_libc, memory->seg[i], memory,endianness,&symtab_libc,NULL,NULL);
@@ -545,7 +545,7 @@ int loadELF (char* name,int mode,uint32_t addr) {
 
     // on reloge chaque section du fichier
     if(verbose>0) {
-        INFO_MSG("--------------Relocation de %s-------------------\n",name);
+        INFO_MSG("--------------Relocation de %s-------------------",name);
     }
     for (i=k; i<j; i++) {
         reloc_segment(pf_elf, memory->seg[i], memory,endianness,&symtab,&symtab_libc,pf_libc);
@@ -572,7 +572,7 @@ int loadELF (char* name,int mode,uint32_t addr) {
             libcTextEnd=memory->seg[k].start._32+memory->seg[k].size._32;
         }
     }
-    if(verbose>4)INFO_MSG("Segments R_X : %8.8X-%8.8X et %8.8X-%8.8X",textStart,textEnd,libcTextStart,libcTextEnd );
+    if(verbose>0)INFO_MSG("Segments R_X : %8.8X-%8.8X et %8.8X-%8.8X",textStart,textEnd,libcTextStart,libcTextEnd );
 
 
     //Initialisation de l'emulateur en vu d'un run

@@ -81,9 +81,4 @@ int SUBU(instruction ins, int pipestep, int* tmp);
 int SYSCALL(instruction ins, int pipestep, int* tmp);
 
 
-
-
-
-
-
 #endif

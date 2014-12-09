@@ -14,7 +14,7 @@ typedef enum {stop,running,step,stepinto,step_return} state; 			//pipeline state
 typedef enum {OK,EmptyPipe,InvalidInstruction,InvalidExecution,IntegerOverflow,BreakPoint,ReservedInstruction,SysCall,quit,flush,memFail} exception;
 
 
-int pipeline(uint32_t end, state running, int affichage);				//Main pipeline function
+//Main pipeline function	(now iterative)
 int pipeiter(state running);
 
 
