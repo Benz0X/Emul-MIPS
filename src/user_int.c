@@ -711,13 +711,22 @@ int decrypt(char input [])
 
 
     case WINDOW:
-        if(nextword(&word,input,&n) && isDecimal(word)) {
+        if(nextword(&word,input,&n)) {
             WARNING_MSG("Too much arguments");
             return -1;
         }
 
         return affichage();
 
+        break;
+
+    case HELP:
+        if(nextword(&word,input,&n)) {
+            WARNING_MSG("Too much arguments");
+            return -1;
+        }
+        printf("List of available command :\nclock [time], set a clock at [time] us\nverb [v], allow 6 level of output\nwindow, open graphic interface\nload [filepath], load a MIPS object and relocate it\nexit, exit the program\ndisp [arguments], display stuff, enter 'disp' command to see arguments\ndisasm [plage], disassemble memory in [plage], plage is [adress:adress] or [adress+offset]\nset [argument], set a value to a register or memory, enter 'set' command to see arguments\nassert [arguments], same as SET but assert the value\nresume, resume script processing\nrun [adress], run from [adress], run from current PC value if no [adress] set\nstep, increase clock by one, if it encounter a JALR or JAL, execute whole procedure\nstep into, increase clock by one\nbreak [arguments], add, remove or list breakpoints\n");        
+        return 0;
         break;
 
     case UNKNOWN:

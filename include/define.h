@@ -75,6 +75,7 @@ typedef enum {                          //Commandes de l'interpreteur
     CLOCK,
     VERB,
     WINDOW,
+    HELP,
     UNKNOWN
 } command ;
 

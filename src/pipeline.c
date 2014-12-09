@@ -65,65 +65,69 @@ int exceptionHandler(exception number) {
             INFO_MSG("Syscall : %d",reg_mips[2]);
         }
         switch (reg_mips[2]) { //v0
-        case 0:
-            INFO_MSG("Exit called by program");
-            return quit;
-            break;
-
-        case 1://putchar
-            putchar(reg_mips[4]);
-            fflush(stdout);
-            //case 1:                                   //disp integer
-            //printf("%d\n",reg_mips[4]); //a0
-            break;
-
-        case 2:
-            reg_mips[2]=getchar();
-            break;
-
-        case 4:
-            ;
-            int i=0,c;
-            do {
-                memRead(reg_mips[4]+i,0,&c);
-                printf("%c",(char)c);
-                i+=1;
-            }
-            while(((char)c)!='\0');
-            printf("\n");
-            break;
-        case 5:
-            if(verbose>0)printf("Entrez un décimal ou héxadécimal:\n");
-            char n;
-            while((scanf("%X%c",&reg_mips[2],&n)!=2 || n!='\n') && clean_stdin()) {
-                WARNING_MSG("Ceci n'est pas un entier valide");
-            };
-            break;
-        case 8:
-            ;
-            int j=0;
-            char *input=calloc(INPUT_SIZE,sizeof(char));
-            //fgets(input,reg_mips[5],stdin);
-            if(verbose>0)printf("Entrez une chaine de caractère :\n");
-            scanf("%s",input);
-            do
+            if (SYSCALL_LIBC)
             {
-                memWrite(reg_mips[4]+j,0,input[j]);
-                j++;
-            } while((input[j-1])!='\0' && j < reg_mips[5]);
-            memWrite(reg_mips[4]+j-1,0,'\0'); //Fin forcée de la chaine de caractère
-            break;
-        case 10:
-            INFO_MSG("Exit called by program");
-            return quit;
-            break;
-        default:
-            if (verbose==1||verbose>2) {
-                WARNING_MSG("Unknown SysCall, %d",reg_mips[2]);
+            case 0:
+                INFO_MSG("Exit called by program");
+                return quit;
+                break;
+
+            case 1://putchar
+                putchar(reg_mips[4]);
+                fflush(stdout);
+                //case 1:                                   //disp integer
+                //printf("%d\n",reg_mips[4]); //a0
+                break;
+
+            case 2:
+                reg_mips[2]=getchar();
+                break;
+            } else {
+            case 4:
+                ;
+                int i=0,c;
+                do {
+                    memRead(reg_mips[4]+i,0,&c);
+                    printf("%c",(char)c);
+                    i+=1;
+                }
+                while(((char)c)!='\0');
+                printf("\n");
+                break;
+            case 5:
+                if(verbose>0)printf("Entrez un décimal ou héxadécimal:\n");
+                char n;
+                while((scanf("%X%c",&reg_mips[2],&n)!=2 || n!='\n') && clean_stdin()) {
+                    WARNING_MSG("Ceci n'est pas un entier valide");
+                };
+                break;
+            case 8:
+                ;
+                int j=0;
+                char *input=calloc(INPUT_SIZE,sizeof(char));
+                //fgets(input,reg_mips[5],stdin);
+                if(verbose>0)printf("Entrez une chaine de caractère :\n");
+                scanf("%s",input);
+                do
+                {
+                    memWrite(reg_mips[4]+j,0,input[j]);
+                    j++;
+                } while((input[j-1])!='\0' && j < reg_mips[5]);
+                memWrite(reg_mips[4]+j-1,0,'\0'); //Fin forcée de la chaine de caractère
+                break;
+            case 10:
+                INFO_MSG("Exit called by program");
+                return quit;
+                break;
+            default:
+                if (verbose==1||verbose>2) {
+                    WARNING_MSG("Unknown SysCall, %d",reg_mips[2]);
+                }
+                break;
             }
-            break;
         }
         break;
+
 
 
 

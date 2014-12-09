@@ -62,6 +62,8 @@ command getCommand(char word[]) {
         return VERB;
     if (!strcmp(word,"window"))
         return WINDOW;
+    if (!strcmp(word,"help"))
+        return HELP;
     return UNKNOWN;
 }
 
