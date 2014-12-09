@@ -5,7 +5,7 @@ verbose : différents niveaux d'affichage en sortie
 clock : règle la vitesse de la machine virtuelle
 disp mem symtab et disp mem libsymtab : affiche la table des symboles du fichier/de la libc
 disp clockcycle : affiche le nombre de tour de clock depuis l'initialisation du programme
-window : affiche l'interface graphique=========
+window : affiche l'interface graphique
 
 
 **pour compiler la version debuggable**
