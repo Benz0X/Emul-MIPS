@@ -63,7 +63,7 @@ int decrypt(char input [])
     case DISP:
 
         if(!nextword(&word,input,&n)) {
-            WARNING_MSG("Too few arguments. Syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+'");
+            WARNING_MSG("Too few arguments. Syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+' or 'disp mem symtab' or 'disp mem libsymtab' or 'disp clockcycle'");
             return -1;
         } else {
             if(strcmp(word,"mem")==0) {                             //Disp mem
@@ -125,7 +125,7 @@ int decrypt(char input [])
                                     return -1;
                                 }
                             }
-                            WARNING_MSG("Syntax Error, syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+'");
+                            WARNING_MSG("Syntax Error, syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+' or 'disp mem symtab' or 'disp mem libsymtab' or 'disp clockcycle'");
                             return -1;
 
                         } else {
@@ -725,7 +725,21 @@ int decrypt(char input [])
             WARNING_MSG("Too much arguments");
             return -1;
         }
-        printf("List of available command :\nclock [time], set a clock at [time] us\nverb [v], allow 6 level of output\nwindow, open graphic interface\nload [filepath], load a MIPS object and relocate it\nexit, exit the program\ndisp [arguments], display stuff, enter 'disp' command to see arguments\ndisasm [plage], disassemble memory in [plage], plage is [adress:adress] or [adress+offset]\nset [argument], set a value to a register or memory, enter 'set' command to see arguments\nassert [arguments], same as SET but assert the value\nresume, resume script processing\nrun [adress], run from [adress], run from current PC value if no [adress] set\nstep, increase clock by one, if it encounter a JALR or JAL, execute whole procedure\nstep into, increase clock by one\nbreak [arguments], add, remove or list breakpoints\n");        
+        printf("*List of available command :\n");
+        printf("*clock [time], set a clock at [time] us\n");
+        printf("*verb [v], allow 6 level of output\n");
+        printf("*window, open graphic interface\n");
+        printf("*load [filepath], load a MIPS object and relocate it\n");
+        printf("*exit, exit the program\n");
+        printf("*disp [arguments], display stuff, enter 'disp' command to see arguments\n");
+        printf("*disasm [plage], disassemble memory in [plage], plage is [adress:adress] or [adress+offset]\n");
+        printf("*set [argument], set a value to a register or memory, enter 'set' command to see arguments\n");
+        printf("*assert [arguments], same as SET but assert the value\n");
+        printf("*resume, resume script processing\n");
+        printf("*run [adress], run from [adress], run from current PC value if no [adress] set\n");
+        printf("*step, increase clock by one, if it encounter a JALR or JAL, execute whole procedure\n");
+        printf("*step into, increase clock by one\n");
+        printf("*break [arguments], add, remove or list breakpoints\n");
         return 0;
         break;
 

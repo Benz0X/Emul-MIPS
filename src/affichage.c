@@ -488,7 +488,9 @@ int Button (SDL_Surface* ecran, int x, int y, int w, int h, SDL_Event event, int
 
     uint32_t white=SDL_MapRGB(ecran->format, 255,255,255);
     uint32_t black=SDL_MapRGB(ecran->format, 0,0,0);
-    SDL_Color fontblack=(SDL_Color) {0,0,0,0};
+    SDL_Color fontblack=(SDL_Color) {
+        0,0,0,0
+    };
 ///////
 
 

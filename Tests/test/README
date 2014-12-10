@@ -1,5 +1,7 @@
-les fichiers de test
+Les fichiers de test :
 
-les tests sont regroupés en repertoires correspondant à une commande. 
+Les tests sont regroupés en repertoires correspondants à des commande (assert, clock, disasm, disp, exit, load, run, set, step, verbose).
+Ils vérifient la robustesse de la commande aux erreurs de syntaxe, les retours d'erreurs et, si possible, que la commande effectue bien ce pour quoi elle est faite.
+Les tests contenus dans "execute" fonctionnent de pair avec les fichiers mips objet contenus dans execute. Il s'agit de tests permettant de vérifier le bon fonctionnement de quelques instructions MIPS à l'aide de SET et de ASSERT.
 
-Il doivent être passés en parametre de simpleUnitTest.sh
+Ils doivent être passés en parametre de simpleUnitTest.sh

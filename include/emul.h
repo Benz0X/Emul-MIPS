@@ -37,6 +37,5 @@ int dispmemPlage(uint32_t start_adrr,uint32_t size);				//affiche une plage mém
 //Ces fonctions retournent -1 en cas d'accès hors zone mémoire :
 int memRead(uint32_t start_addr,int type, int* value);				//lit en mémoire à start_addr et stocke dans value
 int memWrite(uint32_t start_addr,int type, int value);				//écrit value en mémoire à start_addr
-int memWriteChecked(uint32_t start_addr,int type, int32_t value);	//écrit value en mémoire à start_addr SI l'attribut est RW, a revoir
 
 #endif
