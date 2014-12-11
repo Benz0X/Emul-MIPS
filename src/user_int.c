@@ -13,6 +13,8 @@
 #include "pipeline.h"
 #include <ctype.h>
 #include "affichage.h"
+#include <time.h>           //Gestion du temps
+
 
 
 
@@ -63,7 +65,7 @@ int decrypt(char input [])
     case DISP:
 
         if(!nextword(&word,input,&n)) {
-            WARNING_MSG("Too few arguments. Syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+' or 'disp mem symtab' or 'disp mem libsymtab' or 'disp clockcycle'");
+            WARNING_MSG("Too few arguments. Syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+' or\n\t'disp mem symtab' or\n\t'disp mem libsymtab' or\n\t'disp clockcycle', 'disp totalexectime', disp 'exectime'");
             return -1;
         } else {
             if(strcmp(word,"mem")==0) {                             //Disp mem
@@ -125,7 +127,7 @@ int decrypt(char input [])
                                     return -1;
                                 }
                             }
-                            WARNING_MSG("Syntax Error, syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+' or 'disp mem symtab' or 'disp mem libsymtab' or 'disp clockcycle'");
+                            WARNING_MSG("Syntax Error, syntax is :\n\t'disp mem <plage>+' or\n\t'disp mem map'  or\n\t'disp reg <register>+' or\n\t'disp mem symtab' or\n\t'disp mem libsymtab' or\n\t'disp clockcycle', 'disp totalexectime', disp 'exectime'");
                             return -1;
 
                         } else {
@@ -179,6 +181,22 @@ int decrypt(char input [])
                 printf("Number of cycles since start of program : %d\n",nbcycle);
                 return 0;
 
+            } else if(strcmp(word,"totalexectime")==0) {
+                if (nextword(&word,input,&n)) {
+                    WARNING_MSG("Too much arguments");
+                    return -1;
+                }
+                printf("Total time since beginning of programm : %lf ms\n",((double)(totalexectime)/CLOCKS_PER_SEC*1000));
+                return 0;
+
+            } else if(strcmp(word,"exectime")==0) {
+                if (nextword(&word,input,&n)) {
+                    WARNING_MSG("Too much arguments");
+                    return -1;
+                }
+                printf("Time spent for last instruction : %lf us\n",((double)(exectime)/CLOCKS_PER_SEC*1000000));
+                return 0;
+
             } else {
                 WARNING_MSG("First argument of 'disp' must be : \tmem    or reg or clockcycle");
                 return -1;
@@ -209,7 +227,11 @@ int decrypt(char input [])
                                 INFO_MSG("Disassembling memory from 0x%8.8X to 0x%8.8X",adress1,adress2);
 
                                 return disasm(adress1,size);;
+                            }else{
+
+
                             }
+
                             WARNING_MSG("Adresses must be hexadecimal");//en fait non faut que ce soit un uint c'est tout->a changer
                             return -1;
                         }
@@ -236,6 +258,8 @@ int decrypt(char input [])
             } else {
                 WARNING_MSG("Second argument of 'disasm' must be : \t<plage>+ (uint:uint) or (uint+uint)");
                 return -1;
+                
+                
             }
 
 
@@ -248,6 +272,7 @@ int decrypt(char input [])
 
         if(!nextword(&word,input,&n)) {
             WARNING_MSG("Too few arguments. Syntax is :\n\t'set mem <type> <adress> <value>'  or\n\t'set reg <register> <value>'");
+            return -1;
         } else {
             if(strcmp(word,"mem")==0) {                             //set mem
                 if(nextword(&word,input,&n)) {
@@ -281,9 +306,11 @@ int decrypt(char input [])
                                 }
                             } else {
                                 WARNING_MSG("Last argument of 'set mem' must be : \t<value>");
+                                return -1;
                             }
                         } else {
                             WARNING_MSG("Second argument of 'set mem' must be : \t<adress>");
+                            return -1;
                         }
                     } else if(strcmp(word,"word")==0) {
                         if(nextword(&word,input,&n)&& isHexa(word)) { //soucis?
@@ -315,15 +342,19 @@ int decrypt(char input [])
                                 }
                             } else {
                                 WARNING_MSG("Last argument of 'set mem' must be : \t<value>");
+                                return -1;
                             }
                         } else {
                             WARNING_MSG("Second argument of 'set mem' must be : \t<adress>");
+                            return -1;
                         }
                     } else {
                         WARNING_MSG("First argument of 'set mem' must be : \t<type> (byte or word)");
+                        return -1;
                     }
                 } else {
                     WARNING_MSG("First argument of 'set mem' must be : \t<type> (byte or word)");
+                    return -1;
                 }
 
 
@@ -384,6 +415,7 @@ int decrypt(char input [])
 
         if(!nextword(&word,input,&n)) {
             WARNING_MSG("Too few arguments. Syntax is :\n\t'assert reg <register> <value>'  or\n\t'assert <type> <adress> <value>'");
+            return -1;
         } else {
             if(strcmp(word,"reg")==0) {                     //assert reg
                 if(!nextword(&word,input,&n)) {
@@ -626,7 +658,7 @@ int decrypt(char input [])
             } else if(strcmp(word,"del")==0) {
                 while(nextword(&word,input,&n)) {
                     if(strcmp(word,"all")==0) {
-                        breaklist=NULL;
+                        freeList(breaklist);
                         return 0;
                     } else {
                         if (isHexa(word)) {
@@ -642,9 +674,37 @@ int decrypt(char input [])
                             }
 
                         } else {
-                            WARNING_MSG("Adress %s not valid.",word);
+                        uint32_t address=0;
+                        for (i = 0; i < symtab.size; ++i)
+                        {
+                            if(!strcmp(word,symtab.sym[i].name)) {
+                                addr_from_symnb(i,symtab,memory,&address);
+                                break;
+                            }
+                        }
+                        if (address==0);
+                        {
+                            for (i = 0; i < libcsymtab.size; ++i)
+                            {
+                                if(!strcmp(word,libcsymtab.sym[i].name)) {
+                                    addr_from_symnb(i,libcsymtab,memory,&address);
+                                    break;
+                                }
+                            }
+                        }
+                        if (address==0)
+                        {
+                            WARNING_MSG("Adress %s not valid",word);
                             return -1;
                         }
+                        if((address>=textStart && address<textEnd) || (address>=libcTextStart && address<libcTextEnd)) { //                             Test de seg
+                                breaklist=del(address,breaklist);    //suppression du breakpoint
+                            } else {
+                            WARNING_MSG("Adress 0x%8.8X can't be breakpoint, segment not allowed",address);
+                            //return -1;
+                        }
+
+                    }
                     }
                 }
                 return 0;
@@ -662,9 +722,39 @@ int decrypt(char input [])
                             //return -1;
                         }
 
-                    } else {
-                        WARNING_MSG("Adress %s not valid",word);
-                        return -1;
+                    }
+                    else {
+                        uint32_t address=0;
+                        for (i = 0; i < symtab.size; ++i)
+                        {
+                            if(!strcmp(word,symtab.sym[i].name)) {
+                                addr_from_symnb(i,symtab,memory,&address);
+                                break;
+                            }
+                        }
+                        if (address==0);
+                        {
+                            for (i = 0; i < libcsymtab.size; ++i)
+                            {
+                                if(!strcmp(word,libcsymtab.sym[i].name)) {
+                                    addr_from_symnb(i,libcsymtab,memory,&address);
+                                    break;
+                                }
+                            }
+                        }
+                        if (address==0)
+                        {
+                            WARNING_MSG("Adress %s not valid",word);
+                            return -1;
+                        }
+                        address-=address % 4;
+                        if((address>=textStart && address<textEnd) || (address>=libcTextStart && address<libcTextEnd)) { //                             Test de seg .text
+                            if(empty(present(address,breaklist))) breaklist=insert(address,breaklist); //Si le point n'existe pas, on le rajoute
+                        } else {
+                            WARNING_MSG("Adress 0x%8.8X can't be breakpoint, segment not allowed",address);
+                            //return -1;
+                        }
+
                     }
                 }
                 return 0;
@@ -727,7 +817,7 @@ int decrypt(char input [])
         }
         printf("*List of available command :\n");
         printf("*clock [time], set a clock at [time] us\n");
-        printf("*verb [v], allow 6 level of output\n");
+        printf("*verbose [v], allow 6 level of output\n");
         printf("*window, open graphic interface\n");
         printf("*load [filepath], load a MIPS object and relocate it\n");
         printf("*exit, exit the program\n");

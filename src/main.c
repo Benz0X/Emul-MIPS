@@ -29,6 +29,8 @@
 //Declaration des variables globales
 int scriptmode;                     //0 for interactive mode, 1 for script mode
 int clocktime=0;                    //Mips clock : 0 for max speed
+int exectime=0;
+int totalexectime=0;
 int nbinstr=0;                      //Nombre d'instruction du dictionnaire
 list breaklist;                     //Initialisation de la liste de points d'arret
 
@@ -47,6 +49,7 @@ pipeblock vpipeline[5];             //Structure de pipeline : 5 block -> IF, ID,
 
 int main(int argc, char *argv[])
 {
+    INFO_MSG("Welcome to Mips Emulator by A. Vasselle & N. Exibard. Type help to see list of available command");
     readDico(DICONAME);
 
 

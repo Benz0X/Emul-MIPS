@@ -18,7 +18,7 @@
 #define CONSOLE_H 16		//Hauteur de la console
 
 
-int affichage();			//Boucle principale de l'affichage 
+int affichage();			//Boucle principale de l'affichage
 
 
 int FilterEvents(const SDL_Event *event) ;																				// Permet de filtrer les evenements MouseMotion (indirectement permet de Flip quand necessaire)

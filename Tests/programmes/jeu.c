@@ -13,18 +13,18 @@ int main(int argc, char const *argv[])
 	int res;
 
 
-		printf("Entrez votre nom :\n");
-		scanf("%s",name);
-		length = strlen(name);
-		printf("Entrez un max\n");
-		scanf("%d",&max);
+	printf("Entrez votre nom :\n");
+	scanf("%s",name);
+	length = strlen(name);
+	printf("Entrez un max\n");
+	scanf("%d",&max);
 	
 	for (i=0; i<length-2; i++){
 		aleatoire += name[i];
-		}
+	}
 	aleatoire = aleatoire * 419669081 % 999999989 ;
 	aleatoire=(aleatoire % max+max)/2;
-	printf("%d\n", aleatoire);
+	//printf("%d\n", aleatoire);
 	printf("Trouvez le nombre entre 0 et %d\n",max );
 	i=0;
 	do{

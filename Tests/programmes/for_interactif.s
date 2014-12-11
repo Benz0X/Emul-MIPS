@@ -4,7 +4,7 @@
 	.rdata
 	.align	2
 $LC0:
-	.ascii	"Entrez des notes (moins de 10,<0 pour terminer) :\000"
+	.ascii	"Entrez 10 notes :\000"
 	.align	2
 $LC1:
 	.ascii	"%d\000"
@@ -16,10 +16,13 @@ $LC3:
 	.ascii	"Votre moyenne est : %d\012\000"
 	.align	2
 $LC4:
-	.ascii	"notes tri\303\251es : \000"
+	.ascii	"notes tri\303\251es : \012[\000"
 	.align	2
 $LC5:
-	.ascii	" %d \012\000"
+	.ascii	"%d,\000"
+	.align	2
+$LC6:
+	.ascii	"]\000"
 	.text
 	.align	2
 	.globl	main
@@ -118,7 +121,7 @@ $L2:
 
 	lui	$2,%hi($LC4)
 	addiu	$4,$2,%lo($LC4)
-	jal	puts
+	jal	printf
 	nop
 
 	sw	$0,20($fp)
@@ -148,6 +151,11 @@ $L7:
 	nop
 	slt	$2,$2,$3
 	bne	$2,$0,$L8
+	nop
+
+	lui	$2,%hi($LC6)
+	addiu	$4,$2,%lo($LC6)
+	jal	puts
 	nop
 
 	move	$2,$0

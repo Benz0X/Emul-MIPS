@@ -1,5 +1,4 @@
-load Tests/programmes/test_printf.o
-break add 0x300C
-run
-window
+load Tests/relocation.o 
+verbose 1
+disasm 0x3000+40
 debug

@@ -10,7 +10,7 @@ disp mem symtab et disp mem libsymtab : affiche la table des symboles du fichier
 
 disp clockcycle : affiche le nombre de tour de clock depuis l'initialisation du programme
 
-window : affiche l'interface graphique
+window : affiche l'interface graphique. NB : dans l'interface, utiliser la fleche du haut pour remettre le focus sur la console après l'exécution d'une commande.
 
 
 **pour compiler la version debuggable**
@@ -39,7 +39,7 @@ $ make archive
 ./Tests/tests
 
 Pour les exécuter, se placer dans le fichier de l'exécutable et entrer :
-./Tests/simpleUnitTest.sh -e projet -b Tests/test/set/*.emu
+./Tests/simpleUnitTest.sh -e emulMips -b Tests/test/set/*.emu
 
 Ici, la commande set sera testée.
 La plupart de nos tests chargent un fichier boucle.o à l'adresse par défaut présent dans ./Tests

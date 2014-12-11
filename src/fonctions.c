@@ -738,6 +738,7 @@ int getInstr(uint32_t adress, instruction* instr_ptr) {
 void initprog() {
     INFO_MSG("Program initialisation");
 //Initialisation des Pipeblocks
+    totalexectime=0;
     nbcycle=0;
     vpipeline[IF].ins.value=-1;
     vpipeline[IF].dico_entry=-1;
@@ -907,7 +908,7 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
         }
     }
     else {
-        if(verbose>0) printf("Trying to get symbol in libc\n");
+        if(verbose>0) printf("Trying to get symbol in libc... ");
         j=-1;
         while ((int)j<=(int)libcsymtab.size && (int)segnumber<0) {
             j++;
@@ -918,6 +919,7 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
             if(strcmp(libcsymtab.sym[j].name,symtab.sym[symnb].name)==0) {
                 //get the memory segment
                 segnumber=0;//dirty, it's libc.text
+                if(verbose>0) printf(" Symbol found\n");
                 break;
             }
             //}
@@ -936,13 +938,18 @@ int addr_from_symnb(int symnb,stab symtab, mem memory,uint32_t* addr) {
     return 0;
 }
 
-int get_seg_from_adress(int addr,mem mem) {
+int get_seg_from_adress(uint32_t addr,mem mem) {
     int i,seg=-1;
     for (i = 0; i < memory->nseg; ++i)
     {
-        if (addr>=memory->seg[i].start._32 && addr<memory->seg[i].start._32+memory->seg[i].size._32) {
+        long diff;
+        diff=(long)(uint32_t)(addr)-(long)((uint32_t)memory->seg[i].start._32);
+        if (diff>=0 && diff<memory->seg[i].size._32) {
             seg=i;
+            //printf("%d\n",(int)diff );
+            break;
         }
     }
+
     return seg;
 }

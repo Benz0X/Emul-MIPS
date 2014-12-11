@@ -34,7 +34,7 @@ dico_info* dico_data=NULL;
 
 
 
-#define LIBC_MEM_END 0xF000
+#define LIBC_MEM_END 0x000F0000
 #define PATH_TO_LIBC "include/libc/libc.so"
 
 // nombre max de sections que l'on extraira du fichier ELF
@@ -168,8 +168,8 @@ void reloc_segment(FILE* fp, segment seg, mem memory,unsigned int endianness,sta
 
     if (rel != NULL &&seg.content!=NULL && seg.size._32!=0) {
         if(verbose>0) {
-            INFO_MSG("--------------Relocation de %s-------------------\n",seg.name) ;
-            INFO_MSG("Nombre de symboles a reloger: %ld\n",scnsz/sizeof(*rel)) ;
+            INFO_MSG("--------------Relocation of %s-------------------\n",seg.name) ;
+            INFO_MSG("Number of symbol to relocate: %ld\n",scnsz/sizeof(*rel)) ;
         }
 
         //------------------------------------------------------
@@ -479,7 +479,7 @@ int loadELF (char* name,int mode,uint32_t addr) {
         }
     }
     if(verbose>0) {
-        INFO_MSG("--------------Relocation de %s-------------------",PATH_TO_LIBC);
+        INFO_MSG("--------------Relocation of %s-------------------",PATH_TO_LIBC);
     }
     for (i=0; i<j; i++) {
         reloc_segment(pf_libc, memory->seg[i], memory,endianness,&symtab_libc,NULL,NULL);
@@ -513,7 +513,7 @@ int loadELF (char* name,int mode,uint32_t addr) {
 
     // on reloge chaque section du fichier
     if(verbose>0) {
-        INFO_MSG("--------------Relocation de %s-------------------",name);
+        INFO_MSG("--------------Relocation of %s-------------------",name);
     }
     for (i=k; i<j; i++) {
         reloc_segment(pf_elf, memory->seg[i], memory,endianness,&symtab,&symtab_libc,pf_libc);
@@ -540,7 +540,7 @@ int loadELF (char* name,int mode,uint32_t addr) {
             libcTextEnd=memory->seg[k].start._32+memory->seg[k].size._32;
         }
     }
-    if(verbose>0)INFO_MSG("Segments R_X : %8.8X-%8.8X et %8.8X-%8.8X",textStart,textEnd,libcTextStart,libcTextEnd );
+    if(verbose>0)INFO_MSG("R_X segments: %8.8X-%8.8X and %8.8X-%8.8X",textStart,textEnd,libcTextStart,libcTextEnd );
 
 
     //Initialisation de l'emulateur en vu d'un run

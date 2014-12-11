@@ -214,7 +214,34 @@ int pipeiter(state running) {
 
 
 
+//Step
+    if (running==step_return && reg_mips[PC]==return_addr+4) {    //Lors d'un step, on attend d'arriver sur return_addr pour break
+        //printf("returned to %d\n",reg_mips[PC]);
+        running=stop;
+        return 0;
+    }
+
+    if (running==step) {            //step passe le pipeline en mode step_return si EX est JAL ou JALR -> appel de procedure
+        if (strcmp(dico_data[vpipeline[MEM].dico_entry].name,"JAL")==0 || strcmp(dico_data[vpipeline[MEM].dico_entry].name,"JALR")==0) {
+            running=step_return; //will wait for return adress
+            return_addr=reg_mips[PC]-4;
+            if (verbose==1||verbose>2) {
+                printf("RETURN ADRESS SET TO %d\n",return_addr);
+            }
+        }
+        else {
+            running=stop;       //Sinon il agit comme stepinto
+        }
+    }
+//Step into
+
+    if (running==stepinto) {        //stepinto break
+        running=stop;
+    }
+
     //Execution principale
+
+
 
 //Write Back
     flag[WB] = exceptionHandler(execute(vpipeline[WB].ins,vpipeline[WB].step,vpipeline[WB].dico_entry,&(vpipeline[WB].tmp)));
@@ -236,14 +263,17 @@ int pipeiter(state running) {
     }
 
 //Temporisation
+    tick=clock()-tick;
     if(clocktime!=0) {      //Si la clock est fixée
-        tick=clock()-tick;
         if(verbose>4) {
             printf("Time spent: %g us\t", (double)tick/CLOCKS_PER_SEC*1000);
             printf("Waiting %g us\n", (double)(clocktime-tick/CLOCKS_PER_SEC*1000));
         }
         if((double)tick/CLOCKS_PER_SEC*1000<clocktime) DELAY((clocktime-tick/CLOCKS_PER_SEC*1000)*1); //On DELAY
     }
+    exectime=tick+(clocktime-tick/CLOCKS_PER_SEC*1000);
+    totalexectime+=exectime;
+
 
 //Affichage
     if(verbose>3) {
@@ -275,25 +305,7 @@ int pipeiter(state running) {
         pipecpy(&vpipeline[ID],vpipeline[IF]);  //ID becomes IF
     }
 
-//Step
-    if (running==step_return && reg_mips[PC]==return_addr) {    //Lors d'un step, on attend d'arriver sur return_addr pour break
-        return 0;
-    }
-    if (running==stepinto) {        //stepinto break
-        running=stop;
-    }
-    if (running==step) {            //step passe le pipeline en mode step_return si EX est JAL ou JALR -> appel de procedure
-        if (strcmp(dico_data[vpipeline[EX].dico_entry].name,"JAL")==0 || strcmp(dico_data[vpipeline[EX].dico_entry].name,"JALR")==0) {
-            running=step_return; //will wait for return adress
-            return_addr=reg_mips[PC];
-            if (verbose==1||verbose>2) {
-                printf("RETURN ADRESS SET TO %d\n",return_addr);
-            }
-        }
-        else {
-            running=stop;       //Sinon il agit comme stepinto
-        }
-    }
+
 
 //Gestion fin de programme
     if((reg_mips[PC]>=textEnd+16 && reg_mips[PC]<libcTextStart) || reg_mips[PC]<textStart || reg_mips[PC]>=libcTextEnd+16) {

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <SDL/SDL.h>
 #include <SDL_ttf.h>
@@ -16,6 +17,7 @@
 #include "fonctions.h"
 #include "user_int.h"
 #include "common/notify.h"
+#include "emul.h"
 
 
 
@@ -68,7 +70,8 @@ int affichage() {
 
     char string_pipeline [32768];
     char string_registers [32768];
-    char string_disasm [32768];
+
+    char string_disasm [65556];
     char string_memory [32768];
 //////////
 
@@ -78,9 +81,9 @@ int affichage() {
     uint32_t grey=SDL_MapRGB(ecran->format, 70,70,70);
     uint32_t softgrey=SDL_MapRGB(ecran->format, 150,150,150);
 
-    uint32_t red=SDL_MapRGB(ecran->format, 255,0,0);
-    uint32_t green=SDL_MapRGB(ecran->format, 0,255,0);
-    uint32_t blue=SDL_MapRGB(ecran->format, 0,0,255);
+    //uint32_t red=SDL_MapRGB(ecran->format, 255,0,0);
+    //uint32_t green=SDL_MapRGB(ecran->format, 0,255,0);
+    //uint32_t blue=SDL_MapRGB(ecran->format, 0,0,255);
 
     SDL_Color fontwhite=(SDL_Color) {
         255,255,255,0
@@ -111,7 +114,7 @@ int affichage() {
 
     //Titles
     SDL_Surface* title;
-    SDL_Rect titlerect;
+    //SDL_Rect titlerect;
 
 
     //TextEditions definitions
@@ -257,6 +260,11 @@ int affichage() {
 
                     printf("%s%s\n",PROMPT_STRING, input );
                     if(strcmp(input,"")!=0) res=decrypt(input); 	//Anti-Sigsegv
+
+                    //TE_SetFocusEdition(&consolete,0);
+                    //TE_SetCursorPos(&consolete,0);
+                    //TE_SetFocusEdition(&consolete,1);
+
                     redraw();
                     break;
 
@@ -488,10 +496,7 @@ int Button (SDL_Surface* ecran, int x, int y, int w, int h, SDL_Event event, int
 
     uint32_t white=SDL_MapRGB(ecran->format, 255,255,255);
     uint32_t black=SDL_MapRGB(ecran->format, 0,0,0);
-    SDL_Color fontblack=(SDL_Color) {
-        0,0,0,0
-    };
-///////
+    ///////
 
 
     Draw_FillRect (ecran, x,y,w,h, color);
@@ -561,7 +566,7 @@ int stringRegisters(char* string) {
     int i;
     char name[INPUT_SIZE];
     char tmp[50];
-    sprintf(string,"");	//Remise à 0
+    sprintf(string," ");	//Remise à 0
 
     for(i=0; i<NBREG+2; i++) {
         parseReg(i,name);               //Recuperation du nom complet
@@ -579,7 +584,7 @@ int stringRegisters(char* string) {
 
 int stringMemory(char* string) {
     char tmp[128];
-    sprintf(string,"");	//Remise à 0
+    sprintf(string," ");	//Remise à 0
 
     if(memory==NULL) {
         sprintf(string,"            No memory loaded");
@@ -615,12 +620,37 @@ int stringMemory(char* string) {
                     strcat(string,tmp);
                 }
                 else strcat(string,"   ");
-
                 current_addr++;
+
                 i++;
             }
 
 
+        } else if (!strcmp(memory->seg[k].name,"[stack]")) {
+            //start_addr = memory->seg[k].start._32;
+            start_addr = reg_mips[29];
+            size = memory->seg[k].start._32-start_addr+memory->seg[k].size._32;
+
+            sprintf(tmp,"\n\n  %s", memory->seg[k].name);
+            strcat(string,tmp);
+            current_addr=start_addr;
+            i=0;
+
+            while (i<size) {	//Affichage du segment
+                if (i%16==0) {
+                    sprintf(tmp,"\n 0x%8.8X  ",current_addr);
+                    strcat(string,tmp);
+                }
+
+                if(memRead(current_addr,0,&value)==0) { //on verifie qu'il soit dans une plage memoire valide
+                    sprintf(tmp,"%2.2X ",value);
+                    strcat(string,tmp);
+                }
+                else strcat(string,"   ");
+
+                current_addr++;
+                i++;
+            }
         }
     }
     return 0;
@@ -633,7 +663,7 @@ int stringPipeline(char* string) {
     }
 
     char tmp[128];
-    sprintf(string,"");	//Remise à 0
+    sprintf(string," ");	//Remise à 0
 
     //Affichage des differents blocks
     sprintf(string,"  Stage Fetch\t          Stage Decode\t          Stage Execute\t          Stage Memory\t          Stage Write Back\n");
@@ -648,7 +678,7 @@ int stringPipeline(char* string) {
     sprintf(tmp,"  Temporary Values :                \t              %d\t                  \t %d\t                \t%d\n\n",vpipeline[EX].tmp,vpipeline[MEM].tmp,vpipeline[WB].tmp);
     strcat(string,tmp);
 
-    sprintf(tmp,"  Clock Count : %d      Clock time : %d\n", nbcycle, clocktime);
+    sprintf(tmp,"  Clock Count : %d      Clock time : %d      Instruction Exectime : %lfus      Total Exectime : %lfms\n", nbcycle, clocktime, ((double)(exectime)/CLOCKS_PER_SEC*1000000), ((double)(totalexectime)/CLOCKS_PER_SEC*1000));
     strcat(string,tmp);
 
     return 0;
@@ -656,7 +686,7 @@ int stringPipeline(char* string) {
 
 int stringDisasm(uint32_t start_addr,uint32_t size, char* string) {
     char tmp[128];
-    sprintf(string,"");	//Remise à 0
+    sprintf(string," ");	//Remise à 0
 
 
     if(memory==NULL) {

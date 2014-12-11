@@ -1,5 +1,4 @@
-TARGET=projet
-
+TARGET=emulMips
 
 
 # noms des executables utilisés durant la compilation/edition des liens
