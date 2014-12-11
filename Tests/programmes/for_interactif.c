@@ -6,7 +6,7 @@ int main(int argc, char const *argv[])
 	int tabnotes[10];
 	int note=0,tot=0,i=0,j;
 	int moyenne;
-	printf("Entrez des notes (moins de 10,<0 pour terminer) :\n");
+	printf("Entrez 10 notes :\n");
 	for (i=0;i<9;i++){
 		scanf("%d",&note);
 		if (note>0){
@@ -18,11 +18,12 @@ int main(int argc, char const *argv[])
 	moyenne=tot/(i);
 	printf("Votre moyenne est : %d\n",moyenne);
 	tri_tab(tabnotes,i-1);
-	printf("notes triées : \n");
+	printf("notes triées : \n[");
 	for (j = 0; j < i; ++j)
 	{
-		printf(" %d \n",tabnotes[j] );
+		printf("%d,",tabnotes[j] );
 	}
+	printf("]\n");
 	return 0;
 }
 

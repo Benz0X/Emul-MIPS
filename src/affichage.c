@@ -269,14 +269,14 @@ int affichage() {
 
                 case SDLK_F2:
                     strcpy(input,"step");
-                    printf("%s%s\n",PROMPT_STRING, input );
+                    //printf("%s%s\n",PROMPT_STRING, input );
                     decrypt(input);
                     redraw();
                     break;
 
                 case SDLK_F3:
                     strcpy(input,"step into");
-                    printf("%s%s\n",PROMPT_STRING, input );
+                    //printf("%s%s\n",PROMPT_STRING, input );
                     decrypt(input);
                     redraw();
                     break;
